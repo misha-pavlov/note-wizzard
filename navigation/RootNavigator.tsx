@@ -1,4 +1,10 @@
-import { Button, useColorMode, useColorModeValue } from "native-base";
+import {
+  Button,
+  useColorMode,
+  useColorModeValue,
+  Text,
+  View,
+} from "native-base";
 import { useNoteWizardTheme } from "../hooks";
 
 const RootNavigator = () => {
@@ -8,9 +14,17 @@ const RootNavigator = () => {
   const { toggleColorMode } = useColorMode();
 
   return (
-    <Button bg={bg} variant={variant} mt={50} onPress={toggleColorMode}>
-      Sample
-    </Button>
+    <>
+      <Button bg={bg} variant={variant} mt={50} onPress={toggleColorMode}>
+        Sample
+      </Button>
+
+      <View mt={150} bg={colors.light.purple}>
+        <Text>Regular</Text>
+        <Text fontWeight={500}>Medium</Text>
+        <Text fontWeight={700}>Bold</Text>
+      </View>
+    </>
   );
 };
 
