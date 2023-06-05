@@ -2,7 +2,7 @@
   "expo": {
     "name": "note-wizard",
     "slug": "note-wizard",
-    "scheme": "note-wizard",
+    "scheme": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

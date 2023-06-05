@@ -7,6 +7,7 @@ import {
 } from "native-base";
 import { useNoteWizardTheme } from "../hooks";
 
+// TODO: REMOVE BECAUSE THIS USE ONLY FOR SHOWING HOW TO WORK WITH THEME
 const RootNavigator = () => {
   const colors = useNoteWizardTheme();
   const bg = useColorModeValue(colors.light.main, colors.dark.main);
