@@ -5,6 +5,7 @@ type BaseColorsType = {
   purple: string;
   purple2: string;
   second: string;
+  gray: string;
 };
 
 type NoteWizardColors = {

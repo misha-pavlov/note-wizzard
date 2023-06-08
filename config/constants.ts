@@ -20,4 +20,8 @@ export const constants = {
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Bold": require("../assets/fonts/Roboto-Bold.ttf"),
   },
+
+  routes: {
+    signUp: '/sign-up'
+  }
 };
