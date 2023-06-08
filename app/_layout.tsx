@@ -1,11 +1,13 @@
 import * as Font from "expo-font";
+import { Slot, SplashScreen } from "expo-router";
+import { useEffect } from "react";
 import { ColorMode, NativeBaseProvider, extendTheme } from "native-base";
 import type { StorageManager } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
-import { constants } from "./config/constants";
-import RootNavigator from "./navigation/RootNavigator";
+import { constants } from "../config/constants";
+import { Provider } from "../context/auth";
 
+const fonts = constants.fonts;
 const colors = {
   noteWizard: {
     light: {
@@ -23,21 +25,28 @@ const colors = {
   },
 };
 
-const fonts = {
-  "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-  "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-  "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
-};
+// Prevent hiding the splash screen
+SplashScreen.preventAutoHideAsync();
 
-const App = () => {
-  // load fonts
+const Layout = () => {
+  // Load the fonts
   useEffect(() => {
     Font.loadAsync(fonts);
+    console.log("GGG");
   }, []);
 
-  // get fonts
+  // Get the fonts
   const [fontsLoaded] = Font.useFonts(fonts);
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      // Hide the splash screen after the fonts have loaded and the
+      // UI is ready.
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  // Prevent rendering until the font has loaded
   if (!fontsLoaded) {
     return null;
   }
@@ -92,9 +101,11 @@ const App = () => {
 
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
-      <RootNavigator />
+      <Provider>
+        <Slot />
+      </Provider>
     </NativeBaseProvider>
   );
 };
 
-export default App;
+export default Layout;
