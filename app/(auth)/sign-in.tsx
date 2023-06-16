@@ -116,7 +116,12 @@ const SignIn = () => {
                 }}
               />
               <FormControl.HelperText alignSelf="flex-end">
-                <Text color={light.gray}>Forgot password?</Text>
+                <Text
+                  color={light.gray}
+                  onPress={() => router.push(constants.routes.forgotPassword)}
+                >
+                  Forgot password?
+                </Text>
               </FormControl.HelperText>
             </FormControl>
           </Stack>
@@ -132,7 +137,7 @@ const SignIn = () => {
               <Divider bg={light.gray} />
               <Text
                 color={light.gray}
-                bg="white"
+                bg={light.white}
                 position="absolute"
                 alignSelf="center"
                 pl="2"
@@ -187,7 +192,7 @@ const SignIn = () => {
                 color={light.purple}
                 fontWeight={500}
                 fontSize={16}
-                onPress={() => router.push(constants.routes.signUp)}
+                onPress={() => router.replace(constants.routes.signUp)}
               >
                 Sign up
               </Text>

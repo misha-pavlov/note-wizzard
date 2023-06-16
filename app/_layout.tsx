@@ -16,6 +16,7 @@ const colors = {
       purple2: "#D9C1FF",
       second: "#FBF5FF",
       gray: "#A3A3A3",
+      white: "#F0F0F0",
     },
     dark: {
       main: "#211B27",
@@ -23,6 +24,7 @@ const colors = {
       purple2: "#A587A0",
       second: "#3A2849",
       gray: "#A3A3A3",
+      white: "#F0F0F0",
     },
   },
 };

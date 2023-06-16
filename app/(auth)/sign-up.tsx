@@ -1,6 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  Checkbox,
   Divider,
   FormControl,
   IconButton,
@@ -143,7 +142,7 @@ const SignUp = () => {
               <Divider bg={light.gray} />
               <Text
                 color={light.gray}
-                bg="white"
+                bg={light.white}
                 position="absolute"
                 alignSelf="center"
                 pl="2"
@@ -184,7 +183,7 @@ const SignUp = () => {
                 color={light.purple}
                 fontWeight={500}
                 fontSize={16}
-                onPress={() => router.push(constants.routes.signIn)}
+                onPress={() => router.replace(constants.routes.signIn)}
               >
                 Sign in
               </Text>

@@ -22,7 +22,18 @@ export const constants = {
   },
 
   routes: {
-    signUp: '/sign-up',
-    signIn: '/sign-in'
-  }
+    signUp: "/sign-up",
+    signIn: "/sign-in",
+    forgotPassword: "/forgot-password",
+    verification: "/verification",
+    newPassword: "/new-password",
+  },
+
+  screens: {
+    signUp: "sign-up",
+    signIn: "sign-in",
+    forgotPassword: "forgot-password",
+    verification: "verification",
+    newPassword: "new-password",
+  },
 };
