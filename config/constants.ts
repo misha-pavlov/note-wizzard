@@ -22,6 +22,7 @@ export const constants = {
   },
 
   routes: {
-    signUp: '/sign-up'
+    signUp: '/sign-up',
+    signIn: '/sign-in'
   }
 };
