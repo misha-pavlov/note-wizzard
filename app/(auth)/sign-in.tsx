@@ -12,7 +12,7 @@ import {
   View,
 } from "native-base";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Feather,
   MaterialCommunityIcons,
@@ -24,11 +24,33 @@ import { useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 
+const initialState = {
+  phone: "",
+  password: "",
+};
+
 const SignIn = () => {
+  const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
+
+  const onChange = useCallback(
+    (newValue: string | boolean, key: string) =>
+      setState({ ...state, [key]: newValue }),
+    [state]
+  );
+
+  const isDisabled = useMemo(() => {
+    const { phone, password } = state;
+    return (
+      phone === "" ||
+      phone.length < 10 ||
+      password === "" ||
+      password.length < 8
+    );
+  }, [state]);
 
   return (
     <ScrollView>
@@ -55,6 +77,9 @@ const SignIn = () => {
                 placeholderTextColor={dark.main}
                 color={dark.main}
                 placeholder="Phone"
+                value={state.phone}
+                keyboardType="phone-pad"
+                onChangeText={(text) => onChange(text, "phone")}
                 _focus={{
                   backgroundColor: "transparency",
                   borderColor: dark.main,
@@ -70,6 +95,8 @@ const SignIn = () => {
                 placeholderTextColor={dark.main}
                 color={dark.main}
                 placeholder="Password"
+                value={state.password}
+                onChangeText={(text) => onChange(text, "password")}
                 type={showPassword ? "text" : "password"}
                 InputRightElement={
                   <Pressable
@@ -95,7 +122,11 @@ const SignIn = () => {
           </Stack>
 
           <Stack space={10}>
-            <Button text="Sign in" onPress={() => console.log("123")} />
+            <Button
+              text="Sign in"
+              isDisabled={isDisabled}
+              onPress={() => console.log("123")}
+            />
 
             <View position="relative" display="flex" justifyContent="center">
               <Divider bg={light.gray} />

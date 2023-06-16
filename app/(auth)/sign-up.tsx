@@ -28,7 +28,6 @@ const initialState = {
 
 const SignUp = () => {
   const [state, setState] = useState(initialState);
-  console.log("🚀 ~ file: sign-up.tsx:32 ~ SignUp ~ state:", state);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const router = useRouter();
