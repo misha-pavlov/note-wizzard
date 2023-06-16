@@ -13,18 +13,43 @@ import {
   View,
 } from "native-base";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "../../context/auth";
 import { useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 
+const initialState = {
+  name: "",
+  phone: "",
+  password: "",
+};
+
 const SignUp = () => {
+  const [state, setState] = useState(initialState);
+  console.log("🚀 ~ file: sign-up.tsx:32 ~ SignUp ~ state:", state);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
+
+  const onChange = useCallback(
+    (newValue: string | boolean, key: string) =>
+      setState({ ...state, [key]: newValue }),
+    [state]
+  );
+
+  const isDisabled = useMemo(() => {
+    const { name, phone, password } = state;
+    return (
+      name === "" ||
+      phone === "" ||
+      phone.length < 10 ||
+      password === "" ||
+      password.length < 8
+    );
+  }, [state]);
 
   return (
     <ScrollView>
@@ -41,37 +66,38 @@ const SignUp = () => {
             NoteWizard
           </Text>
 
-          <Stack space={5} mb={5}>
+          <Stack space={5} mb={20}>
             <Text color={dark.main}>Create Account</Text>
-            <FormControl isInvalid={false}>
-              <Input
-                size="xl"
-                borderColor={dark.main}
-                borderRadius={8}
-                placeholderTextColor={dark.main}
-                color={dark.main}
-                placeholder="Name"
-                _focus={{
-                  backgroundColor: "transparency",
-                  borderColor: dark.main,
-                }}
-              />
-            </FormControl>
+            <Input
+              size="xl"
+              borderColor={dark.main}
+              borderRadius={8}
+              placeholderTextColor={dark.main}
+              color={dark.main}
+              placeholder="Name"
+              value={state.name}
+              onChangeText={(text) => onChange(text, "name")}
+              _focus={{
+                backgroundColor: "transparency",
+                borderColor: dark.main,
+              }}
+            />
 
-            <FormControl isInvalid={false}>
-              <Input
-                size="xl"
-                borderColor={dark.main}
-                borderRadius={8}
-                placeholderTextColor={dark.main}
-                color={dark.main}
-                placeholder="Phone"
-                _focus={{
-                  backgroundColor: "transparency",
-                  borderColor: dark.main,
-                }}
-              />
-            </FormControl>
+            <Input
+              size="xl"
+              borderColor={dark.main}
+              borderRadius={8}
+              placeholderTextColor={dark.main}
+              color={dark.main}
+              placeholder="Phone"
+              value={state.phone}
+              keyboardType="phone-pad"
+              onChangeText={(text) => onChange(text, "phone")}
+              _focus={{
+                backgroundColor: "transparency",
+                borderColor: dark.main,
+              }}
+            />
 
             <FormControl>
               <Input
@@ -81,6 +107,8 @@ const SignUp = () => {
                 placeholderTextColor={dark.main}
                 color={dark.main}
                 placeholder="Password"
+                value={state.password}
+                onChangeText={(text) => onChange(text, "password")}
                 type={showPassword ? "text" : "password"}
                 InputRightElement={
                   <Pressable
@@ -103,14 +131,14 @@ const SignUp = () => {
                 <Text color={light.gray}>at least 8 chapters</Text>
               </FormControl.HelperText>
             </FormControl>
-
-            <Checkbox value="purple" colorScheme="purple" defaultIsChecked>
-              I agree to the Terms and Privacy
-            </Checkbox>
           </Stack>
 
           <Stack space={10}>
-            <Button text="Sign in" onPress={() => console.log("123")} />
+            <Button
+              text="Sign up"
+              isDisabled={isDisabled}
+              onPress={() => console.log("123")}
+            />
 
             <View position="relative" display="flex" justifyContent="center">
               <Divider bg={light.gray} />
