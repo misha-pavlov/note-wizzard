@@ -1,17 +1,6 @@
-import { Text } from "native-base";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../context/auth";
+import { Redirect } from "expo-router";
+import { constants } from "../config/constants";
 
-export const Index = () => {
-  const { signOut } = useAuth();
-
-  console.log("123");
-
-  return (
-    <SafeAreaView>
-      <Text onPress={() => signOut()}>Sign Out</Text>
-    </SafeAreaView>
-  );
-};
+export const Index = () => <Redirect href={constants.screens.home} />;
 
 export default Index;
