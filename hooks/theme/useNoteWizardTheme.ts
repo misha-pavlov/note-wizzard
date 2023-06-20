@@ -1,4 +1,5 @@
-import { useTheme } from "native-base";
+import { useColorMode, useTheme } from "native-base";
+import { constants } from "../../config/constants";
 
 type BaseColorsType = {
   main: string;
@@ -18,9 +19,14 @@ type NoteWizardColors = {
 
 const useNoteWizardTheme = () => {
   const { colors } = useTheme();
+  const { colorMode } = useColorMode();
   // use unknown here because we need to rewrite primary type
   const noteWizardColors = colors as unknown as NoteWizardColors;
-  return noteWizardColors.noteWizard;
+  return {
+    ...noteWizardColors.noteWizard,
+    currentTheme:
+      noteWizardColors.noteWizard[colorMode || constants.theme.light],
+  };
 };
 
 export default useNoteWizardTheme;

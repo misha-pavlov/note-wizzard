@@ -1,13 +1,11 @@
-import { ColorMode } from "native-base";
-
 export const constants = {
   keys: {
     theme: "theme",
   },
 
   theme: {
-    dark: "dark" as ColorMode,
-    light: "light" as ColorMode,
+    dark: "dark" as "dark",
+    light: "light" as "light",
   },
 
   fonts: {
