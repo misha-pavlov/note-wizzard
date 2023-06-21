@@ -130,7 +130,7 @@ const SignIn = () => {
             <Button
               text="Sign in"
               isDisabled={isDisabled}
-              onPress={() => console.log("123")}
+              onPress={signIn}
             />
 
             <View position="relative" display="flex" justifyContent="center">

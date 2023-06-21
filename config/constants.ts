@@ -1,18 +1,11 @@
-import { ColorMode } from "native-base";
-import { RNSensitiveInfoAttrAccessibleOptions } from "react-native-sensitive-info";
-
 export const constants = {
   keys: {
     theme: "theme",
-    options: {
-      kSecAttrAccessible:
-        "kSecAttrAccessibleWhenUnlockedThisDeviceOnly" as RNSensitiveInfoAttrAccessibleOptions,
-    },
   },
 
   theme: {
-    dark: "dark" as ColorMode,
-    light: "light" as ColorMode,
+    dark: "dark" as "dark",
+    light: "light" as "light",
   },
 
   fonts: {
@@ -22,18 +15,40 @@ export const constants = {
   },
 
   routes: {
+    // auth
     signUp: "/sign-up",
     signIn: "/sign-in",
     forgotPassword: "/forgot-password",
     verification: "/verification",
     newPassword: "/new-password",
+    // logged in user
+    home: "/home",
+    newNote: "/new-note",
+    profile: "/profile",
+    settings: "/settings",
+    // home screens
+    folderNotes: "/home/folderNotes",
+    note: "/home/note",
+    // profile screens
+    editProfile: "/profile/editProfile",
   },
 
   screens: {
+    // auth
     signUp: "sign-up",
     signIn: "sign-in",
     forgotPassword: "forgot-password",
     verification: "verification",
     newPassword: "new-password",
+    // logged in user
+    home: "home",
+    newNote: "new-note",
+    profile: "profile",
+    settings: "settings",
+    // home screens
+    folderNotes: "folderNotes",
+    note: "note",
+    // profile screens
+    editProfile: "editProfile",
   },
 };

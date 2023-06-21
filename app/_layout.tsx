@@ -13,8 +13,8 @@ const colors = {
     light: {
       main: "#FBF5FF",
       purple: "#8614CC",
-      purple2: "#D9C1FF",
-      second: "#FBF5FF",
+      purple2: "#af82f8",
+      second: "#FFF",
       gray: "#A3A3A3",
       white: "#F0F0F0",
     },
