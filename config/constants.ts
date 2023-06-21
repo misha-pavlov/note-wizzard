@@ -26,6 +26,11 @@ export const constants = {
     newNote: "/new-note",
     profile: "/profile",
     settings: "/settings",
+    // home screens
+    folderNotes: "/home/folderNotes",
+    note: "/home/note",
+    // profile screens
+    editProfile: "/profile/editProfile",
   },
 
   screens: {
@@ -40,5 +45,10 @@ export const constants = {
     newNote: "new-note",
     profile: "profile",
     settings: "settings",
+    // home screens
+    folderNotes: "folderNotes",
+    note: "note",
+    // profile screens
+    editProfile: "editProfile",
   },
 };
