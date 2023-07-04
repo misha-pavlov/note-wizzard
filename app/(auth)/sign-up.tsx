@@ -8,7 +8,7 @@ import {
   ScrollView,
   Stack,
   Text,
-  VStack,
+  HStack,
   View,
 } from "native-base";
 import { useRouter } from "expo-router";
@@ -152,11 +152,7 @@ const SignUp = () => {
               </Text>
             </View>
 
-            <VStack
-              alignItems="center"
-              justifyContent="space-around"
-              flexDirection="row"
-            >
+            <HStack alignItems="center" justifyContent="space-around">
               <IconButton
                 icon={<AntDesign name="google" size={32} color="black" />}
                 borderRadius="full"
@@ -169,13 +165,9 @@ const SignUp = () => {
                 icon={<AntDesign name="apple1" size={32} color="black" />}
                 borderRadius="full"
               />
-            </VStack>
+            </HStack>
 
-            <VStack
-              alignItems="center"
-              justifyContent="space-around"
-              flexDirection="row"
-            >
+            <HStack alignItems="center" justifyContent="space-around">
               <Text color={light.gray} fontWeight={500} fontSize={16}>
                 Already have an account?
               </Text>
@@ -187,7 +179,7 @@ const SignUp = () => {
               >
                 Sign in
               </Text>
-            </VStack>
+            </HStack>
           </Stack>
         </View>
       </SafeAreaView>

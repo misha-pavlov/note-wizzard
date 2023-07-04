@@ -1,4 +1,4 @@
-import { Pressable, Stack, Text, VStack, View } from "native-base";
+import { Pressable, Stack, Text, HStack, View } from "native-base";
 import { useWindowDimensions } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
@@ -31,7 +31,7 @@ const Verification = () => {
 
   const renderNumbers = useMemo(() => {
     return (
-      <VStack direction="row" justifyContent="space-between">
+      <HStack justifyContent="space-between">
         {numbers.map((number) => {
           const isSelected = selected === number;
           return (
@@ -53,7 +53,7 @@ const Verification = () => {
             </Pressable>
           );
         })}
-      </VStack>
+      </HStack>
     );
   }, [numbers, selected]);
 
