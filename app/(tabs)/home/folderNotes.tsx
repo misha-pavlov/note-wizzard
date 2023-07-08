@@ -1,5 +1,5 @@
 import { useNavigation, useRouter, useSearchParams } from "expo-router";
-import { View, Text } from "native-base";
+import { View } from "native-base";
 import { useEffect } from "react";
 import NoteList from "./components/Lists/NoteList";
 
@@ -8,7 +8,7 @@ const FolderNotes = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    navigation.setOptions({ title: `${params.folderName} Notes` as string });
+    navigation.setOptions({ title: `${params.folderName} Notes` });
   }, []);
 
   return (
