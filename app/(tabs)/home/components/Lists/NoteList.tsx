@@ -5,6 +5,7 @@ import { useWindowDimensions } from "react-native";
 
 type NoteListProps = {
   isAllTab?: boolean;
+  hideHeader?: boolean;
 };
 
 const DATA = [
@@ -16,12 +17,16 @@ const DATA = [
   },
 ];
 
-const NoteList: FC<NoteListProps> = ({ isAllTab }) => {
+const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
   const { width } = useWindowDimensions();
 
   return (
     <Stack space={4}>
-      <Text fontWeight={700}>My {isAllTab ? "Notes" : "Important Notes"}</Text>
+      {!hideHeader && (
+        <Text fontWeight={700}>
+          My {isAllTab ? "Notes" : "Important Notes"}
+        </Text>
+      )}
 
       {/* 32 - padding left + right, 81% - height to the bottom nav*/}
       <View width={width - 32} height="81%">

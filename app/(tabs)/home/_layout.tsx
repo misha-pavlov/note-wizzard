@@ -7,7 +7,7 @@ const HomeLayout = () => {
   return (
     <Stack>
       <Stack.Screen options={{ headerShown: false }} name={home} />
-      <Stack.Screen name={folderNotes} />
+      <Stack.Screen options={{ title: 'Folder Notes' }} name={folderNotes} />
       <Stack.Screen name={note} />
     </Stack>
   );

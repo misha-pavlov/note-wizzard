@@ -1,13 +1,19 @@
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter, useSearchParams } from "expo-router";
 import { View, Text } from "native-base";
-import { constants } from "../../../config/constants";
+import { useEffect } from "react";
+import NoteList from "./components/Lists/NoteList";
 
 const FolderNotes = () => {
-  const router = useRouter();
+  const params = useSearchParams();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: `${params.folderName} Notes` as string });
+  }, []);
+
   return (
     <View>
-      <Text onPress={() => router.push(constants.routes.note)}>Note</Text>
-      <Text onPress={router.back}>BAck</Text>
+      <NoteList hideHeader />
     </View>
   );
 };
