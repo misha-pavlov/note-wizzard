@@ -3,22 +3,18 @@ import React, { FC, useMemo } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import { useNoteWizardTheme } from "../../../../../hooks";
+import { TABS } from "../../config/constants";
 
 type NoteWizardTabsProps = {
-  tabs: { title: string; icon: string; key: string }[];
   selected: string;
   selectTab: (key: string) => void;
 };
 
-const NoteWizardTabs: FC<NoteWizardTabsProps> = ({
-  tabs,
-  selected,
-  selectTab,
-}) => {
+const NoteWizardTabs: FC<NoteWizardTabsProps> = ({ selected, selectTab }) => {
   const { currentTheme } = useNoteWizardTheme();
   const renderTabs = useMemo(
     () =>
-      tabs.map((tab) => {
+      TABS.map((tab) => {
         const isSelected = selected === tab.key;
         const backgroundColor = isSelected
           ? currentTheme.purple
