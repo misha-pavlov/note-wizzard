@@ -6,14 +6,18 @@ import {
   Text,
   HStack,
   View,
+  Fab,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { useWindowDimensions } from "react-native";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
+import { constants } from "../../../config/constants";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -22,6 +26,7 @@ const Home = () => {
   const { width } = useWindowDimensions();
   const [selected, setSelected] = useState(DEFAULT_TAB);
   const [searchTerm, setSearchTerm] = useState("");
+  const route = useRouter();
 
   const selectTab = useCallback((key: string) => setSelected(key), []);
 
@@ -116,6 +121,17 @@ const Home = () => {
 
         {/* LISTS */}
         <Lists currentTab={isSearchTermEaqual0 ? selected : ""} />
+
+        {/* ADD BUTTON */}
+        <Fab
+          shadow={2}
+          bottom={100}
+          backgroundColor={currentTheme.purple}
+          _pressed={{ opacity: 0.5 }}
+          placement="bottom-right"
+          onPress={() => route.push(constants.routes.note)}
+          icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
+        />
       </Stack>
     </SafeAreaView>
   );

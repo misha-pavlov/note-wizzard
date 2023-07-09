@@ -36,7 +36,6 @@ const Layout = () => {
   // Load the fonts
   useEffect(() => {
     Font.loadAsync(fonts);
-    console.log("GGG");
   }, []);
 
   // Get the fonts

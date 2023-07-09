@@ -23,7 +23,6 @@ export const constants = {
     newPassword: "/new-password",
     // logged in user
     home: "/home",
-    newNote: "/new-note",
     profile: "/profile",
     settings: "/settings",
     // home screens
@@ -42,7 +41,6 @@ export const constants = {
     newPassword: "new-password",
     // logged in user
     home: "home",
-    newNote: "new-note",
     profile: "profile",
     settings: "settings",
     // home screens

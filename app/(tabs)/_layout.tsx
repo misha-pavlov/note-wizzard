@@ -1,6 +1,5 @@
 import { Tabs } from "expo-router";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { View } from "native-base";
 import { constants } from "../../config/constants";
 import { useNoteWizardTheme } from "../../hooks";
 
@@ -8,7 +7,7 @@ const capitalizeText = (text: string) =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
 export default function AppLayout() {
-  const { home, settings, profile, newNote } = constants.screens;
+  const { home, settings, profile } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
 
   return (
@@ -72,23 +71,6 @@ export default function AppLayout() {
                 color={currentTheme.purple2}
               />
             ),
-        }}
-      />
-      <Tabs.Screen
-        name={newNote}
-        options={{
-          tabBarLabel: "",
-          tabBarIcon: () => (
-            <View
-              position="absolute"
-              backgroundColor={currentTheme.purple}
-              p={5}
-              bottom={3}
-              borderRadius="full"
-            >
-              <Ionicons name="ios-add" size={24} color={currentTheme.main} />
-            </View>
-          ),
         }}
       />
     </Tabs>
