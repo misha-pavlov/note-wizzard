@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useNavigation, usePathname, useRouter } from "expo-router";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { constants } from "../../config/constants";
 import { useNoteWizardTheme } from "../../hooks";
@@ -9,6 +9,7 @@ const capitalizeText = (text: string) =>
 export default function AppLayout() {
   const { home, settings, profile } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
+  const pathname = usePathname();
 
   return (
     <Tabs
@@ -18,6 +19,7 @@ export default function AppLayout() {
         tabBarInactiveTintColor: currentTheme.purple2,
         tabBarStyle: {
           backgroundColor: currentTheme.second,
+          ...(pathname === constants.routes.note && { display: "none" }),
         },
       }}
     >

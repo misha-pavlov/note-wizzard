@@ -17,6 +17,7 @@ const colors = {
       second: "#F3EAFA",
       gray: "#A3A3A3",
       white: "#F0F0F0",
+      red: "#EF6262",
     },
     dark: {
       main: "#211B27",
@@ -25,6 +26,7 @@ const colors = {
       second: "#3A2849",
       gray: "#A3A3A3",
       white: "#F0F0F0",
+      red: "#EF6262",
     },
   },
 };

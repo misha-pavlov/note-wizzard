@@ -125,11 +125,12 @@ const Home = () => {
         {/* ADD BUTTON */}
         <Fab
           shadow={2}
-          bottom={100}
+          bottom={150}
           backgroundColor={currentTheme.purple}
           _pressed={{ opacity: 0.5 }}
           placement="bottom-right"
           onPress={() => route.push(constants.routes.note)}
+          renderInPortal={false}
           icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
         />
       </Stack>

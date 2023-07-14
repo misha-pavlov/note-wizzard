@@ -1,35 +1,105 @@
-import { useNavigation, useRouter, useSearchParams } from "expo-router";
-import { View, Text, Pressable, useColorMode } from "native-base";
-import { useEffect } from "react";
-import { Feather } from "@expo/vector-icons";
+import { useNavigation, useSearchParams } from "expo-router";
+import { Fab, HStack, Input, ScrollView } from "native-base";
+import { useEffect, useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  MaterialIcons,
+  Feather,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { useNoteWizardTheme } from "../../../hooks";
 
 const Note = () => {
-  const router = useRouter();
   const params = useSearchParams();
   const navigation = useNavigation();
-  const { colorMode } = useColorMode();
-  const { dark, light } = useNoteWizardTheme();
+  const [title, setTitle] = useState("");
+  const [showReminder, setShowReminder] = useState(false);
+  const { currentTheme } = useNoteWizardTheme();
 
   useEffect(() => {
     navigation.setOptions({
       ...(params.note && { title: `${params.note}` }),
-      headerRight: () => (
-        <Pressable _pressed={{ opacity: 0.5 }}>
-          <Feather
-            name="more-vertical"
-            size={24}
-            color={colorMode === "dark" ? light.main : dark.main}
-          />
-        </Pressable>
-      ),
     });
   }, []);
 
   return (
-    <View>
-      <Text onPress={router.back}>BAck</Text>
-    </View>
+    <>
+      <ScrollView px={4} pt={4}>
+        <Input
+          size="xl"
+          variant="unstyled"
+          placeholder="Title"
+          value={title}
+          onChangeText={(newTitle) => setTitle(newTitle)}
+          InputRightElement={
+            showReminder ? (
+              <HStack space={1} alignItems="center">
+                <DateTimePicker
+                  value={new Date()}
+                  mode="datetime"
+                  style={{ width: 170, height: 27 }}
+                />
+                <MaterialIcons
+                  name="cancel"
+                  size={16}
+                  color={currentTheme.red}
+                  onPress={() => setShowReminder(false)}
+                />
+              </HStack>
+            ) : (
+              <MaterialIcons
+                name="timer"
+                size={16}
+                color={currentTheme.purple}
+                onPress={() => setShowReminder(true)}
+              />
+            )
+          }
+        />
+
+        {/* RECORDERS */}
+        {/* NOTE */}
+      </ScrollView>
+
+      <HStack
+        alignItems="center"
+        px={4}
+        pt={4}
+        pb={10}
+        justifyContent="space-between"
+        backgroundColor={currentTheme.second}
+      >
+        <Feather name="share" size={28} color={currentTheme.purple} />
+        <MaterialIcons
+          name="delete-outline"
+          size={28}
+          color={currentTheme.purple}
+        />
+        <MaterialCommunityIcons
+          name="format-text"
+          size={28}
+          color={currentTheme.purple}
+        />
+        <MaterialIcons name="undo" size={28} color={currentTheme.purple} />
+      </HStack>
+
+      <Fab
+        shadow={2}
+        bottom={100}
+        backgroundColor={currentTheme.purple}
+        _pressed={{ opacity: 0.5 }}
+        placement="bottom-right"
+        // onPress={() => route.push(constants.routes.note)}
+        renderInPortal={false}
+        icon={
+          <MaterialCommunityIcons
+            name="microphone-outline"
+            size={24}
+            color={currentTheme.main}
+          />
+        }
+      />
+    </>
   );
 };
 

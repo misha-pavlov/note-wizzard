@@ -70,6 +70,7 @@ const SignIn = () => {
           <Stack space={5} mb={20}>
             <Text color={dark.main}>Login to your Account</Text>
             <FormControl isInvalid={false}>
+              {/* TODO: ADD COUNTRY FORMATTING AND LIMIT */}
               <Input
                 size="xl"
                 borderColor={dark.main}

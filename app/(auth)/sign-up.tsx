@@ -81,6 +81,7 @@ const SignUp = () => {
               }}
             />
 
+            {/* TODO: ADD COUNTRY FORMATTING AND LIMIT */}
             <Input
               size="xl"
               borderColor={dark.main}

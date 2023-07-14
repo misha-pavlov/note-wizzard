@@ -8,6 +8,7 @@ type BaseColorsType = {
   second: string;
   gray: string;
   white: string;
+  red: string;
 };
 
 type NoteWizardColors = {
