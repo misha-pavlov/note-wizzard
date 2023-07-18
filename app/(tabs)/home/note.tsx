@@ -8,6 +8,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNoteWizardTheme } from "../../../hooks";
+import { Audio } from "./components";
 
 const Note = () => {
   const params = useSearchParams();
@@ -37,7 +38,7 @@ const Note = () => {
                 <DateTimePicker
                   value={new Date()}
                   mode="datetime"
-                  style={{ width: 170, height: 27 }}
+                  style={{ width: 180, height: 27 }}
                 />
                 <MaterialIcons
                   name="cancel"
@@ -58,9 +59,12 @@ const Note = () => {
         />
 
         {/* RECORDERS */}
+        <Audio />
+
         {/* NOTE */}
       </ScrollView>
 
+      {/* BOTTOM */}
       <HStack
         alignItems="center"
         px={4}
