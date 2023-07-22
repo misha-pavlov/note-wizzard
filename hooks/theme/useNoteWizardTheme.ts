@@ -7,6 +7,7 @@ type BaseColorsType = {
   purple2: string;
   second: string;
   gray: string;
+  background: string;
   white: string;
   red: string;
 };
