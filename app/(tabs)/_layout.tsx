@@ -6,6 +6,8 @@ import { useNoteWizardTheme } from "../../hooks";
 const capitalizeText = (text: string) =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
+const HIDE_BOTTOM_NAV_BAR = [constants.routes.note, constants.routes.recording];
+
 export default function AppLayout() {
   const { home, settings, profile } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
@@ -19,7 +21,7 @@ export default function AppLayout() {
         tabBarInactiveTintColor: currentTheme.purple2,
         tabBarStyle: {
           backgroundColor: currentTheme.second,
-          ...(pathname === constants.routes.note && { display: "none" }),
+          ...(HIDE_BOTTOM_NAV_BAR.includes(pathname) && { display: "none" }),
         },
       }}
     >

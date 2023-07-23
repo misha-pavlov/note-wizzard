@@ -28,6 +28,7 @@ export const constants = {
     // home screens
     folderNotes: "/home/folderNotes",
     note: "/home/note",
+    recording: "/home/recording",
     // profile screens
     editProfile: "/profile/editProfile",
   },
@@ -46,6 +47,7 @@ export const constants = {
     // home screens
     folderNotes: "folderNotes",
     note: "note",
+    recording: "recording",
     // profile screens
     editProfile: "editProfile",
   },

@@ -1,4 +1,4 @@
-import { useNavigation, useSearchParams } from "expo-router";
+import { useNavigation, useRouter, useSearchParams } from "expo-router";
 import {
   Fab,
   HStack,
@@ -15,6 +15,7 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
+import { constants } from "../../../config/constants";
 
 const Note = () => {
   const params = useSearchParams();
@@ -23,6 +24,8 @@ const Note = () => {
   const [showReminder, setShowReminder] = useState(false);
   const { currentTheme } = useNoteWizardTheme();
   const { height } = useWindowDimensions();
+  const router = useRouter();
+
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
     default: 0,
@@ -120,7 +123,7 @@ const Note = () => {
         backgroundColor={currentTheme.purple}
         _pressed={{ opacity: 0.5 }}
         placement="bottom-right"
-        // onPress={() => route.push(constants.routes.note)}
+        onPress={() => router.push(constants.routes.recording)}
         renderInPortal={false}
         icon={
           <MaterialCommunityIcons
