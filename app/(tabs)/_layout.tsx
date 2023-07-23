@@ -1,15 +1,17 @@
-import { Tabs } from "expo-router";
+import { Tabs, useNavigation, usePathname, useRouter } from "expo-router";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { View } from "native-base";
 import { constants } from "../../config/constants";
 import { useNoteWizardTheme } from "../../hooks";
 
 const capitalizeText = (text: string) =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
+const HIDE_BOTTOM_NAV_BAR = [constants.routes.note, constants.routes.recording];
+
 export default function AppLayout() {
-  const { home, settings, profile, newNote } = constants.screens;
+  const { home, settings, profile } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
+  const pathname = usePathname();
 
   return (
     <Tabs
@@ -19,6 +21,7 @@ export default function AppLayout() {
         tabBarInactiveTintColor: currentTheme.purple2,
         tabBarStyle: {
           backgroundColor: currentTheme.second,
+          ...(HIDE_BOTTOM_NAV_BAR.includes(pathname) && { display: "none" }),
         },
       }}
     >
@@ -72,23 +75,6 @@ export default function AppLayout() {
                 color={currentTheme.purple2}
               />
             ),
-        }}
-      />
-      <Tabs.Screen
-        name={newNote}
-        options={{
-          tabBarLabel: "",
-          tabBarIcon: () => (
-            <View
-              position="absolute"
-              backgroundColor={currentTheme.purple}
-              p={5}
-              bottom={3}
-              borderRadius="full"
-            >
-              <Ionicons name="ios-add" size={24} color={currentTheme.main} />
-            </View>
-          ),
         }}
       />
     </Tabs>

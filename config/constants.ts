@@ -23,12 +23,12 @@ export const constants = {
     newPassword: "/new-password",
     // logged in user
     home: "/home",
-    newNote: "/new-note",
     profile: "/profile",
     settings: "/settings",
     // home screens
     folderNotes: "/home/folderNotes",
     note: "/home/note",
+    recording: "/home/recording",
     // profile screens
     editProfile: "/profile/editProfile",
   },
@@ -42,12 +42,12 @@ export const constants = {
     newPassword: "new-password",
     // logged in user
     home: "home",
-    newNote: "new-note",
     profile: "profile",
     settings: "settings",
     // home screens
     folderNotes: "folderNotes",
     note: "note",
+    recording: "recording",
     // profile screens
     editProfile: "editProfile",
   },

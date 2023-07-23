@@ -13,10 +13,12 @@ const colors = {
     light: {
       main: "#FBF5FF",
       purple: "#8614CC",
-      purple2: "#af82f8",
-      second: "#FFF",
+      purple2: "#AF82F8",
+      second: "#F3EAFA",
       gray: "#A3A3A3",
+      background: "#F2F2F2",
       white: "#F0F0F0",
+      red: "#EF6262",
     },
     dark: {
       main: "#211B27",
@@ -24,7 +26,9 @@ const colors = {
       purple2: "#A587A0",
       second: "#3A2849",
       gray: "#A3A3A3",
+      background: "",
       white: "#F0F0F0",
+      red: "#EF6262",
     },
   },
 };
@@ -36,7 +40,6 @@ const Layout = () => {
   // Load the fonts
   useEffect(() => {
     Font.loadAsync(fonts);
-    console.log("GGG");
   }, []);
 
   // Get the fonts

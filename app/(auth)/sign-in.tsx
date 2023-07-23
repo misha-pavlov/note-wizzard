@@ -8,7 +8,7 @@ import {
   ScrollView,
   Stack,
   Text,
-  VStack,
+  HStack,
   View,
 } from "native-base";
 import { useRouter } from "expo-router";
@@ -70,6 +70,7 @@ const SignIn = () => {
           <Stack space={5} mb={20}>
             <Text color={dark.main}>Login to your Account</Text>
             <FormControl isInvalid={false}>
+              {/* TODO: ADD COUNTRY FORMATTING AND LIMIT */}
               <Input
                 size="xl"
                 borderColor={dark.main}
@@ -127,11 +128,7 @@ const SignIn = () => {
           </Stack>
 
           <Stack space={10}>
-            <Button
-              text="Sign in"
-              isDisabled={isDisabled}
-              onPress={signIn}
-            />
+            <Button text="Sign in" isDisabled={isDisabled} onPress={signIn} />
 
             <View position="relative" display="flex" justifyContent="center">
               <Divider bg={light.gray} />
@@ -161,11 +158,7 @@ const SignIn = () => {
               <Text color={dark.main}>Use Face ID</Text>
             </View>
 
-            <VStack
-              alignItems="center"
-              justifyContent="space-around"
-              flexDirection="row"
-            >
+            <HStack alignItems="center" justifyContent="space-around">
               <IconButton
                 icon={<AntDesign name="google" size={32} color="black" />}
                 borderRadius="full"
@@ -178,13 +171,9 @@ const SignIn = () => {
                 icon={<AntDesign name="apple1" size={32} color="black" />}
                 borderRadius="full"
               />
-            </VStack>
+            </HStack>
 
-            <VStack
-              alignItems="center"
-              justifyContent="space-around"
-              flexDirection="row"
-            >
+            <HStack alignItems="center" justifyContent="space-around">
               <Text color={light.gray} fontWeight={500} fontSize={16}>
                 Don't have an account?
               </Text>
@@ -196,7 +185,7 @@ const SignIn = () => {
               >
                 Sign up
               </Text>
-            </VStack>
+            </HStack>
           </Stack>
         </View>
       </SafeAreaView>
