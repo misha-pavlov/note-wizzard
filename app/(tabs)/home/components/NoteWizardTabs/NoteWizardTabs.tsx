@@ -48,7 +48,7 @@ const NoteWizardTabs: FC<NoteWizardTabsProps> = ({ selected, selectTab }) => {
           </Pressable>
         );
       }),
-    [selected]
+    [selected, currentTheme]
   );
 
   return <HStack justifyContent="space-between">{renderTabs}</HStack>;

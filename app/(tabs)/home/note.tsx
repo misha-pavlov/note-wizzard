@@ -8,6 +8,7 @@ import {
   VStack,
   Box,
   Menu,
+  useColorMode,
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -25,6 +26,7 @@ const Note = () => {
   const { currentTheme } = useNoteWizardTheme();
   const { height } = useWindowDimensions();
   const router = useRouter();
+  const { colorMode } = useColorMode();
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -55,7 +57,11 @@ const Note = () => {
                   accessibilityLabel="More options menu"
                   {...triggerProps}
                 >
-                  <MaterialCommunityIcons name="dots-vertical" size={24} />
+                  <MaterialCommunityIcons
+                    name="dots-vertical"
+                    size={24}
+                    color={currentTheme.font}
+                  />
                 </Pressable>
               );
             }}
@@ -66,11 +72,11 @@ const Note = () => {
         </Box>
       ),
     });
-  }, []);
+  }, [currentTheme]);
 
   return (
     <>
-      <ScrollView px={4} pt={4}>
+      <ScrollView px={4} pt={4} backgroundColor={currentTheme.background}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={keyboardVerticalOffset}
@@ -89,6 +95,7 @@ const Note = () => {
                     <DateTimePicker
                       value={new Date()}
                       mode="datetime"
+                      themeVariant={colorMode || undefined}
                       style={{ width: 180, height: 27 }}
                     />
                     <MaterialIcons

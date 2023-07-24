@@ -50,7 +50,7 @@ const Home = () => {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: currentTheme.background }}>
       <Stack px={4} space={4}>
         {/* HEADER */}
         <HStack justifyContent="space-between" alignItems="center">

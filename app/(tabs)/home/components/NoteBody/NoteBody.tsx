@@ -1,4 +1,3 @@
-import { useColorMode } from "native-base";
 import {
   RichEditor,
   RichToolbar,
@@ -9,8 +8,7 @@ import { ActivityIndicator } from "react-native";
 import { useNoteWizardTheme } from "../../../../../hooks";
 
 const NoteBody = () => {
-  const { currentTheme, dark, light } = useNoteWizardTheme();
-  const { colorMode } = useColorMode();
+  const { currentTheme } = useNoteWizardTheme();
   const richText = useRef<RichEditor>(null);
 
   return (
@@ -30,13 +28,14 @@ const NoteBody = () => {
           actions.insertLink,
           actions.removeFormat,
         ]}
+        style={{ backgroundColor: currentTheme.background }}
       />
       <RichEditor
         ref={richText}
         initialContentHTML="Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>"
         editorStyle={{
           backgroundColor: currentTheme.background,
-          color: colorMode === "dark" ? light.main : dark.main,
+          color: currentTheme.font,
         }}
         onChange={(text) => {
           console.log("text:", text);

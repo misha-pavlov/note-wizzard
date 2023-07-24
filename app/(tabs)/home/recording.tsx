@@ -65,7 +65,7 @@ const Recording = () => {
   );
 
   return (
-    <View position="relative" flex={1}>
+    <View position="relative" flex={1} backgroundColor={currentTheme.background}>
       {isRecording && recordingAnimation}
       <Pressable
         alignItems="center"

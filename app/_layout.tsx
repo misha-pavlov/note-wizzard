@@ -19,6 +19,7 @@ const colors = {
       background: "#F2F2F2",
       white: "#F0F0F0",
       red: "#EF6262",
+      font: "#211B27",
     },
     dark: {
       main: "#211B27",
@@ -26,9 +27,10 @@ const colors = {
       purple2: "#A587A0",
       second: "#3A2849",
       gray: "#A3A3A3",
-      background: "",
+      background: "#131313",
       white: "#F0F0F0",
       red: "#EF6262",
+      font: "#FBF5FF",
     },
   },
 };
