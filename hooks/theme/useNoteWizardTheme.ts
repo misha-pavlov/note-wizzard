@@ -10,6 +10,7 @@ type BaseColorsType = {
   background: string;
   white: string;
   red: string;
+  font: string;
 };
 
 type NoteWizardColors = {

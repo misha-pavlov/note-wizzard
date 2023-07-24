@@ -11,12 +11,18 @@ const Settings = () => {
   const isDarkMode = colorMode === "dark";
 
   return (
-    <ScrollView p={4}>
+    <ScrollView p={4} backgroundColor={currentTheme.background}>
       <Text color={currentTheme.purple} mb={4}>
         {settingsGroupTitle("General Settings")}
       </Text>
       <SettingsItem
-        icon={<Ionicons name="ios-moon-outline" size={20} color="black" />}
+        icon={
+          <Ionicons
+            name="ios-moon-outline"
+            size={20}
+            color={currentTheme.font}
+          />
+        }
         settingTitle="Dark mode"
         rightItem={
           <Switch
@@ -38,18 +44,34 @@ const Settings = () => {
       </Text>
       {/* TODO: ADD LOGIC FOR THE NEXT TWO SETTINGS */}
       <SettingsItem
-        icon={<Ionicons name="ios-star-outline" size={20} color="black" />}
+        icon={
+          <Ionicons
+            name="ios-star-outline"
+            size={20}
+            color={currentTheme.font}
+          />
+        }
         settingTitle="Rate"
         rightItem={
-          <MaterialIcons name="keyboard-arrow-right" size={20} color="black" />
+          <MaterialIcons
+            name="keyboard-arrow-right"
+            size={20}
+            color={currentTheme.font}
+          />
         }
       />
       <Divider mt={4} mb={4} backgroundColor={currentTheme.gray} />
       <SettingsItem
-        icon={<Ionicons name="mail-outline" size={24} color="black" />}
+        icon={
+          <Ionicons name="mail-outline" size={24} color={currentTheme.font} />
+        }
         settingTitle="Contact me"
         rightItem={
-          <MaterialIcons name="keyboard-arrow-right" size={20} color="black" />
+          <MaterialIcons
+            name="keyboard-arrow-right"
+            size={20}
+            color={currentTheme.font}
+          />
         }
       />
     </ScrollView>
