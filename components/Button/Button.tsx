@@ -1,4 +1,8 @@
-import { Button as NativeBaseButton, useColorModeValue } from "native-base";
+import {
+  Button as NativeBaseButton,
+  useColorModeValue,
+  Text,
+} from "native-base";
 import { ResponsiveValue } from "native-base/lib/typescript/components/types";
 import { ISizes } from "native-base/lib/typescript/theme/base/sizes";
 import { FC } from "react";
@@ -10,6 +14,7 @@ type ButtonProps = {
 
   isLoading?: boolean;
   isDisabled?: boolean;
+  useTextTag?: boolean;
   size?: ResponsiveValue<ISizes | (string & {}) | number>;
 };
 
@@ -19,6 +24,7 @@ const Button: FC<ButtonProps> = ({
   size = "md",
   isLoading,
   isDisabled,
+  useTextTag,
 }) => {
   const colors = useNoteWizardTheme();
   const bg = useColorModeValue(colors.light.purple, colors.dark.purple);
@@ -36,7 +42,7 @@ const Button: FC<ButtonProps> = ({
         bg,
       }}
     >
-      {text}
+      {useTextTag ? <Text color={colors.currentTheme.main}>{text}</Text> : text}
     </NativeBaseButton>
   );
 };
