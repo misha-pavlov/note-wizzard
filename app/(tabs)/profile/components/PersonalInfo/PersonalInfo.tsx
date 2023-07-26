@@ -31,7 +31,7 @@ const PersonalInfo = () => {
         {!borderRadiusBottom && <Divider backgroundColor={currentTheme.main} />}
       </>
     ),
-    []
+    [currentTheme]
   );
 
   return (

@@ -21,7 +21,7 @@ const Statictic = () => {
         </Text>
       </View>
     ),
-    []
+    [currentTheme]
   );
 
   return (
