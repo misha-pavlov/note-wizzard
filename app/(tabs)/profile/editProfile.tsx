@@ -1,8 +1,19 @@
-import { ScrollView, VStack, Avatar, Pressable } from "native-base";
+import {
+  ScrollView,
+  VStack,
+  Avatar,
+  Pressable,
+  View,
+  useColorMode,
+  KeyboardAvoidingView,
+} from "native-base";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useCallback, useState } from "react";
 import { useNavigation } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { BottomSheet } from "react-native-btr";
+import { Platform } from "react-native";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Button } from "../../../components";
 import { FloatingTitleTextInputField } from "./components";
@@ -12,8 +23,11 @@ const EditProfile = () => {
   const [image, setImage] = useState<string | null>(null);
   const [profile, setProfile] = useState<{ [x: string]: string }>({
     firstName: "",
+    password: "",
   });
+  const [visible, setVisible] = useState(false);
   const { goBack } = useNavigation();
+  const { colorMode } = useColorMode();
   console.log("🚀 ~ file: editProfile.tsx:10 ~ EditProfile ~ image:", image);
 
   const pickImage = useCallback(async () => {
@@ -37,6 +51,13 @@ const EditProfile = () => {
       setProfile({ ...profile, [attrName]: value }),
     [profile]
   );
+
+  const toggle = () => setVisible((prev) => !prev);
+
+  const keyboardVerticalOffset = Platform.select({
+    ios: 150,
+    default: 0,
+  });
 
   return (
     <ScrollView
@@ -64,76 +85,100 @@ const EditProfile = () => {
           </Avatar>
         </Pressable>
 
-        <VStack width="100%" space={4}>
-          <FloatingTitleTextInputField
-            title="First Name"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="firstName"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "position" : "height"}
+          keyboardVerticalOffset={keyboardVerticalOffset}
+          overflow="hidden"
+          width="100%"
+        >
+          <VStack space={4}>
+            <FloatingTitleTextInputField
+              title="First Name"
+              value={profile.firstName}
+              updateMasterState={updateMasterState}
+              attrName="firstName"
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+            />
 
-          <FloatingTitleTextInputField
-            title="Last Name"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="lastName"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
+            <FloatingTitleTextInputField
+              title="Last Name"
+              value={profile.firstName}
+              updateMasterState={updateMasterState}
+              attrName="lastName"
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+            />
 
-          <FloatingTitleTextInputField
-            title="Birthday"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="birthday"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
+            <FloatingTitleTextInputField
+              title="Birthday"
+              value={profile.firstName}
+              updateMasterState={updateMasterState}
+              attrName="birthday"
+              onFocus={toggle}
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+            />
 
-          {/* TODO: ADD FORMATIC */}
-          <FloatingTitleTextInputField
-            title="Phone"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="phone"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
+            {/* TODO: ADD FORMATIC */}
+            <FloatingTitleTextInputField
+              title="Phone"
+              value={profile.firstName}
+              updateMasterState={updateMasterState}
+              attrName="phone"
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+            />
 
-          <FloatingTitleTextInputField
-            title="Email"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="email"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
+            <FloatingTitleTextInputField
+              title="Email"
+              value={profile.firstName}
+              updateMasterState={updateMasterState}
+              attrName="email"
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+            />
 
-          <FloatingTitleTextInputField
-            title="Password"
-            value={profile.firstName}
-            updateMasterState={updateMasterState}
-            attrName="password"
-            titleActiveSize={12}
-            titleInActiveSize={17}
-            titleActiveColor={currentTheme.font}
-            titleInactiveColor={currentTheme.gray}
-          />
-        </VStack>
+            <FloatingTitleTextInputField
+              title="Password"
+              value={profile.password}
+              updateMasterState={updateMasterState}
+              attrName="password"
+              titleActiveSize={12}
+              titleInActiveSize={17}
+              titleActiveColor={currentTheme.font}
+              titleInactiveColor={currentTheme.gray}
+              isPassword
+            />
+          </VStack>
+        </KeyboardAvoidingView>
 
         <Button text="Save changes" onPress={goBack} useTextTag />
+
+        <BottomSheet
+          visible={visible}
+          onBackButtonPress={toggle}
+          onBackdropPress={toggle}
+        >
+          <View height="60%" backgroundColor={currentTheme.background}>
+            <DateTimePicker
+              mode="date"
+              value={new Date()}
+              display="spinner"
+              themeVariant={colorMode as "light" | "dark"}
+            />
+          </View>
+        </BottomSheet>
       </VStack>
     </ScrollView>
   );
