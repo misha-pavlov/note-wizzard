@@ -1,4 +1,4 @@
-import { Tabs, useNavigation, usePathname, useRouter } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { constants } from "../../config/constants";
 import { useNoteWizardTheme } from "../../hooks";
