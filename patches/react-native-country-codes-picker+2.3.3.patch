@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native-country-codes-picker/index.tsx b/node_modules/react-native-country-codes-picker/index.tsx
+index 5702826..a5d16d1 100644
+--- a/node_modules/react-native-country-codes-picker/index.tsx
++++ b/node_modules/react-native-country-codes-picker/index.tsx
+@@ -153,7 +153,7 @@ export const CountryPicker = ({
+         const lowerSearchValue = searchValue.toLowerCase();
+ 
+         return codes.filter((country) => {
+-            if (country?.dial_code.includes(searchValue) || country?.name[lang || 'en'].toLowerCase().includes(lowerSearchValue)) {
++            if (country?.dial_code.includes(searchValue) || country?.name[lang || 'en']?.toLowerCase().includes(lowerSearchValue)) {
+                 return country;
+             }
+         });
+@@ -189,7 +189,7 @@ export const CountryPicker = ({
+ 
+     const renderItem = ({item, index}: { item: CountryItem, index: number }) => {
+         let itemName = item?.name[lang];
+-        let checkName = itemName.length ? itemName : item?.name['en'];
++        let checkName = itemName?.length ? itemName : item?.name['en'];
+ 
+         return (
+             <ItemTemplate
