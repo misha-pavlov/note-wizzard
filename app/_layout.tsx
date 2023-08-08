@@ -6,6 +6,7 @@ import type { StorageManager } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../config/constants";
 import { Provider } from "../context/auth";
+import { StatusBar } from "../components";
 
 const fonts = constants.fonts;
 const colors = {
@@ -110,6 +111,7 @@ const Layout = () => {
 
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
+      <StatusBar />
       <Provider>
         <Slot />
       </Provider>
