@@ -12,12 +12,13 @@ import {
   View,
 } from "native-base";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "../../context/auth";
 import { useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
+import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 
 const initialState = {
   name: "",
@@ -25,7 +26,7 @@ const initialState = {
   password: "",
 };
 
-const SignUp = () => {
+const SignUp: FC<SignInUpProps> = ({ InputLeftElement }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
@@ -81,7 +82,6 @@ const SignUp = () => {
               }}
             />
 
-            {/* TODO: ADD COUNTRY FORMATTING AND LIMIT */}
             <Input
               size="xl"
               borderColor={dark.main}
@@ -96,6 +96,7 @@ const SignUp = () => {
                 backgroundColor: "transparency",
                 borderColor: dark.main,
               }}
+              InputLeftElement={InputLeftElement}
             />
 
             <FormControl>
@@ -188,4 +189,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default withCountryPicker(SignUp);

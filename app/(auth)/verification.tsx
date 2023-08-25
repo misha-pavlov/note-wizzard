@@ -36,6 +36,7 @@ const Verification = () => {
           const isSelected = selected === number;
           return (
             <Pressable
+              key={number}
               borderColor={isSelected ? light.purple : light.gray}
               borderWidth={1}
               borderRadius={30}
@@ -60,7 +61,7 @@ const Verification = () => {
   return (
     <View ml={9} mr={9} mt={10}>
       <Stack space={5}>
-        <Text fontWeight={500} textAlign="center" fontSize={18}>
+        <Text fontWeight={500} textAlign="center" fontSize={18} color={light.font}>
           Select verification code
         </Text>
 

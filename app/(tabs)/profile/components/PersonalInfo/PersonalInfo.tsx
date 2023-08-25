@@ -51,6 +51,7 @@ const PersonalInfo = () => {
         ),
         text: "26/06/1998",
       })}
+      {/* TODO: ADD FORMATIC */}
       {renderItem({
         icon: (
           <FontAwesome5

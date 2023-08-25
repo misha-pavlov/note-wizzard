@@ -3,7 +3,7 @@ import { constants } from "../../../config/constants";
 import { useNoteWizardTheme } from "../../../hooks";
 
 const ProfileLayout = () => {
-  const { profile, editProfile } = constants.screens;
+  const { profileIndex, editProfile } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
 
   return (
@@ -13,7 +13,7 @@ const ProfileLayout = () => {
         headerTintColor: currentTheme.font,
       }}
     >
-      <Stack.Screen name={profile} options={{ headerTitle: "My Profile" }} />
+      <Stack.Screen name={profileIndex} options={{ headerTitle: "My Profile" }} />
       <Stack.Screen
         name={editProfile}
         options={{ headerTitle: "Edit Profile" }}

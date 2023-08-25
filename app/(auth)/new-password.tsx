@@ -28,7 +28,7 @@ const NewPassword = () => {
     <SafeAreaView>
       <View ml={9} mr={9} mt={10}>
         <Stack space={5}>
-          <Text fontWeight={500} textAlign="center" fontSize={18}>
+          <Text fontWeight={500} textAlign="center" fontSize={18} color={light.font}>
             Enter new password
           </Text>
 

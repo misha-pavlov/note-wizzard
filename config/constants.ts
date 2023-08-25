@@ -50,5 +50,9 @@ export const constants = {
     recording: "recording",
     // profile screens
     editProfile: "editProfile",
+    // indexes
+    homeIndex: "homeIndex",
+    settingsIndex: "settingsIndex",
+    profileIndex: "profileIndex",
   },
 };

@@ -3,7 +3,7 @@ import { constants } from "../../../config/constants";
 import { useNoteWizardTheme } from "../../../hooks";
 
 const HomeLayout = () => {
-  const { home, folderNotes, note, recording } = constants.screens;
+  const { homeIndex, folderNotes, note, recording } = constants.screens;
   const { currentTheme } = useNoteWizardTheme();
 
   return (
@@ -13,7 +13,7 @@ const HomeLayout = () => {
         headerTintColor: currentTheme.font,
       }}
     >
-      <Stack.Screen options={{ headerShown: false }} name={home} />
+      <Stack.Screen options={{ headerShown: false }} name={homeIndex} />
       <Stack.Screen options={{ title: "Folder Notes" }} name={folderNotes} />
       <Stack.Screen options={{ title: "New Note" }} name={note} />
       <Stack.Screen options={{ title: "" }} name={recording} />
