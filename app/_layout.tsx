@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { ColorMode, NativeBaseProvider, extendTheme } from "native-base";
 import type { StorageManager } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme } from "react-native";
 import { constants } from "../config/constants";
 import { Provider } from "../context/auth";
 import { StatusBar } from "../components";
@@ -47,6 +48,7 @@ const Layout = () => {
 
   // Get the fonts
   const [fontsLoaded] = Font.useFonts(fonts);
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -64,7 +66,7 @@ const Layout = () => {
   const theme = extendTheme({
     colors,
     config: {
-      initialColorMode: constants.theme.light,
+      initialColorMode: colorScheme || constants.theme.light,
     },
     fontConfig: {
       Roboto: {

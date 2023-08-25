@@ -1,5 +1,6 @@
 import { Text, ScrollView, useColorMode, Switch, Divider } from "native-base";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { useNoteWizardTheme } from "../../../hooks";
 import { SettingsItem } from "./components";
 
@@ -10,11 +11,8 @@ const Settings = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isDarkMode = colorMode === "dark";
 
-  return (
-    <ScrollView p={4} backgroundColor={currentTheme.background}>
-      <Text color={currentTheme.purple} mb={4}>
-        {settingsGroupTitle("General Settings")}
-      </Text>
+  const renderDarkModeSwitcher = useMemo(
+    () => (
       <SettingsItem
         icon={
           <Ionicons
@@ -38,6 +36,16 @@ const Settings = () => {
           />
         }
       />
+    ),
+    [isDarkMode]
+  );
+
+  return (
+    <ScrollView p={4} backgroundColor={currentTheme.background}>
+      <Text color={currentTheme.purple} mb={4}>
+        {settingsGroupTitle("General Settings")}
+      </Text>
+      {renderDarkModeSwitcher}
 
       <Text color={currentTheme.purple} mb={4} mt={4}>
         {settingsGroupTitle("Other")}
