@@ -10,6 +10,7 @@ import { useNoteWizardTheme } from "../../../hooks";
 
 export type SignInUpProps = {
   InputLeftElement?: JSX.Element;
+  countryCode?: string;
 };
 
 const ListHeaderComponent = ({
@@ -59,6 +60,7 @@ const withCountryPicker = (BaseComponent: FC<SignInUpProps>) => {
               {countryCode}
             </Text>
           }
+          countryCode={countryCode}
         />
         <CountryPicker
           show={show}

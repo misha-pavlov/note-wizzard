@@ -5,9 +5,11 @@ import { ColorMode, NativeBaseProvider, extendTheme } from "native-base";
 import type { StorageManager } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "react-native";
+import { Provider as StoreProvider } from "react-redux";
 import { constants } from "../config/constants";
 import { Provider } from "../context/auth";
 import { StatusBar } from "../components";
+import { store } from '../store';
 
 const fonts = constants.fonts;
 const colors = {
@@ -113,10 +115,12 @@ const Layout = () => {
 
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
-      <StatusBar />
-      <Provider>
-        <Slot />
-      </Provider>
+      <StoreProvider store={store}>
+        <StatusBar />
+        <Provider>
+          <Slot />
+        </Provider>
+      </StoreProvider>
     </NativeBaseProvider>
   );
 };
