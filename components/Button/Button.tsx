@@ -15,6 +15,7 @@ type ButtonProps = {
   isLoading?: boolean;
   isDisabled?: boolean;
   useTextTag?: boolean;
+  isRedButton?: boolean;
   size?: ResponsiveValue<ISizes | (string & {}) | number>;
 };
 
@@ -25,9 +26,13 @@ const Button: FC<ButtonProps> = ({
   isLoading,
   isDisabled,
   useTextTag,
+  isRedButton,
 }) => {
   const colors = useNoteWizardTheme();
-  const bg = useColorModeValue(colors.light.purple, colors.dark.purple);
+  const bg = useColorModeValue(
+    isRedButton ? colors.light.red : colors.light.purple,
+    isRedButton ? colors.dark.red : colors.dark.purple
+  );
 
   return (
     <NativeBaseButton

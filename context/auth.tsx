@@ -1,6 +1,5 @@
 import { useRouter, useSegments } from "expo-router";
 import React from "react";
-import { useCurrentUserQuery } from "../store/userApi/user.api";
 
 type JWTType = Record<string, string> | string | null;
 type ValueType = {
@@ -29,30 +28,28 @@ function useProtectedRoute(jwt: JWTType) {
 
   React.useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
-    let retries = 10;
 
     if (
       // If the user is not signed in and the initial segment is not anything in the auth group.
       !jwt &&
-      !inAuthGroup &&
-      !retries
+      !inAuthGroup
     ) {
       // Redirect to the sign-in page.
       router.replace("/sign-in");
     } else if (jwt && inAuthGroup) {
       // Redirect away from the sign-in page.
       router.replace("/");
-    } else {
-      --retries;
     }
   }, [jwt, segments]);
 }
 
-export function Provider(props: { children: JSX.Element }) {
-  const { data: currentUser } = useCurrentUserQuery();
-  const [jwt, setAuth] = React.useState<JWTType>(null);
+export function Provider(props: {
+  children: JSX.Element;
+  token: string | null;
+}) {
+  const [jwt, setAuth] = React.useState<JWTType>(props?.token);
 
-  useProtectedRoute(jwt || currentUser?.token || null);
+  useProtectedRoute(jwt);
 
   return (
     <AuthContext.Provider
