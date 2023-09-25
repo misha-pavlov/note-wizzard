@@ -10,32 +10,64 @@ import {
   Text,
   HStack,
   View,
+  Alert,
+  VStack,
+  CloseIcon,
+  Center,
 } from "native-base";
 import { useRouter } from "expo-router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Feather,
   MaterialCommunityIcons,
   AntDesign,
   FontAwesome5,
 } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../../context/auth";
 import { useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
+import { useSignInMutation } from "../../store/userApi/user.api";
 
 const initialState = {
   phone: "",
   password: "",
 };
 
-const SignIn: FC<SignInUpProps> = ({ InputLeftElement }) => {
+const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn } = useAuth();
+  const [showError, setShowError] = useState(false);
+  const { signIn: authSignIn } = useAuth();
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
+  const [signIn, { data, error, isLoading }] = useSignInMutation();
+
+  useEffect(() => {
+    if (data) {
+      // set new token
+      (async () =>
+        AsyncStorage.setItem(constants.localStorageKeys.token, data.token))();
+      // redirect to home screen
+      authSignIn(data.token);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      // show error message
+      setShowError(true);
+    }
+  }, [error]);
+
+  const onSignIn = useCallback(
+    () =>
+      countryCode &&
+      signIn({ phone: countryCode + state.phone, password: state.password }),
+    [state, countryCode]
+  );
 
   const onChange = useCallback(
     (newValue: string | boolean, key: string) =>
@@ -129,7 +161,11 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement }) => {
           </Stack>
 
           <Stack space={10}>
-            <Button text="Sign in" isDisabled={isDisabled} onPress={signIn} />
+            <Button
+              text="Sign in"
+              isDisabled={isDisabled || isLoading}
+              onPress={onSignIn}
+            />
 
             <View position="relative" display="flex" justifyContent="center">
               <Divider bg={light.gray} />
@@ -189,6 +225,35 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement }) => {
             </HStack>
           </Stack>
         </View>
+
+        {showError && error && (
+          <Center position="absolute" top={120} w="100%">
+            <Alert w="80%" status="error">
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack flexShrink={1} space={2} justifyContent="space-between">
+                  <HStack space={2} flexShrink={1}>
+                    <Alert.Icon mt="1" />
+                    <Text fontSize="md" color="coolGray.800">
+                      {/* @ts-ignore - because data is exists but types said that not */}
+                      {error.data.message}
+                    </Text>
+                  </HStack>
+                  <IconButton
+                    variant="unstyled"
+                    _focus={{
+                      borderWidth: 0,
+                    }}
+                    icon={<CloseIcon size="3" />}
+                    _icon={{
+                      color: "coolGray.600",
+                    }}
+                    onPress={() => setShowError(false)}
+                  />
+                </HStack>
+              </VStack>
+            </Alert>
+          </Center>
+        )}
       </SafeAreaView>
     </ScrollView>
   );

@@ -55,4 +55,8 @@ export const constants = {
     settingsIndex: "settingsIndex",
     profileIndex: "profileIndex",
   },
+
+  localStorageKeys: {
+    token: "TOKEN",
+  },
 };

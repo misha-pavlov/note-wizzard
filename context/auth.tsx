@@ -3,7 +3,7 @@ import React from "react";
 
 type JWTType = Record<string, string> | string | null;
 type ValueType = {
-  signIn: VoidFunction;
+  signIn: (newJwt: string) => void;
   signOut: VoidFunction;
   jwt: JWTType;
 };
@@ -43,15 +43,18 @@ function useProtectedRoute(jwt: JWTType) {
   }, [jwt, segments]);
 }
 
-export function Provider(props: { children: JSX.Element }) {
-  const [jwt, setAuth] = React.useState<JWTType>(null);
+export function Provider(props: {
+  children: JSX.Element;
+  token: string | null;
+}) {
+  const [jwt, setAuth] = React.useState<JWTType>(props?.token);
 
   useProtectedRoute(jwt);
 
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => setAuth({}),
+        signIn: (newJwt: string) => setAuth(newJwt),
         signOut: () => setAuth(null),
         jwt,
       }}

@@ -1,11 +1,12 @@
 import { FormControl, Input, Pressable, Stack, Text, View } from "native-base";
-import { useMemo, useState } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { Button } from "../../components";
 import { useNoteWizardTheme } from "../../hooks";
 import { constants } from "../../config/constants";
+import { useResetPasswordMutation } from "../../store/userApi/user.api";
 
 const NewPassword = () => {
   const [password, setPassword] = useState("");
@@ -14,21 +15,38 @@ const NewPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const params = useSearchParams();
+
   const isDisabled = useMemo(
     () =>
       password === "" ||
       password.length < 8 ||
       confirmPassword === "" ||
       confirmPassword.length < 8 ||
-      password !== confirmPassword,
-    [password, confirmPassword]
+      password !== confirmPassword ||
+      isLoading,
+    [password, confirmPassword, isLoading]
   );
+
+  const onPress = useCallback(() => {
+    const phone = params.phone;
+    if (phone && typeof phone === "string") {
+      resetPassword({ newPassword: password, phone });
+      router.replace(constants.routes.signIn);
+    }
+  }, [password]);
 
   return (
     <SafeAreaView>
       <View ml={9} mr={9} mt={10}>
         <Stack space={5}>
-          <Text fontWeight={500} textAlign="center" fontSize={18} color={light.font}>
+          <Text
+            fontWeight={500}
+            textAlign="center"
+            fontSize={18}
+            color={light.font}
+          >
             Enter new password
           </Text>
 
@@ -82,7 +100,7 @@ const NewPassword = () => {
                 }
                 pr={2}
               >
-                {showPassword ? (
+                {showConfirmPassword ? (
                   <Feather name="eye-off" size={24} color={dark.main} />
                 ) : (
                   <Feather name="eye" size={24} color={dark.main} />
@@ -95,11 +113,7 @@ const NewPassword = () => {
             }}
           />
 
-          <Button
-            text="Submit"
-            isDisabled={isDisabled}
-            onPress={() => router.replace(constants.routes.signIn)}
-          />
+          <Button text="Submit" isDisabled={isDisabled} onPress={onPress} />
         </Stack>
       </View>
     </SafeAreaView>

@@ -1,13 +1,15 @@
 import * as Font from "expo-font";
 import { Slot, SplashScreen } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ColorMode, NativeBaseProvider, extendTheme } from "native-base";
 import type { StorageManager } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "react-native";
+import { Provider as StoreProvider } from "react-redux";
 import { constants } from "../config/constants";
 import { Provider } from "../context/auth";
 import { StatusBar } from "../components";
+import { store } from "../store";
 
 const fonts = constants.fonts;
 const colors = {
@@ -41,9 +43,13 @@ const colors = {
 SplashScreen.preventAutoHideAsync();
 
 const Layout = () => {
+  const [token, setToken] = useState<string | null>(null);
   // Load the fonts
   useEffect(() => {
     Font.loadAsync(fonts);
+    AsyncStorage.getItem(constants.localStorageKeys.token).then((asyncToken) =>
+      setToken(asyncToken)
+    );
   }, []);
 
   // Get the fonts
@@ -113,10 +119,12 @@ const Layout = () => {
 
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
-      <StatusBar />
-      <Provider>
-        <Slot />
-      </Provider>
+      <StoreProvider store={store}>
+        <StatusBar />
+        <Provider token={token}>
+          <Slot />
+        </Provider>
+      </StoreProvider>
     </NativeBaseProvider>
   );
 };
