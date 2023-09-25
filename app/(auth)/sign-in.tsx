@@ -68,6 +68,7 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
       signIn({ phone: countryCode + state.phone, password: state.password }),
     [state, countryCode]
   );
+
   const onChange = useCallback(
     (newValue: string | boolean, key: string) =>
       setState({ ...state, [key]: newValue }),
