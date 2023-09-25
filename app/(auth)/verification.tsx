@@ -11,19 +11,20 @@ import {
   CloseIcon,
 } from "native-base";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "expo-router";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigation, useSearchParams } from "expo-router";
 import { useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 import { useSendVerificationCodeMutation } from "../../store/userApi/user.api";
+import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 
-const Verification = () => {
+const Verification: FC<SignInUpProps> = ({ countryCode }) => {
   const [numbers, setNumbers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [correctNumber, setCorrectNumber] = useState<number | null>(null);
   const [showError, setShowError] = useState(false);
-  const router = useRouter();
+  const { navigate } = useNavigation();
   const { light } = useNoteWizardTheme();
   const isDisabled = useMemo(() => !selected, [selected]);
   const { width } = useWindowDimensions();
@@ -56,12 +57,17 @@ const Verification = () => {
   }, []);
 
   const onPress = useCallback(() => {
-    if (selected === correctNumber) {
-      router.replace(constants.routes.newPassword);
+    const phone = params.phone;
+    if (selected === correctNumber && phone && typeof phone === "string") {
+      // TODO: fixe types here
+      // @ts-ignore
+      navigate(constants.screens.newPassword, {
+        phone: countryCode + phone,
+      });
     } else {
       setShowError(true);
     }
-  }, [setShowError, router]);
+  }, [setShowError, params, countryCode, selected, correctNumber]);
 
   const renderNumbers = useMemo(() => {
     return (
@@ -144,4 +150,4 @@ const Verification = () => {
   );
 };
 
-export default Verification;
+export default withCountryPicker(Verification);
