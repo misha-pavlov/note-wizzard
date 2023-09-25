@@ -1,20 +1,29 @@
 import { Input, Stack, Text, View } from "native-base";
-import { useMemo, useState } from "react";
-import { useRouter } from "expo-router";
+import { FC, useMemo, useState } from "react";
+import { useNavigation } from "expo-router";
 import { Button } from "../../components";
 import { useNoteWizardTheme } from "../../hooks";
 import { constants } from "../../config/constants";
+import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 
-const ForgotPassword = () => {
+const ForgotPassword: FC<SignInUpProps> = ({
+  InputLeftElement,
+  countryCode,
+}) => {
   const [phone, setPhone] = useState("");
-  const router = useRouter();
   const { dark } = useNoteWizardTheme();
   const isDisabled = useMemo(() => phone === "" || phone.length < 10, [phone]);
+  const { navigate } = useNavigation();
 
   return (
     <View ml={9} mr={9} mt={10}>
       <Stack space={5}>
-        <Text fontWeight={500} textAlign="center" fontSize={18} color={dark.main}>
+        <Text
+          fontWeight={500}
+          textAlign="center"
+          fontSize={18}
+          color={dark.main}
+        >
           Enter your phone number
         </Text>
 
@@ -32,16 +41,23 @@ const ForgotPassword = () => {
             backgroundColor: "transparency",
             borderColor: dark.main,
           }}
+          InputLeftElement={InputLeftElement}
         />
 
         <Button
           text="Send"
           isDisabled={isDisabled}
-          onPress={() => router.push(constants.routes.verification)}
+          onPress={() =>
+            // TODO: fixe types here
+            // @ts-ignore
+            navigate(constants.screens.verification, {
+              phone: countryCode + phone,
+            })
+          }
         />
       </Stack>
     </View>
   );
 };
 
-export default ForgotPassword;
+export default withCountryPicker(ForgotPassword);
