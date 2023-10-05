@@ -10,14 +10,17 @@ import {
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialIcons, Octicons } from "@expo/vector-icons";
-import { useWindowDimensions } from "react-native";
+import { ActivityIndicator, useWindowDimensions } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
 import { constants } from "../../../config/constants";
+import { useCurrentUserQuery } from "../../../store/userApi/user.api";
+import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
+import { useCreateNoteMutation } from "../../../store/noteApi/note.api";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -26,7 +29,27 @@ const Home = () => {
   const { width } = useWindowDimensions();
   const [selected, setSelected] = useState(DEFAULT_TAB);
   const [searchTerm, setSearchTerm] = useState("");
-  const route = useRouter();
+  const { navigate } = useNavigation();
+  const { data: user, isLoading } = useCurrentUserQuery();
+  const [createNote, { isLoading: isCreateNoteLoading }] =
+    useCreateNoteMutation();
+
+  const createNoteOnPress = useCallback(async () => {
+    try {
+      const createdNote = await createNote().unwrap();
+
+      if (createdNote) {
+        // TODO: fixe types here
+        // @ts-ignore
+        navigate(constants.screens.note, {
+          noteName: createdNote.name,
+          noteId: createdNote._id,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   const selectTab = useCallback((key: string) => setSelected(key), []);
 
@@ -49,6 +72,10 @@ const Home = () => {
     []
   );
 
+  if (isLoading || !user) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <SafeAreaView style={{ backgroundColor: currentTheme.background }}>
       <Stack px={4} space={4}>
@@ -57,16 +84,18 @@ const Home = () => {
           <Stack>
             <Text fontSize={12}>Welcome Back</Text>
             <Text fontSize={16} fontWeight={700}>
-              User Name
+              {getUserName(user)}
             </Text>
           </Stack>
 
           <Avatar
             bg={currentTheme.main}
             source={{
-              uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+              uri: user?.image,
             }}
-          />
+          >
+            {getUserInitials(user)}
+          </Avatar>
         </HStack>
 
         {/* SEARCH */}
@@ -129,8 +158,9 @@ const Home = () => {
           backgroundColor={currentTheme.purple}
           _pressed={{ opacity: 0.5 }}
           placement="bottom-right"
-          onPress={() => route.push(constants.routes.note)}
+          onPress={createNoteOnPress}
           renderInPortal={false}
+          disabled={isCreateNoteLoading}
           icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
         />
       </Stack>

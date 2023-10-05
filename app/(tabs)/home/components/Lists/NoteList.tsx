@@ -1,27 +1,28 @@
 import { Text, Stack, View } from "native-base";
 import { FC } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { useWindowDimensions } from "react-native";
+import { ActivityIndicator, useWindowDimensions } from "react-native";
 import { useNavigation } from "expo-router";
 import { constants } from "../../../../../config/constants";
+import { useGetAllUserNotesQuery } from "../../../../../store/noteApi/note.api";
 
 type NoteListProps = {
   isAllTab?: boolean;
   hideHeader?: boolean;
 };
 
-const DATA = [
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-];
-
 const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
   const { width } = useWindowDimensions();
   const { navigate } = useNavigation();
+  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: 10000
+  });
+
+  if (isLoading || !allUserNotes) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <Stack space={4}>
@@ -34,22 +35,24 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
       {/* 32 - padding left + right, 81% - height to the bottom nav*/}
       <View width={width - 32} height="81%">
         <FlashList
-          data={DATA}
+          data={allUserNotes}
           renderItem={({ item }) => (
             <Text
               onPress={() =>
                 // TODO: fixe types here
                 // @ts-ignore
                 navigate(constants.screens.note, {
-                  note: "GG_NOTE",
+                  noteName: item.name,
+                  noteId: item._id,
                 })
               }
             >
-              {item.title}
+              {item.name + " " + item._id}
             </Text>
           )}
           // TODO: SET TH NEXT VALUE CORRECTLY
           estimatedItemSize={200}
+          ListEmptyComponent={<Text>You don't have any notes</Text>}
         />
       </View>
     </Stack>

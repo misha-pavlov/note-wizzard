@@ -13,20 +13,37 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
+import {
+  Platform,
+  Pressable,
+  useWindowDimensions,
+  Share,
+  ActivityIndicator,
+} from "react-native";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
 import { constants } from "../../../config/constants";
+import { useGetNoteByIdQuery } from "../../../store/noteApi/note.api";
+import { NoteType } from "../../../dataTypes/note.types";
 
 const Note = () => {
   const params = useSearchParams();
+  const noteId = params.noteId as string;
+
   const navigation = useNavigation();
-  const [title, setTitle] = useState("");
+  const [note, setNote] = useState<NoteType | undefined>();
   const [showReminder, setShowReminder] = useState(false);
   const { currentTheme } = useNoteWizardTheme();
   const { height } = useWindowDimensions();
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const { data: noteById, isLoading } = useGetNoteByIdQuery(
+    {
+      noteId,
+    },
+    { skip: !noteId }
+  );
+  console.log("🚀 ~ file: note.tsx:41 ~ Note ~ noteById:", noteById);
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -46,7 +63,7 @@ const Note = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      ...(params.note && { title: `${params.note}` }),
+      ...(params.noteName && { title: `${params.noteName}` }),
       headerRight: () => (
         <Box alignItems="center">
           <Menu
@@ -74,6 +91,16 @@ const Note = () => {
     });
   }, [currentTheme]);
 
+  useEffect(() => {
+    if (noteById) {
+      setNote(noteById);
+    }
+  }, [noteById]);
+
+  if (isLoading || !noteById || !note) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <>
       <ScrollView px={4} pt={4} backgroundColor={currentTheme.background}>
@@ -87,8 +114,8 @@ const Note = () => {
               size="xl"
               variant="unstyled"
               placeholder="Title"
-              value={title}
-              onChangeText={(newTitle) => setTitle(newTitle)}
+              value={note.title}
+              onChangeText={(newTitle) => setNote({ ...note, title: newTitle })}
               InputRightElement={
                 showReminder ? (
                   <HStack space={1} alignItems="center">
