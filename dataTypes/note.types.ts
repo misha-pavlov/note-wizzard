@@ -4,10 +4,12 @@ export type NoteType = {
   createdBy: string;
   sharedWith: string[];
   privacy: "private" | "public";
+  createdAt: Date;
   title?: string;
   reminder?: Date;
   recorders?: string[];
   content?: string;
+  folderId?: string
 };
 
 export type GetNotesByIdsParams = {

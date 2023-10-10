@@ -1,10 +1,11 @@
-import { Text, Stack, View } from "native-base";
+import { Text, Stack, View, Divider } from "native-base";
 import { FC } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
 import { useNavigation } from "expo-router";
 import { constants } from "../../../../../config/constants";
 import { useGetAllUserNotesQuery } from "../../../../../store/noteApi/note.api";
+import { NoteFolderRow } from "../../../../../components";
 
 type NoteListProps = {
   isAllTab?: boolean;
@@ -17,7 +18,7 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
   const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
-    pollingInterval: 10000
+    pollingInterval: 10000,
   });
 
   if (isLoading || !allUserNotes) {
@@ -37,7 +38,9 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
         <FlashList
           data={allUserNotes}
           renderItem={({ item }) => (
-            <Text
+            <NoteFolderRow
+              key={item._id}
+              note={item}
               onPress={() =>
                 // TODO: fixe types here
                 // @ts-ignore
@@ -46,9 +49,7 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader }) => {
                   noteId: item._id,
                 })
               }
-            >
-              {item.name + " " + item._id}
-            </Text>
+            />
           )}
           // TODO: SET TH NEXT VALUE CORRECTLY
           estimatedItemSize={200}
