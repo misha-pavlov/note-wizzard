@@ -8,6 +8,6 @@ export const noteWizardDateFormat = (date: Date) => {
     sameDay: "h:mm a", // The same day ( 2:30 am )
     lastDay: "[Yesterday at] h:mm a", // The day before ( Yesterday at 2:30 am )
     lastWeek: "[Last] dddd [at] h:mm a", // Last week ( Last Monday at 2:30 am )
-    sameElse: "DD/MM/YYYY", // Everything else ( 17/10/2011 )
+    sameElse: "MMMM D, YYYY", // Everything else ( August 16, 2018 )
   });
 };

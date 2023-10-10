@@ -87,6 +87,16 @@ const Home = () => {
     []
   );
 
+  const renderList = useMemo(
+    () => (
+      <Lists
+        currentTab={isSearchTermEaqual0 ? selected : ""}
+        sortType={sortType}
+      />
+    ),
+    [sortType, isSearchTermEaqual0, selected]
+  );
+
   if (isLoading || !user) {
     return <ActivityIndicator />;
   }
@@ -180,7 +190,7 @@ const Home = () => {
         )}
 
         {/* LISTS */}
-        <Lists currentTab={isSearchTermEaqual0 ? selected : ""} />
+        {renderList}
 
         {/* ADD BUTTON */}
         <Fab

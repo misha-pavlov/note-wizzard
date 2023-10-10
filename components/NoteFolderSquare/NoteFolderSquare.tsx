@@ -1,17 +1,19 @@
 import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
 import { FC } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { useWindowDimensions } from "react-native";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
 
-const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
+const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
   note,
   folder,
 }) => {
   const { currentTheme } = useNoteWizardTheme();
+  const { width } = useWindowDimensions();
 
   if (!note && !folder) {
     return null;
@@ -27,33 +29,40 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
+      w={(width - 32 - 16) / 2}
     >
-      <HStack justifyContent="space-between" alignItems="center">
-        <HStack space={4} alignItems="center">
+      <VStack space={4}>
+        <HStack justifyContent="space-between">
           <IconButton
             icon={
-              <AntDesign name="question" size={24} color={currentTheme.red} />
+              <AntDesign
+                name="question"
+                size={24}
+                color={currentTheme.purple}
+              />
             }
-            backgroundColor={hexToRgba(currentTheme.red, 0.2)}
+            backgroundColor={hexToRgba(currentTheme.purple, 0.2)}
             size="xs"
           />
 
           <VStack>
             <Text fontWeight={700}>{note ? note.name : folder.name}</Text>
-            <Text fontSize={13}>{hasNoteFolderContent || "This note without content"}</Text>
+            {note && (
+              <Text color={currentTheme.gray} fontSize={11}>
+                {noteWizardDateFormat(note.createdAt)}
+              </Text>
+            )}
           </VStack>
         </HStack>
 
-        <VStack alignSelf={note ? "flex-start" : "center"}>
-          {note && (
-            <Text color={currentTheme.gray} fontSize={11}>
-              {noteWizardDateFormat(note.createdAt)}
-            </Text>
-          )}
-        </VStack>
-      </HStack>
+        <HStack>
+          <Text fontSize={13}>
+            {hasNoteFolderContent || "This note without content"}
+          </Text>
+        </HStack>
+      </VStack>
     </Pressable>
   );
 };
 
-export default NoteFolderRow;
+export default NoteFolderSquare;

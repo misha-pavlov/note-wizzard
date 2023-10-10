@@ -9,7 +9,7 @@ export type NoteType = {
   reminder?: Date;
   recorders?: string[];
   content?: string;
-  folderId?: string
+  folderId?: string;
 };
 
 export type GetNotesByIdsParams = {
@@ -31,4 +31,12 @@ export type UpdateParams = {
   newRecorders?: string[];
   rewriteRecorders?: boolean;
   rewriteSharedWith?: boolean;
+};
+
+export type NoteFolderComponentPropsTypes = {
+  onPress: () => void;
+
+  note?: NoteType;
+  // TODO: CHANGE ON FOLDER TYPE
+  folder?: any;
 };
