@@ -58,5 +58,11 @@ export const constants = {
 
   localStorageKeys: {
     token: "TOKEN",
+    sortType: "sortType",
+  },
+
+  sortTypes: {
+    squares: "squares",
+    rows: "rows",
   },
 };

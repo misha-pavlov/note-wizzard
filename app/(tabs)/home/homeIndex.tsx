@@ -9,11 +9,16 @@ import {
   Fab,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather, MaterialIcons, Octicons } from "@expo/vector-icons";
+import {
+  Feather,
+  MaterialIcons,
+  FontAwesome5,
+  Ionicons,
+} from "@expo/vector-icons";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
@@ -29,10 +34,20 @@ const Home = () => {
   const { width } = useWindowDimensions();
   const [selected, setSelected] = useState(DEFAULT_TAB);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortType, setSortType] = useState<string | null>(null);
   const { navigate } = useNavigation();
   const { data: user, isLoading } = useCurrentUserQuery();
   const [createNote, { isLoading: isCreateNoteLoading }] =
     useCreateNoteMutation();
+
+  const { localStorageKeys, sortTypes, screens } = constants;
+
+  useEffect(() => {
+    AsyncStorage.getItem(localStorageKeys.sortType).then((value) =>
+      // null condition for the first user open
+      value === null ? setSortType(sortTypes.rows) : setSortType(value)
+    );
+  }, []);
 
   const createNoteOnPress = useCallback(async () => {
     try {
@@ -41,7 +56,7 @@ const Home = () => {
       if (createdNote) {
         // TODO: fixe types here
         // @ts-ignore
-        navigate(constants.screens.note, {
+        navigate(screens.note, {
           noteName: createdNote.name,
           noteId: createdNote._id,
         });
@@ -137,8 +152,24 @@ const Home = () => {
               p={2}
               borderRadius={15}
               _pressed={{ opacity: 0.5 }}
+              onPress={() => {
+                const newSortType =
+                  sortType === sortTypes.rows
+                    ? sortTypes.squares
+                    : sortTypes.rows;
+
+                AsyncStorage.setItem(localStorageKeys.sortType, newSortType);
+                setSortType(newSortType);
+              }}
+              minW="40px"
+              alignItems="center"
+              justifyContent="center"
             >
-              <Octicons name="sort-desc" size={24} color={currentTheme.main} />
+              <FontAwesome5
+                name={sortType === sortTypes.rows ? "sort-amount-down" : "sort"}
+                size={24}
+                color={currentTheme.main}
+              />
             </Pressable>
           )}
         </HStack>

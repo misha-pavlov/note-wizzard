@@ -1,9 +1,9 @@
-import dayjs, { PluginFunc } from "dayjs";
-import * as calendar from "dayjs/plugin/calendar"; // import plugin
+import dayjs from "dayjs";
 
 export const noteWizardDateFormat = (date: Date) => {
-  // fix types
-  dayjs.extend(calendar as unknown as PluginFunc<unknown>);
+  dayjs.extend(require("dayjs/plugin/calendar"));
+  // fix calendar doesn't exist in dayjs because actually it is in dayjs
+  // @ts-ignore
   return dayjs().calendar(date, {
     sameDay: "h:mm a", // The same day ( 2:30 am )
     lastDay: "[Yesterday at] h:mm a", // The day before ( Yesterday at 2:30 am )

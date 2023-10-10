@@ -55,7 +55,7 @@ const NoteFolderRow: FC<NoteFolderRowPropsTypes> = ({
         <VStack alignSelf={note ? "flex-start" : "center"}>
           {note && (
             <Text color={currentTheme.gray} fontSize={11}>
-              {noteWizardDateFormat(note.createdAt).toString()}
+              {noteWizardDateFormat(note.createdAt)}
             </Text>
           )}
         </VStack>
