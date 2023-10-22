@@ -1,4 +1,9 @@
-import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome5,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 
 export const getFolderTypeIcon = (
   iconType: string,
@@ -25,7 +30,9 @@ export const getFolderTypeIcon = (
     case "Inspiration":
       return <FontAwesome5 name="lightbulb" size={size} color={color} />;
     case "Learning":
-      return <FontAwesome5 name="chalkboard-teacher" size={size} color={color} />;
+      return (
+        <FontAwesome5 name="chalkboard-teacher" size={size} color={color} />
+      );
     case "Home":
       return <Feather name="home" size={size} color={color} />;
     case "Gifts":
@@ -39,6 +46,6 @@ export const getFolderTypeIcon = (
     case "Hobbies":
       return <MaterialIcons name="toys" size={size} color={color} />;
     default:
-      return null;
+      return <AntDesign name="question" size={24} color={color} />;
   }
 };

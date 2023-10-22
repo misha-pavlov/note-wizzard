@@ -2,10 +2,12 @@ import { Text, Stack, View } from "native-base";
 import { FlashList } from "@shopify/flash-list";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
 import { useNavigation } from "expo-router";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { constants } from "../../../../../config/constants";
 import { usePreviousProps } from "../../../../../hooks";
 import { useGetFoldersForUserQuery } from "../../../../../store/folderApi/folder.api";
+import { FolderType } from "../../../../../dataTypes/folder.types";
+import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
 
 type FoldersListProps = {
   sortType: string | null;
@@ -28,6 +30,37 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
     }
   );
 
+  const renderItem = useCallback(
+    ({ item }: { item: FolderType }) =>
+      sortType === constants.sortTypes.rows ? (
+        <NoteFolderRow
+          key={item._id}
+          folder={item}
+          onPress={() =>
+            // TODO: fixe types here
+            // @ts-ignore
+            navigate(constants.screens.note, {
+              folderName: item.title,
+            })
+          }
+        />
+      ) : (
+        <NoteFolderSquare
+          key={item._id}
+          folder={item}
+          onPress={() =>
+            // TODO: fixe types here
+            // @ts-ignore
+            navigate(constants.screens.note, {
+              folderName: item.title,
+              noteId: item._id,
+            })
+          }
+        />
+      ),
+    [sortType]
+  );
+
   if (isLoading || !foldersForUser || !previousProps) {
     return <ActivityIndicator />;
   }
@@ -40,19 +73,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
       <View width={width - 32} height="81%">
         <FlashList
           data={foldersForUser}
-          renderItem={({ item }) => (
-            <Text
-              onPress={() =>
-                // TODO: fixe types here
-                // @ts-ignore
-                navigate<NavigateType>(constants.screens.folderNotes, {
-                  folderName: "GG_FOLDER",
-                })
-              }
-            >
-              {item.title}
-            </Text>
-          )}
+          renderItem={renderItem}
           ListEmptyComponent={<Text>{constants.emptyLists.folder}</Text>}
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
           extraData={previousProps}

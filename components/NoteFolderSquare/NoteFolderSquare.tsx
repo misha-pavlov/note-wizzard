@@ -7,6 +7,7 @@ import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
 import { constants } from "../../config/constants";
+import { getFolderTypeIcon } from "../../helpers/folder-helpers";
 
 const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
@@ -20,7 +21,27 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
     return null;
   }
 
-  const hasNoteFolderContent = note ? note?.content : folder.name;
+  const getIcon = () => {
+    if (note) {
+      return <AntDesign name="question" size={24} color={currentTheme.red} />;
+    }
+
+    if (folder) {
+      return getFolderTypeIcon(folder.iconType);
+    }
+  };
+
+  const getSubText = () => {
+    if (note) {
+      return note?.content || constants.thisNoteWithoutContent;
+    }
+
+    if (folder) {
+      return `${folder.noteIds.length} notes`;
+    }
+
+    return "???";
+  };
 
   return (
     <Pressable
@@ -36,19 +57,13 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
       <VStack space={4}>
         <HStack space={4}>
           <IconButton
-            icon={
-              <AntDesign
-                name="question"
-                size={24}
-                color={currentTheme.purple}
-              />
-            }
+            icon={getIcon()}
             backgroundColor={hexToRgba(currentTheme.purple, 0.2)}
             size="xs"
           />
 
           <VStack>
-            <Text fontWeight={700}>{note ? note.name : folder.name}</Text>
+            <Text fontWeight={700}>{note ? note.name : folder?.title}</Text>
             {note && (
               <Text color={currentTheme.gray} fontSize={11}>
                 {noteWizardDateFormat(note.createdAt)}
@@ -58,9 +73,7 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
         </HStack>
 
         <HStack>
-          <Text fontSize={13}>
-            {hasNoteFolderContent || constants.thisNoteWithoutContent}
-          </Text>
+          <Text fontSize={13}>{getSubText()}</Text>
         </HStack>
       </VStack>
     </Pressable>
