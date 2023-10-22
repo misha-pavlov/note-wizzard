@@ -15,6 +15,15 @@ export type NoteType = {
   isImportant?: boolean;
 };
 
+export type NoteTypeArrayWithPageInfo = {
+  notes: NoteType[];
+  pageInfo: {
+    currentPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+
 export type GetNotesByIdsParams = {
   noteIds: string[];
 };
@@ -38,6 +47,7 @@ export type UpdateParams = {
 
 export type GetAllUserNotesParams = {
   isImportant?: boolean;
+  page: number;
 };
 
 export type NoteFolderComponentPropsTypes = {

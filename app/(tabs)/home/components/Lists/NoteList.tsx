@@ -1,13 +1,20 @@
 import { Text, Stack, View } from "native-base";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { ActivityIndicator, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  useWindowDimensions,
+} from "react-native";
 import { useNavigation } from "expo-router";
 import { constants } from "../../../../../config/constants";
-import { useGetAllUserNotesQuery } from "../../../../../store/noteApi/note.api";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
 import { NoteType } from "../../../../../dataTypes/note.types";
-import { usePreviousProps } from "../../../../../hooks";
+import {
+  useGetAllUserNotesQueryWithFetchMore,
+  useNoteWizardTheme,
+  usePreviousProps,
+} from "../../../../../hooks";
 
 type NoteListProps = {
   sortType: string | null;
@@ -29,15 +36,15 @@ const NoteList: FC<NoteListProps> = ({
   });
   const { width } = useWindowDimensions();
   const { navigate } = useNavigation();
-  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(
-    { isImportant },
-    {
-      refetchOnFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMountOrArgChange: true,
-      pollingInterval: 10000,
-    }
-  );
+  const { currentTheme } = useNoteWizardTheme();
+  const {
+    notes,
+    isLoading,
+    fetchMore,
+    isRefreshing,
+    onRefresh,
+    isFetchingMore,
+  } = useGetAllUserNotesQueryWithFetchMore(isImportant);
 
   const renderItem = useCallback(
     ({ item }: { item: NoteType }) =>
@@ -71,7 +78,7 @@ const NoteList: FC<NoteListProps> = ({
     [sortType]
   );
 
-  if (isLoading || !allUserNotes || !previousProps) {
+  if (isLoading || !previousProps) {
     return <ActivityIndicator />;
   }
 
@@ -86,13 +93,28 @@ const NoteList: FC<NoteListProps> = ({
       {/* 32 - padding left + right, 82% - height to the bottom nav*/}
       <View width={width - 32} height="82%">
         <FlashList
-          data={allUserNotes}
+          data={notes}
           renderItem={renderItem}
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
           ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
           // refetch FlashList on change sortType
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}
+          onRefresh={onRefresh}
+          refreshing={isRefreshing}
+          refreshControl={
+            <RefreshControl
+              tintColor={currentTheme.purple}
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          onEndReached={fetchMore}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <ActivityIndicator color={currentTheme.purple} />
+            ) : null
+          }
         />
       </View>
     </Stack>

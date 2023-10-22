@@ -9,15 +9,15 @@ import {
   Text,
 } from "native-base";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, RefreshControl } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { TriangleColorPicker, fromHsv } from "react-native-color-picker";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
-import { useGetAllUserNotesQuery } from "../../store/noteApi/note.api";
 import { NoteType } from "../../dataTypes/note.types";
 import { NoteFolderRow } from "../../components";
+import useGetAllUserNotesQueryWithFetchMore from "../note/useGetAllUserNotesQueryWithFetchMore";
 
 const useCreateFolderModal = (callback?: VoidFunction) => {
   // TODO: CONVERT ALL STATES INTO 1 USE_REDUCER
@@ -28,12 +28,16 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
   const { currentTheme } = useNoteWizardTheme();
-  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(
-    {},
-    {
-      skip: currentStep !== 4,
-    }
-  );
+  const {
+    notes,
+    isLoading,
+    isFetchingMore,
+    isRefreshing,
+    onRefresh,
+    fetchMore,
+  } = useGetAllUserNotesQueryWithFetchMore(undefined, {
+    skip: currentStep !== 4,
+  });
   const folderTypesList = constants.folderTypesList;
 
   const clearModal = () => {
@@ -130,11 +134,11 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
           </Center>
         );
       case 4:
-        return isLoading || !allUserNotes ? (
+        return isLoading ? (
           <ActivityIndicator />
         ) : (
           <FlashList
-            data={allUserNotes}
+            data={notes}
             renderItem={({ item }: { item: NoteType }) => {
               const noteId = item._id;
               return (
@@ -156,6 +160,21 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
             estimatedItemSize={84}
             extraData={selectedNotes}
             ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
+            onRefresh={onRefresh}
+            refreshing={isRefreshing}
+            refreshControl={
+              <RefreshControl
+                tintColor={currentTheme.purple}
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
+              />
+            }
+            onEndReached={fetchMore}
+            ListFooterComponent={
+              isFetchingMore ? (
+                <ActivityIndicator color={currentTheme.purple} />
+              ) : null
+            }
           />
         );
       default:
@@ -165,9 +184,13 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
     currentStep,
     folderTitle,
     selectedType,
-    allUserNotes,
+    notes,
     selectedNotes,
     selectedColor,
+    onRefresh,
+    isRefreshing,
+    isFetchingMore,
+    fetchMore,
   ]);
 
   const renderFolderModal = useMemo(
@@ -185,7 +208,9 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
             Create your new folder
           </Modal.Header>
           {/* block scroll when selecting color */}
-          <Modal.Body _scrollview={{ scrollEnabled: currentStep !== 3 }}>
+          <Modal.Body
+            _scrollview={{ scrollEnabled: [3, 4].includes(currentStep) }}
+          >
             {renderStep}
           </Modal.Body>
           <Modal.Footer backgroundColor={currentTheme.main}>
