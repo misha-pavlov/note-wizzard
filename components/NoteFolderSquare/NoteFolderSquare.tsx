@@ -27,7 +27,7 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
     }
 
     if (folder) {
-      return getFolderTypeIcon(folder.iconType);
+      return getFolderTypeIcon(folder.iconType, 24, folder.color);
     }
   };
 
@@ -58,7 +58,10 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
         <HStack space={4}>
           <IconButton
             icon={getIcon()}
-            backgroundColor={hexToRgba(currentTheme.purple, 0.2)}
+            backgroundColor={hexToRgba(
+              folder ? folder.color : currentTheme.red,
+              0.2
+            )}
             size="xs"
           />
 

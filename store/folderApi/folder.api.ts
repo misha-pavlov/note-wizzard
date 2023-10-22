@@ -21,11 +21,12 @@ export const folderApi = createApi({
   endpoints: (builder) => ({
     // POST
     createFolder: builder.mutation<FolderType, CreateParams>({
-      query: ({ title, iconType, noteIds }) => ({
+      query: ({ title, iconType, noteIds, color }) => ({
         url: "create",
         method: "POST",
         body: {
           title,
+          color,
           iconType,
           noteIds,
         },

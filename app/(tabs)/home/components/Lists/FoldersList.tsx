@@ -39,7 +39,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           onPress={() =>
             // TODO: fixe types here
             // @ts-ignore
-            navigate(constants.screens.note, {
+            navigate(constants.screens.folderNotes, {
               folderName: item.title,
             })
           }
@@ -51,7 +51,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           onPress={() =>
             // TODO: fixe types here
             // @ts-ignore
-            navigate(constants.screens.note, {
+            navigate(constants.screens.folderNotes, {
               folderName: item.title,
               noteId: item._id,
             })

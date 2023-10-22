@@ -63,11 +63,12 @@ const Home = () => {
           }
 
           if (modalData.ready) {
-            const { title, iconType, noteIds } = modalData;
+            const { title, iconType, noteIds, color } = modalData;
             const createdFolder = await createFolder({
               title,
               iconType,
               noteIds,
+              color,
             }).unwrap();
 
             if (createdFolder) {

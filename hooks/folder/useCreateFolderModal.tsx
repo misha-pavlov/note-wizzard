@@ -1,5 +1,6 @@
 import {
   Button,
+  Center,
   FormControl,
   HStack,
   Input,
@@ -10,6 +11,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { TriangleColorPicker, fromHsv } from "react-native-color-picker";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
@@ -23,10 +25,15 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
   const [showModal, setShowModal] = useState(false);
   const [folderTitle, setFolderTitle] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  console.log(
+    "🚀 ~ file: useCreateFolderModal.tsx:28 ~ useCreateFolderModal ~ selectedColor:",
+    selectedColor
+  );
   const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
   const { currentTheme } = useNoteWizardTheme();
   const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
-    skip: currentStep !== 3,
+    skip: currentStep !== 4,
   });
   const folderTypesList = constants.folderTypesList;
 
@@ -35,10 +42,11 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
     setFolderTitle("");
     setSelectedType("");
     setSelectedNotes([]);
+    setSelectedColor("");
   };
 
   const onNextFinishPress = useCallback(() => {
-    if (currentStep === 3) {
+    if (currentStep === 4) {
       setShowModal(false);
 
       if (callback) {
@@ -56,11 +64,13 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
       case 2:
         return selectedType.length === 0;
       case 3:
+        return selectedColor.length === 0;
+      case 4:
         return selectedNotes.length === 0;
       default:
         return true;
     }
-  }, [currentStep, folderTitle, selectedType, selectedNotes]);
+  }, [currentStep, folderTitle, selectedType, selectedNotes, selectedColor]);
 
   const renderStep = useMemo(() => {
     switch (currentStep) {
@@ -110,6 +120,17 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
           />
         );
       case 3:
+        return (
+          <Center>
+            {/* @ts-ignore - escape of "'TriangleColorPicker' cannot be used as a JSX component." error */}
+            <TriangleColorPicker
+              color={selectedColor}
+              onColorChange={(color) => setSelectedColor(fromHsv(color))}
+              style={{ width: 250, height: 250 }}
+            />
+          </Center>
+        );
+      case 4:
         return isLoading || !allUserNotes ? (
           <ActivityIndicator />
         ) : (
@@ -141,7 +162,14 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
       default:
         return <ActivityIndicator />;
     }
-  }, [currentStep, folderTitle, selectedType, allUserNotes, selectedNotes]);
+  }, [
+    currentStep,
+    folderTitle,
+    selectedType,
+    allUserNotes,
+    selectedNotes,
+    selectedColor,
+  ]);
 
   const renderFolderModal = useMemo(
     () => (
@@ -157,7 +185,10 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
           <Modal.Header backgroundColor={currentTheme.main}>
             Create your new folder
           </Modal.Header>
-          <Modal.Body>{renderStep}</Modal.Body>
+          {/* block scroll when selecting color */}
+          <Modal.Body _scrollview={{ scrollEnabled: currentStep !== 3 }}>
+            {renderStep}
+          </Modal.Body>
           <Modal.Footer backgroundColor={currentTheme.main}>
             <Button.Group>
               <Button
@@ -166,7 +197,7 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
                 disabled={disabled}
                 isDisabled={disabled}
               >
-                {currentStep === 3 ? "Finish" : "Next step"}
+                {currentStep === 4 ? "Finish" : "Next step"}
               </Button>
             </Button.Group>
           </Modal.Footer>
@@ -189,8 +220,9 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
     modalData: {
       title: folderTitle,
       iconType: selectedType,
+      color: selectedColor,
       noteIds: selectedNotes,
-      ready: currentStep === 3 && selectedNotes.length,
+      ready: currentStep === 4 && selectedNotes.length,
     },
     clearModal,
   };
