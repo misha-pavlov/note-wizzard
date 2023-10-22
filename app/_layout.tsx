@@ -43,6 +43,7 @@ const colors = {
 SplashScreen.preventAutoHideAsync();
 
 const Layout = () => {
+  // TODO: CHANGE "null" TO null WHEN WILL DO RELEASE
   const [token, setToken] = useState<string | null>("null");
   // Load the fonts
   useEffect(() => {

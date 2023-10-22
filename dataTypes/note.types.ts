@@ -42,7 +42,6 @@ export type GetAllUserNotesParams = {
 
 export type NoteFolderComponentPropsTypes = {
   onPress: () => void;
-
   selected?: boolean;
   withoutDate?: boolean;
   note?: NoteType;

@@ -69,8 +69,8 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
     <Stack space={4}>
       <Text fontWeight={700}>My Folders</Text>
 
-      {/* 32 - padding left + right, 81% - height to the bottom nav*/}
-      <View width={width - 32} height="81%">
+      {/* 32 - padding left + right, 82% - height to the bottom nav*/}
+      <View width={width - 32} height="82%">
         <FlashList
           data={foldersForUser}
           renderItem={renderItem}

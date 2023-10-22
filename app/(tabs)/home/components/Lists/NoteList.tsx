@@ -83,8 +83,8 @@ const NoteList: FC<NoteListProps> = ({
         </Text>
       )}
 
-      {/* 32 - padding left + right, 81% - height to the bottom nav*/}
-      <View width={width - 32} height="81%">
+      {/* 32 - padding left + right, 82% - height to the bottom nav*/}
+      <View width={width - 32} height="82%">
         <FlashList
           data={allUserNotes}
           renderItem={renderItem}

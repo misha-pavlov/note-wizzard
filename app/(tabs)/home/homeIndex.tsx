@@ -120,7 +120,7 @@ const Home = () => {
     []
   );
 
-  const renderList = useMemo(
+  const renderLists = useMemo(
     () => (
       <Lists
         currentTab={isSearchTermEaqual0 ? selected : ""}
@@ -223,7 +223,7 @@ const Home = () => {
         )}
 
         {/* LISTS */}
-        {renderList}
+        {renderLists}
 
         {/* ADD BUTTON */}
         <Fab
