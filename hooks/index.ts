@@ -4,6 +4,7 @@ export { default as useNoteWizardTheme } from "./theme/useNoteWizardTheme";
 export { default as usePreviousProps } from "./state/usePreviousProps";
 // folder
 export { default as useCreateFolderModal } from "./folder/useCreateFolderModal";
+export { default as useGetFoldersForUserQueryWithFetchMore } from "./folder/useGetFoldersForUserQueryWithFetchMore";
 // note
 export { default as useGetAllUserNotesQueryWithFetchMore } from "./note/useGetAllUserNotesQueryWithFetchMore";
 // navigations

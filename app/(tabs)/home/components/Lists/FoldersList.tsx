@@ -9,12 +9,12 @@ import { FC, useCallback } from "react";
 import { constants } from "../../../../../config/constants";
 import {
   useCustomNavigation,
+  useGetFoldersForUserQueryWithFetchMore,
   useNoteWizardTheme,
   usePreviousProps,
 } from "../../../../../hooks";
 import { FolderType } from "../../../../../dataTypes/folder.types";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
-import useGetFoldersForUserQueryWithFetchMore from "../../../../../hooks/folder/useGetFoldersForUserQueryWithFetchMore";
 
 type FoldersListProps = {
   sortType: string | null;
