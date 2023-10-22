@@ -1,13 +1,17 @@
 import { Text, Stack, View } from "native-base";
 import { FlashList } from "@shopify/flash-list";
-import { ActivityIndicator, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  useWindowDimensions,
+} from "react-native";
 import { useNavigation } from "expo-router";
 import { FC, useCallback } from "react";
 import { constants } from "../../../../../config/constants";
-import { usePreviousProps } from "../../../../../hooks";
-import { useGetFoldersForUserQuery } from "../../../../../store/folderApi/folder.api";
+import { useNoteWizardTheme, usePreviousProps } from "../../../../../hooks";
 import { FolderType } from "../../../../../dataTypes/folder.types";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
+import useGetFoldersForUserQueryWithFetchMore from "../../../../../hooks/folder/useGetFoldersForUserQueryWithFetchMore";
 
 type FoldersListProps = {
   sortType: string | null;
@@ -17,18 +21,18 @@ type NavigateType = [string, { folderName: string }];
 const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
   const { width } = useWindowDimensions();
   const { navigate } = useNavigation();
+  const { currentTheme } = useNoteWizardTheme();
   const previousProps = usePreviousProps<FoldersListProps>({
     sortType,
   });
-  const { data: foldersForUser, isLoading } = useGetFoldersForUserQuery(
-    undefined,
-    {
-      refetchOnFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMountOrArgChange: true,
-      pollingInterval: 10000,
-    }
-  );
+  const {
+    folders,
+    isLoading,
+    fetchMore,
+    isRefreshing,
+    onRefresh,
+    isFetchingMore,
+  } = useGetFoldersForUserQueryWithFetchMore();
 
   const renderItem = useCallback(
     ({ item }: { item: FolderType }) =>
@@ -61,7 +65,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
     [sortType]
   );
 
-  if (isLoading || !foldersForUser || !previousProps) {
+  if (isLoading || !previousProps) {
     return <ActivityIndicator />;
   }
 
@@ -72,12 +76,27 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
       {/* 32 - padding left + right, 82% - height to the bottom nav*/}
       <View width={width - 32} height="82%">
         <FlashList
-          data={foldersForUser}
+          data={folders}
           renderItem={renderItem}
           ListEmptyComponent={<Text>{constants.emptyLists.folder}</Text>}
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}
+          onRefresh={onRefresh}
+          refreshing={isRefreshing}
+          refreshControl={
+            <RefreshControl
+              tintColor={currentTheme.purple}
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          onEndReached={fetchMore}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <ActivityIndicator color={currentTheme.purple} />
+            ) : null
+          }
         />
       </View>
     </Stack>

@@ -1,7 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../config/constants";
-import { CreateParams, FolderType } from "../../dataTypes/folder.types";
+import {
+  CreateParams,
+  FolderType,
+  FolderTypeArrayWithPageInfo,
+  GetFoldersForUserParams,
+} from "../../dataTypes/folder.types";
 
 export const folderApi = createApi({
   // reducerPath - name your current file
@@ -33,10 +38,16 @@ export const folderApi = createApi({
       }),
     }),
     // GET
-    getFoldersForUser: builder.query<FolderType[], void>({
-      query: () => ({
+    getFoldersForUser: builder.query<
+      FolderTypeArrayWithPageInfo,
+      GetFoldersForUserParams
+    >({
+      query: ({ page }) => ({
         url: "getFoldersForUser",
         method: "GET",
+        params: {
+          page,
+        },
       }),
     }),
   }),

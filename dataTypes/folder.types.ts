@@ -7,6 +7,15 @@ export type FolderType = {
   noteIds: string[];
 };
 
+export type FolderTypeArrayWithPageInfo = {
+  folders: FolderType[];
+  pageInfo: {
+    currentPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+
 export type CreateParams = {
   title: string;
   color: string;
@@ -19,4 +28,8 @@ export type UpdateParams = {
   newTitle?: string;
   newIconType?: string;
   newNoteIds?: string[];
+};
+
+export type GetFoldersForUserParams = {
+  page: number;
 };
