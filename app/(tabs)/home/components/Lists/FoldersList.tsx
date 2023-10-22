@@ -5,10 +5,13 @@ import {
   RefreshControl,
   useWindowDimensions,
 } from "react-native";
-import { useNavigation } from "expo-router";
 import { FC, useCallback } from "react";
 import { constants } from "../../../../../config/constants";
-import { useNoteWizardTheme, usePreviousProps } from "../../../../../hooks";
+import {
+  useCustomNavigation,
+  useNoteWizardTheme,
+  usePreviousProps,
+} from "../../../../../hooks";
 import { FolderType } from "../../../../../dataTypes/folder.types";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
 import useGetFoldersForUserQueryWithFetchMore from "../../../../../hooks/folder/useGetFoldersForUserQueryWithFetchMore";
@@ -16,11 +19,10 @@ import useGetFoldersForUserQueryWithFetchMore from "../../../../../hooks/folder/
 type FoldersListProps = {
   sortType: string | null;
 };
-type NavigateType = [string, { folderName: string }];
 
 const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
   const { width } = useWindowDimensions();
-  const { navigate } = useNavigation();
+  const { navigate } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
   const previousProps = usePreviousProps<FoldersListProps>({
     sortType,
@@ -41,8 +43,6 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           key={item._id}
           folder={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.folderNotes, {
               folderName: item.title,
             })
@@ -53,8 +53,6 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           key={item._id}
           folder={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.folderNotes, {
               folderName: item.title,
               noteId: item._id,

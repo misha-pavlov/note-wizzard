@@ -12,8 +12,8 @@ import {
 } from "native-base";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigation, useSearchParams } from "expo-router";
-import { useNoteWizardTheme } from "../../hooks";
+import { useSearchParams } from "expo-router";
+import { useCustomNavigation, useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 import { useSendVerificationCodeMutation } from "../../store/userApi/user.api";
@@ -24,7 +24,7 @@ const Verification: FC<SignInUpProps> = ({ countryCode }) => {
   const [selected, setSelected] = useState<number | null>(null);
   const [correctNumber, setCorrectNumber] = useState<number | null>(null);
   const [showError, setShowError] = useState(false);
-  const { navigate } = useNavigation();
+  const { navigate } = useCustomNavigation();
   const { light } = useNoteWizardTheme();
   const isDisabled = useMemo(() => !selected, [selected]);
   const { width } = useWindowDimensions();
@@ -59,8 +59,6 @@ const Verification: FC<SignInUpProps> = ({ countryCode }) => {
   const onPress = useCallback(() => {
     const phone = params.phone;
     if (selected === correctNumber && phone && typeof phone === "string") {
-      // TODO: fixe types here
-      // @ts-ignore
       navigate(constants.screens.newPassword, {
         phone: countryCode + phone,
       });

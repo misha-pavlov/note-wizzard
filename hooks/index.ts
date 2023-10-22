@@ -6,3 +6,5 @@ export { default as usePreviousProps } from "./state/usePreviousProps";
 export { default as useCreateFolderModal } from "./folder/useCreateFolderModal";
 // note
 export { default as useGetAllUserNotesQueryWithFetchMore } from "./note/useGetAllUserNotesQueryWithFetchMore";
+// navigations
+export { default as useCustomNavigation } from "./navigations/useCustomNavigation";

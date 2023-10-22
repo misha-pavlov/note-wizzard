@@ -1,16 +1,16 @@
 import { Text, Stack, View } from "native-base";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback } from "react";
 import { FlashList } from "@shopify/flash-list";
 import {
   ActivityIndicator,
   RefreshControl,
   useWindowDimensions,
 } from "react-native";
-import { useNavigation } from "expo-router";
 import { constants } from "../../../../../config/constants";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
 import { NoteType } from "../../../../../dataTypes/note.types";
 import {
+  useCustomNavigation,
   useGetAllUserNotesQueryWithFetchMore,
   useNoteWizardTheme,
   usePreviousProps,
@@ -35,7 +35,7 @@ const NoteList: FC<NoteListProps> = ({
     sortType,
   });
   const { width } = useWindowDimensions();
-  const { navigate } = useNavigation();
+  const { navigate } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
   const {
     notes,
@@ -53,8 +53,6 @@ const NoteList: FC<NoteListProps> = ({
           key={item._id}
           note={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.note, {
               noteName: item.name,
               noteId: item._id,
@@ -66,8 +64,6 @@ const NoteList: FC<NoteListProps> = ({
           key={item._id}
           note={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.note, {
               noteName: item.name,
               noteId: item._id,
