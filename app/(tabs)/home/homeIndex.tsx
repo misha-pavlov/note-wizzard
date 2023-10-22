@@ -9,15 +9,24 @@ import {
   Fab,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather, MaterialIcons, Octicons } from "@expo/vector-icons";
-import { useWindowDimensions } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useNoteWizardTheme } from "../../../hooks";
+import {
+  Feather,
+  MaterialIcons,
+  FontAwesome5,
+  Ionicons,
+} from "@expo/vector-icons";
+import { ActivityIndicator, useWindowDimensions } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigation } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCreateFolderModal, useNoteWizardTheme } from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
 import { constants } from "../../../config/constants";
+import { useCurrentUserQuery } from "../../../store/userApi/user.api";
+import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
+import { useCreateNoteMutation } from "../../../store/noteApi/note.api";
+import { useCreateFolderMutation } from "../../../store/folderApi/folder.api";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -26,7 +35,69 @@ const Home = () => {
   const { width } = useWindowDimensions();
   const [selected, setSelected] = useState(DEFAULT_TAB);
   const [searchTerm, setSearchTerm] = useState("");
-  const route = useRouter();
+  const [sortType, setSortType] = useState<string | null>(null);
+  const { navigate } = useNavigation();
+  const { data: user, isLoading } = useCurrentUserQuery();
+  const [createNote, { isLoading: isCreateNoteLoading }] =
+    useCreateNoteMutation();
+  const [createFolder, { isLoading: isCreateFolderLoading }] =
+    useCreateFolderMutation();
+  const { showModalToggle, renderFolderModal, modalData, clearModal } =
+    useCreateFolderModal(() => createNoteFolderOnPress(true));
+
+  const { localStorageKeys, sortTypes, screens } = constants;
+
+  useEffect(() => {
+    AsyncStorage.getItem(localStorageKeys.sortType).then((value) =>
+      // null condition for the first user open
+      value === null ? setSortType(sortTypes.rows) : setSortType(value)
+    );
+  }, []);
+
+  const createNoteFolderOnPress = useCallback(
+    async (isCalledFromModal = false) => {
+      try {
+        if (selected === TABS_KEYS.folders) {
+          if (!isCalledFromModal) {
+            showModalToggle();
+          }
+
+          if (modalData.ready) {
+            const { title, iconType, noteIds, color } = modalData;
+            const createdFolder = await createFolder({
+              title,
+              iconType,
+              noteIds,
+              color,
+            }).unwrap();
+
+            if (createdFolder) {
+              clearModal();
+              // TODO: fixe types here
+              // @ts-ignore
+              navigate(screens.folderNotes, {
+                folderName: createdFolder.title,
+              });
+            }
+          }
+        } else {
+          const createdNote = await createNote().unwrap();
+
+          if (createdNote) {
+            // TODO: fixe types here
+            // @ts-ignore
+            navigate(screens.note, {
+              noteName: createdNote.name,
+              noteId: createdNote._id,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [selected, modalData]
+  );
 
   const selectTab = useCallback((key: string) => setSelected(key), []);
 
@@ -49,24 +120,40 @@ const Home = () => {
     []
   );
 
+  const renderList = useMemo(
+    () => (
+      <Lists
+        currentTab={isSearchTermEaqual0 ? selected : ""}
+        sortType={sortType}
+      />
+    ),
+    [sortType, isSearchTermEaqual0, selected]
+  );
+
+  if (isLoading || !user) {
+    return <ActivityIndicator />;
+  }
+
   return (
-    <SafeAreaView style={{ backgroundColor: currentTheme.background }}>
+    <SafeAreaView style={{ backgroundColor: currentTheme.background, flex: 1 }}>
       <Stack px={4} space={4}>
         {/* HEADER */}
         <HStack justifyContent="space-between" alignItems="center">
           <Stack>
             <Text fontSize={12}>Welcome Back</Text>
             <Text fontSize={16} fontWeight={700}>
-              User Name
+              {getUserName(user)}
             </Text>
           </Stack>
 
           <Avatar
             bg={currentTheme.main}
             source={{
-              uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+              uri: user?.image,
             }}
-          />
+          >
+            {getUserInitials(user)}
+          </Avatar>
         </HStack>
 
         {/* SEARCH */}
@@ -108,8 +195,24 @@ const Home = () => {
               p={2}
               borderRadius={15}
               _pressed={{ opacity: 0.5 }}
+              onPress={() => {
+                const newSortType =
+                  sortType === sortTypes.rows
+                    ? sortTypes.squares
+                    : sortTypes.rows;
+
+                AsyncStorage.setItem(localStorageKeys.sortType, newSortType);
+                setSortType(newSortType);
+              }}
+              minW="40px"
+              alignItems="center"
+              justifyContent="center"
             >
-              <Octicons name="sort-desc" size={24} color={currentTheme.main} />
+              <FontAwesome5
+                name={sortType === sortTypes.rows ? "sort-amount-down" : "sort"}
+                size={24}
+                color={currentTheme.main}
+              />
             </Pressable>
           )}
         </HStack>
@@ -120,20 +223,22 @@ const Home = () => {
         )}
 
         {/* LISTS */}
-        <Lists currentTab={isSearchTermEaqual0 ? selected : ""} />
+        {renderList}
 
         {/* ADD BUTTON */}
         <Fab
           shadow={2}
-          bottom={150}
+          bottom={100}
           backgroundColor={currentTheme.purple}
           _pressed={{ opacity: 0.5 }}
           placement="bottom-right"
-          onPress={() => route.push(constants.routes.note)}
+          onPress={() => createNoteFolderOnPress()}
           renderInPortal={false}
+          disabled={isCreateNoteLoading || isCreateFolderLoading}
           icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
         />
       </Stack>
+      {renderFolderModal}
     </SafeAreaView>
   );
 };
