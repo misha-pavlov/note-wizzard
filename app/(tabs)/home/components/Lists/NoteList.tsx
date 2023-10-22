@@ -26,6 +26,7 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader, sortType }) => {
   const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
     pollingInterval: 10000,
   });
 
@@ -78,8 +79,8 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader, sortType }) => {
         <FlashList
           data={allUserNotes}
           renderItem={renderItem}
-          estimatedItemSize={84}
-          ListEmptyComponent={<Text>You don't have any notes</Text>}
+          estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
+          ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
           // refetch FlashList on change sortType
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}

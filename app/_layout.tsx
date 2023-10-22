@@ -43,7 +43,7 @@ const colors = {
 SplashScreen.preventAutoHideAsync();
 
 const Layout = () => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>('null');
   // Load the fonts
   useEffect(() => {
     Font.loadAsync(fonts);
@@ -117,6 +117,7 @@ const Layout = () => {
     },
   };
 
+  // TODO: ADD INTERNET CONNECTION HANDLER
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
       <StoreProvider store={store}>

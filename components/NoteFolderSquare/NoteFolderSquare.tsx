@@ -6,6 +6,7 @@ import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
+import { constants } from "../../config/constants";
 
 const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
@@ -29,10 +30,11 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
-      w={(width - 32 - 16) / 2}
+      // 32 - container padding, 8 - space
+      w={(width - 32 - 8) / 2}
     >
       <VStack space={4}>
-        <HStack justifyContent="space-between">
+        <HStack space={4}>
           <IconButton
             icon={
               <AntDesign
@@ -57,7 +59,7 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
 
         <HStack>
           <Text fontSize={13}>
-            {hasNoteFolderContent || "This note without content"}
+            {hasNoteFolderContent || constants.thisNoteWithoutContent}
           </Text>
         </HStack>
       </VStack>

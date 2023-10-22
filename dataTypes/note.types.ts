@@ -1,3 +1,5 @@
+import { FolderType } from "./folder.types";
+
 export type NoteType = {
   _id: string;
   name: string;
@@ -36,7 +38,8 @@ export type UpdateParams = {
 export type NoteFolderComponentPropsTypes = {
   onPress: () => void;
 
+  selected?: boolean;
+  withoutDate?: boolean;
   note?: NoteType;
-  // TODO: CHANGE ON FOLDER TYPE
-  folder?: any;
+  folder?: FolderType;
 };

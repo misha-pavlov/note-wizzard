@@ -5,11 +5,14 @@ import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
+import { constants } from "../../config/constants";
 
 const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
   note,
   folder,
+  withoutDate,
+  selected,
 }) => {
   const { currentTheme } = useNoteWizardTheme();
 
@@ -17,7 +20,7 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
     return null;
   }
 
-  const hasNoteFolderContent = note ? note?.content : folder.name;
+  const hasNoteFolderContent = note ? note?.content : folder?.title;
 
   return (
     <Pressable
@@ -27,6 +30,7 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
+      {...(selected && { borderColor: currentTheme.purple, borderWidth: 1 })}
     >
       <HStack justifyContent="space-between" alignItems="center">
         <HStack space={4} alignItems="center">
@@ -39,18 +43,22 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
           />
 
           <VStack>
-            <Text fontWeight={700}>{note ? note.name : folder.name}</Text>
-            <Text fontSize={13}>{hasNoteFolderContent || "This note without content"}</Text>
+            <Text fontWeight={700}>{note ? note.name : folder?.title}</Text>
+            <Text fontSize={13}>
+              {hasNoteFolderContent || constants.thisNoteWithoutContent}
+            </Text>
           </VStack>
         </HStack>
 
-        <VStack alignSelf={note ? "flex-start" : "center"}>
-          {note && (
-            <Text color={currentTheme.gray} fontSize={11}>
-              {noteWizardDateFormat(note.createdAt)}
-            </Text>
-          )}
-        </VStack>
+        {!withoutDate && (
+          <VStack alignSelf={note ? "flex-start" : "center"}>
+            {note && (
+              <Text color={currentTheme.gray} fontSize={11}>
+                {noteWizardDateFormat(note.createdAt)}
+              </Text>
+            )}
+          </VStack>
+        )}
       </HStack>
     </Pressable>
   );

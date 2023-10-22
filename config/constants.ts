@@ -65,4 +65,30 @@ export const constants = {
     squares: "squares",
     rows: "rows",
   },
+
+  thisNoteWithoutContent: "This note without content",
+
+  folderTypesList: [
+    "Personal Goals",
+    "To-Do",
+    "Job",
+    "Meetings",
+    "Financial",
+    "Health",
+    "Travel",
+    "Books",
+    "Inspiration",
+    "Learning",
+    "Home",
+    "Gifts",
+    "Brainstorming",
+    "Events",
+    "Movies",
+    "Hobbies",
+  ],
+
+  emptyLists: {
+    note: `You don't have any notes`,
+    folder: `You don't have any folders`,
+  },
 };

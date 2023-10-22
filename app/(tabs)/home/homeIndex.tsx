@@ -19,13 +19,14 @@ import { ActivityIndicator, useWindowDimensions } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNoteWizardTheme } from "../../../hooks";
+import { useCreateFolderModal, useNoteWizardTheme } from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
 import { constants } from "../../../config/constants";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
 import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
 import { useCreateNoteMutation } from "../../../store/noteApi/note.api";
+import { useCreateFolderMutation } from "../../../store/folderApi/folder.api";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -39,6 +40,10 @@ const Home = () => {
   const { data: user, isLoading } = useCurrentUserQuery();
   const [createNote, { isLoading: isCreateNoteLoading }] =
     useCreateNoteMutation();
+  const [createFolder, { isLoading: isCreateFolderLoading }] =
+    useCreateFolderMutation();
+  const { showModalToggle, renderFolderModal, modalData, clearModal } =
+    useCreateFolderModal(() => createNoteFolderOnPress(true));
 
   const { localStorageKeys, sortTypes, screens } = constants;
 
@@ -49,22 +54,49 @@ const Home = () => {
     );
   }, []);
 
-  const createNoteOnPress = useCallback(async () => {
-    try {
-      const createdNote = await createNote().unwrap();
+  const createNoteFolderOnPress = useCallback(
+    async (isCalledFromModal = false) => {
+      try {
+        if (selected === TABS_KEYS.folders) {
+          if (!isCalledFromModal) {
+            showModalToggle();
+          }
 
-      if (createdNote) {
-        // TODO: fixe types here
-        // @ts-ignore
-        navigate(screens.note, {
-          noteName: createdNote.name,
-          noteId: createdNote._id,
-        });
+          if (modalData.ready) {
+            const { title, iconType, noteIds } = modalData;
+            const createdFolder = await createFolder({
+              title,
+              iconType,
+              noteIds,
+            }).unwrap();
+
+            if (createdFolder) {
+              clearModal();
+              // TODO: fixe types here
+              // @ts-ignore
+              navigate(screens.folderNotes, {
+                folderName: createdFolder.title,
+              });
+            }
+          }
+        } else {
+          const createdNote = await createNote().unwrap();
+
+          if (createdNote) {
+            // TODO: fixe types here
+            // @ts-ignore
+            navigate(screens.note, {
+              noteName: createdNote.name,
+              noteId: createdNote._id,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+    },
+    [selected, modalData]
+  );
 
   const selectTab = useCallback((key: string) => setSelected(key), []);
 
@@ -102,7 +134,7 @@ const Home = () => {
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: currentTheme.background }}>
+    <SafeAreaView style={{ backgroundColor: currentTheme.background, flex: 1 }}>
       <Stack px={4} space={4}>
         {/* HEADER */}
         <HStack justifyContent="space-between" alignItems="center">
@@ -195,16 +227,17 @@ const Home = () => {
         {/* ADD BUTTON */}
         <Fab
           shadow={2}
-          bottom={150}
+          bottom={100}
           backgroundColor={currentTheme.purple}
           _pressed={{ opacity: 0.5 }}
           placement="bottom-right"
-          onPress={createNoteOnPress}
+          onPress={() => createNoteFolderOnPress()}
           renderInPortal={false}
-          disabled={isCreateNoteLoading}
+          disabled={isCreateNoteLoading || isCreateFolderLoading}
           icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
         />
       </Stack>
+      {renderFolderModal}
     </SafeAreaView>
   );
 };
