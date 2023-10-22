@@ -12,6 +12,7 @@ export type NoteType = {
   recorders?: string[];
   content?: string;
   folderId?: string;
+  isImportant?: boolean;
 };
 
 export type GetNotesByIdsParams = {
@@ -33,6 +34,10 @@ export type UpdateParams = {
   newRecorders?: string[];
   rewriteRecorders?: boolean;
   rewriteSharedWith?: boolean;
+};
+
+export type GetAllUserNotesParams = {
+  isImportant?: boolean;
 };
 
 export type NoteFolderComponentPropsTypes = {

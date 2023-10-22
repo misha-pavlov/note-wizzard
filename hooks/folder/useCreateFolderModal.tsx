@@ -26,15 +26,14 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
   const [folderTitle, setFolderTitle] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
-  console.log(
-    "🚀 ~ file: useCreateFolderModal.tsx:28 ~ useCreateFolderModal ~ selectedColor:",
-    selectedColor
-  );
   const [selectedNotes, setSelectedNotes] = useState<string[]>([]);
   const { currentTheme } = useNoteWizardTheme();
-  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
-    skip: currentStep !== 4,
-  });
+  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(
+    {},
+    {
+      skip: currentStep !== 4,
+    }
+  );
   const folderTypesList = constants.folderTypesList;
 
   const clearModal = () => {

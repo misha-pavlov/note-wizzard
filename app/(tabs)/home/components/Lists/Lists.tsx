@@ -18,7 +18,7 @@ const Lists: FC<ListProps> = ({ currentTab, sortType }) => {
       case TABS_KEYS.folders:
         return <FoldersList sortType={sortType} />;
       case TABS_KEYS.important:
-        return <NoteList sortType={sortType} />;
+        return <NoteList sortType={sortType} isImportant />;
       default:
         return <SearchList />;
     }

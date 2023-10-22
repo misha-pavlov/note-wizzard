@@ -10,12 +10,18 @@ import { NoteType } from "../../../../../dataTypes/note.types";
 import { usePreviousProps } from "../../../../../hooks";
 
 type NoteListProps = {
-  isAllTab?: boolean;
-  hideHeader?: boolean;
   sortType: string | null;
+  isAllTab?: boolean;
+  isImportant?: boolean;
+  hideHeader?: boolean;
 };
 
-const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader, sortType }) => {
+const NoteList: FC<NoteListProps> = ({
+  isAllTab,
+  hideHeader,
+  sortType,
+  isImportant,
+}) => {
   const previousProps = usePreviousProps<NoteListProps>({
     isAllTab,
     hideHeader,
@@ -23,12 +29,15 @@ const NoteList: FC<NoteListProps> = ({ isAllTab, hideHeader, sortType }) => {
   });
   const { width } = useWindowDimensions();
   const { navigate } = useNavigation();
-  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(undefined, {
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-    refetchOnMountOrArgChange: true,
-    pollingInterval: 10000,
-  });
+  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(
+    { isImportant },
+    {
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
+      pollingInterval: 10000,
+    }
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: NoteType }) =>

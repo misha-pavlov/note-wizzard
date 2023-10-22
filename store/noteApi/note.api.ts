@@ -1,7 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../config/constants";
-import { GetNoteByIdParams, NoteType } from "../../dataTypes/note.types";
+import {
+  GetAllUserNotesParams,
+  GetNoteByIdParams,
+  NoteType,
+} from "../../dataTypes/note.types";
 
 export const noteApi = createApi({
   // reducerPath - name your current file
@@ -27,10 +31,13 @@ export const noteApi = createApi({
       }),
     }),
     // GET
-    getAllUserNotes: builder.query<NoteType[], void>({
-      query: () => ({
+    getAllUserNotes: builder.query<NoteType[], GetAllUserNotesParams>({
+      query: ({ isImportant }) => ({
         url: "getAllUserNotes",
         method: "GET",
+        params: {
+          isImportant,
+        },
       }),
     }),
     getNoteById: builder.query<NoteType, GetNoteByIdParams>({
