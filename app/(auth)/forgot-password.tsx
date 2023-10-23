@@ -1,8 +1,7 @@
 import { Input, Stack, Text, View } from "native-base";
 import { FC, useMemo, useState } from "react";
-import { useNavigation } from "expo-router";
 import { Button } from "../../components";
-import { useNoteWizardTheme } from "../../hooks";
+import { useCustomNavigation, useNoteWizardTheme } from "../../hooks";
 import { constants } from "../../config/constants";
 import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 
@@ -13,7 +12,7 @@ const ForgotPassword: FC<SignInUpProps> = ({
   const [phone, setPhone] = useState("");
   const { dark } = useNoteWizardTheme();
   const isDisabled = useMemo(() => phone === "" || phone.length < 10, [phone]);
-  const { navigate } = useNavigation();
+  const { navigate } = useCustomNavigation();
 
   return (
     <View ml={9} mr={9} mt={10}>
@@ -48,8 +47,6 @@ const ForgotPassword: FC<SignInUpProps> = ({
           text="Send"
           isDisabled={isDisabled}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.verification, {
               phone: countryCode + phone,
             })

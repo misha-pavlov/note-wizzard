@@ -5,6 +5,7 @@ import {
   GetAllUserNotesParams,
   GetNoteByIdParams,
   NoteType,
+  NoteTypeArrayWithPageInfo,
 } from "../../dataTypes/note.types";
 
 export const noteApi = createApi({
@@ -31,12 +32,16 @@ export const noteApi = createApi({
       }),
     }),
     // GET
-    getAllUserNotes: builder.query<NoteType[], GetAllUserNotesParams>({
-      query: ({ isImportant }) => ({
+    getAllUserNotes: builder.query<
+      NoteTypeArrayWithPageInfo,
+      GetAllUserNotesParams
+    >({
+      query: ({ isImportant, page }) => ({
         url: "getAllUserNotes",
         method: "GET",
         params: {
           isImportant,
+          page,
         },
       }),
     }),

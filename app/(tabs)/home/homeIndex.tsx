@@ -17,9 +17,12 @@ import {
 } from "@expo/vector-icons";
 import { ActivityIndicator, useWindowDimensions } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCreateFolderModal, useNoteWizardTheme } from "../../../hooks";
+import {
+  useCreateFolderModal,
+  useCustomNavigation,
+  useNoteWizardTheme,
+} from "../../../hooks";
 import { Lists, NoteWizardTabs } from "./components";
 import { TABS_KEYS } from "./config/constants";
 import { constants } from "../../../config/constants";
@@ -36,7 +39,7 @@ const Home = () => {
   const [selected, setSelected] = useState(DEFAULT_TAB);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState<string | null>(null);
-  const { navigate } = useNavigation();
+  const { navigate } = useCustomNavigation();
   const { data: user, isLoading } = useCurrentUserQuery();
   const [createNote, { isLoading: isCreateNoteLoading }] =
     useCreateNoteMutation();
@@ -73,8 +76,6 @@ const Home = () => {
 
             if (createdFolder) {
               clearModal();
-              // TODO: fixe types here
-              // @ts-ignore
               navigate(screens.folderNotes, {
                 folderName: createdFolder.title,
               });
@@ -84,8 +85,6 @@ const Home = () => {
           const createdNote = await createNote().unwrap();
 
           if (createdNote) {
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(screens.note, {
               noteName: createdNote.name,
               noteId: createdNote._id,

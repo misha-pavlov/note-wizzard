@@ -1,13 +1,20 @@
 import { Text, Stack, View } from "native-base";
 import { FC, useCallback } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { ActivityIndicator, useWindowDimensions } from "react-native";
-import { useNavigation } from "expo-router";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  useWindowDimensions,
+} from "react-native";
 import { constants } from "../../../../../config/constants";
-import { useGetAllUserNotesQuery } from "../../../../../store/noteApi/note.api";
 import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
 import { NoteType } from "../../../../../dataTypes/note.types";
-import { usePreviousProps } from "../../../../../hooks";
+import {
+  useCustomNavigation,
+  useGetAllUserNotesQueryWithFetchMore,
+  useNoteWizardTheme,
+  usePreviousProps,
+} from "../../../../../hooks";
 
 type NoteListProps = {
   sortType: string | null;
@@ -28,16 +35,16 @@ const NoteList: FC<NoteListProps> = ({
     sortType,
   });
   const { width } = useWindowDimensions();
-  const { navigate } = useNavigation();
-  const { data: allUserNotes, isLoading } = useGetAllUserNotesQuery(
-    { isImportant },
-    {
-      refetchOnFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMountOrArgChange: true,
-      pollingInterval: 10000,
-    }
-  );
+  const { navigate } = useCustomNavigation();
+  const { currentTheme } = useNoteWizardTheme();
+  const {
+    notes,
+    isLoading,
+    fetchMore,
+    isRefreshing,
+    onRefresh,
+    isFetchingMore,
+  } = useGetAllUserNotesQueryWithFetchMore(isImportant);
 
   const renderItem = useCallback(
     ({ item }: { item: NoteType }) =>
@@ -46,8 +53,6 @@ const NoteList: FC<NoteListProps> = ({
           key={item._id}
           note={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.note, {
               noteName: item.name,
               noteId: item._id,
@@ -59,8 +64,6 @@ const NoteList: FC<NoteListProps> = ({
           key={item._id}
           note={item}
           onPress={() =>
-            // TODO: fixe types here
-            // @ts-ignore
             navigate(constants.screens.note, {
               noteName: item.name,
               noteId: item._id,
@@ -71,7 +74,7 @@ const NoteList: FC<NoteListProps> = ({
     [sortType]
   );
 
-  if (isLoading || !allUserNotes || !previousProps) {
+  if (isLoading || !previousProps) {
     return <ActivityIndicator />;
   }
 
@@ -86,13 +89,28 @@ const NoteList: FC<NoteListProps> = ({
       {/* 32 - padding left + right, 82% - height to the bottom nav*/}
       <View width={width - 32} height="82%">
         <FlashList
-          data={allUserNotes}
+          data={notes}
           renderItem={renderItem}
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
           ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
           // refetch FlashList on change sortType
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}
+          onRefresh={onRefresh}
+          refreshing={isRefreshing}
+          refreshControl={
+            <RefreshControl
+              tintColor={currentTheme.purple}
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          onEndReached={fetchMore}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <ActivityIndicator color={currentTheme.purple} />
+            ) : null
+          }
         />
       </View>
     </Stack>
