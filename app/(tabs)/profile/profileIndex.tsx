@@ -3,19 +3,26 @@ import { Avatar, ScrollView, Text, VStack } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../../config/constants";
 import { useNoteWizardTheme } from "../../../hooks";
-import { Button } from "../../../components";
+import { Button, NoteWizardSpinner } from "../../../components";
 import { PersonalInfo, Statictic } from "./components";
 import { useAuth } from "../../../context/auth";
+import { useCurrentUserQuery } from "../../../store/userApi/user.api";
+import { getUserInitials } from "../../../helpers/user-helpers";
 
 const Profile = () => {
   const router = useRouter();
   const { currentTheme } = useNoteWizardTheme();
   const { signOut } = useAuth();
+  const { data: user, isLoading } = useCurrentUserQuery();
 
   const onPress = () => {
     signOut();
     (async () => AsyncStorage.removeItem(constants.localStorageKeys.token))();
   };
+
+  if (isLoading || !user) {
+    return <NoteWizardSpinner />;
+  }
 
   return (
     <ScrollView
@@ -29,10 +36,12 @@ const Profile = () => {
           <Avatar
             bg={currentTheme.main}
             source={{
-              uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+              uri: user?.image,
             }}
             size="xl"
-          />
+          >
+            {getUserInitials(user)}
+          </Avatar>
 
           <Text fontSize={16} fontWeight={500}>
             First Last

@@ -10,11 +10,11 @@ import {
   IconButton,
   CloseIcon,
 } from "native-base";
-import { ActivityIndicator, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "expo-router";
 import { useCustomNavigation, useNoteWizardTheme } from "../../hooks";
-import { Button } from "../../components";
+import { Button, NoteWizardSpinner } from "../../components";
 import { constants } from "../../config/constants";
 import { useSendVerificationCodeMutation } from "../../store/userApi/user.api";
 import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
@@ -97,7 +97,7 @@ const Verification: FC<SignInUpProps> = ({ countryCode }) => {
   }, [numbers, selected]);
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <NoteWizardSpinner />;
   }
 
   return (

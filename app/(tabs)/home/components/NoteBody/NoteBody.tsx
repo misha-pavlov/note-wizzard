@@ -4,8 +4,8 @@ import {
   actions,
 } from "react-native-pell-rich-editor";
 import { useRef } from "react";
-import { ActivityIndicator } from "react-native";
 import { useNoteWizardTheme } from "../../../../../hooks";
+import { NoteWizardSpinner } from "../../../../../components";
 
 const NoteBody = () => {
   const { currentTheme } = useNoteWizardTheme();
@@ -41,7 +41,7 @@ const NoteBody = () => {
           console.log("text:", text);
         }}
         placeholder="Your note here"
-        renderLoading={() => <ActivityIndicator />}
+        renderLoading={() => <NoteWizardSpinner />}
       />
     </>
   );

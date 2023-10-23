@@ -9,14 +9,14 @@ import {
   Text,
 } from "native-base";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { TriangleColorPicker, fromHsv } from "react-native-color-picker";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
 import { NoteType } from "../../dataTypes/note.types";
-import { NoteFolderRow } from "../../components";
+import { NoteFolderRow, NoteWizardSpinner } from "../../components";
 import useGetAllUserNotesQueryWithFetchMore from "../note/useGetAllUserNotesQueryWithFetchMore";
 
 const useCreateFolderModal = (callback?: VoidFunction) => {
@@ -135,7 +135,7 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
         );
       case 4:
         return isLoading ? (
-          <ActivityIndicator />
+          <NoteWizardSpinner />
         ) : (
           <FlashList
             data={notes}
@@ -170,15 +170,11 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
               />
             }
             onEndReached={fetchMore}
-            ListFooterComponent={
-              isFetchingMore ? (
-                <ActivityIndicator color={currentTheme.purple} />
-              ) : null
-            }
+            ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
           />
         );
       default:
-        return <ActivityIndicator />;
+        return <NoteWizardSpinner />;
     }
   }, [
     currentStep,

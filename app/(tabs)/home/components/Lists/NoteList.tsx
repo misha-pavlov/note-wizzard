@@ -1,13 +1,13 @@
 import { Text, Stack, View } from "native-base";
 import { FC, useCallback } from "react";
 import { FlashList } from "@shopify/flash-list";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  useWindowDimensions,
-} from "react-native";
+import { RefreshControl, useWindowDimensions } from "react-native";
 import { constants } from "../../../../../config/constants";
-import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
+import {
+  NoteFolderRow,
+  NoteFolderSquare,
+  NoteWizardSpinner,
+} from "../../../../../components";
 import { NoteType } from "../../../../../dataTypes/note.types";
 import {
   useCustomNavigation,
@@ -75,7 +75,7 @@ const NoteList: FC<NoteListProps> = ({
   );
 
   if (isLoading || !previousProps) {
-    return <ActivityIndicator />;
+    return <NoteWizardSpinner />;
   }
 
   return (
@@ -106,11 +106,7 @@ const NoteList: FC<NoteListProps> = ({
             />
           }
           onEndReached={fetchMore}
-          ListFooterComponent={
-            isFetchingMore ? (
-              <ActivityIndicator color={currentTheme.purple} />
-            ) : null
-          }
+          ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
         />
       </View>
     </Stack>
