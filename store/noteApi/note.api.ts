@@ -4,6 +4,7 @@ import { constants } from "../../config/constants";
 import {
   GetAllUserNotesParams,
   GetNoteByIdParams,
+  GetUserStatisticReturnType,
   NoteType,
   NoteTypeArrayWithPageInfo,
 } from "../../dataTypes/note.types";
@@ -55,6 +56,12 @@ export const noteApi = createApi({
         },
       }),
     }),
+    getUserStatistic: builder.query<GetUserStatisticReturnType, void>({
+      query: () => ({
+        url: "getUserStatistic",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -64,4 +71,5 @@ export const {
   // GET
   useGetAllUserNotesQuery,
   useGetNoteByIdQuery,
+  useGetUserStatisticQuery
 } = noteApi;

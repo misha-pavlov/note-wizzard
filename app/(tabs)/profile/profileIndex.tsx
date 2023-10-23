@@ -4,16 +4,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../../config/constants";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Button, NoteWizardSpinner } from "../../../components";
-import { PersonalInfo, Statictic } from "./components";
+import { PersonalInfo, Statistic } from "./components";
 import { useAuth } from "../../../context/auth";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
-import { getUserInitials } from "../../../helpers/user-helpers";
+import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
+import { useGetUserStatisticQuery } from "../../../store/noteApi/note.api";
 
 const Profile = () => {
   const router = useRouter();
   const { currentTheme } = useNoteWizardTheme();
   const { signOut } = useAuth();
   const { data: user, isLoading } = useCurrentUserQuery();
+  const { data: userStatistic, isLoading: isUserStatisticLoading } =
+    useGetUserStatisticQuery();
 
   const onPress = () => {
     signOut();
@@ -44,7 +47,7 @@ const Profile = () => {
           </Avatar>
 
           <Text fontSize={16} fontWeight={500}>
-            First Last
+            {getUserName(user)}
           </Text>
 
           <Button
@@ -56,7 +59,7 @@ const Profile = () => {
 
         <VStack space={4}>
           <Text fontSize={16}>Statistic</Text>
-          <Statictic />
+          <Statistic isLoading={isUserStatisticLoading} {...userStatistic} />
         </VStack>
 
         <VStack space={4}>
