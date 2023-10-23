@@ -67,7 +67,6 @@ const withCountryPicker = (BaseComponent: FC<SignInUpProps>) => {
           lang="us"
           // when picker button press you will get the country object with dial code
           pickerButtonOnPress={(item) => {
-            console.log("🚀 ~ file: sign-in.tsx:243 ~ SignIn ~ item:", item);
             setCountryCode(item.dial_code);
             setShow(false);
           }}

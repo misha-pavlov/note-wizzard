@@ -16,7 +16,7 @@ const Profile = () => {
   const { signOut } = useAuth();
   const { data: user, isLoading } = useCurrentUserQuery();
   const { data: userStatistic, isLoading: isUserStatisticLoading } =
-    useGetUserStatisticQuery();
+    useGetUserStatisticQuery(undefined, { pollingInterval: 10000 });
 
   const onPress = () => {
     signOut();
@@ -64,7 +64,7 @@ const Profile = () => {
 
         <VStack space={4}>
           <Text fontSize={16}>Personal info</Text>
-          <PersonalInfo />
+          <PersonalInfo user={user} />
         </VStack>
 
         <Button text="Log out" useTextTag isRedButton onPress={onPress} />

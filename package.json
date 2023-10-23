@@ -22,6 +22,7 @@
     "expo-linking": "~4.0.1",
     "expo-router": "^1.5.3",
     "expo-status-bar": "~1.4.4",
+    "libphonenumber-js": "^1.10.48",
     "native-base": "^3.4.28",
     "patch-package": "^7.0.2",
     "react": "18.2.0",
