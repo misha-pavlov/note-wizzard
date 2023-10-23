@@ -3,6 +3,7 @@ import { useGetAllUserNotesQuery } from "../../store/noteApi/note.api";
 
 const useGetAllUserNotesQueryWithFetchMore = (
   isImportant?: boolean,
+  onlyWithoutFolder?: boolean,
   options?: Record<string, unknown>
 ) => {
   const [page, setPage] = useState(1);
@@ -10,7 +11,7 @@ const useGetAllUserNotesQueryWithFetchMore = (
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const { data, isLoading, refetch } = useGetAllUserNotesQuery(
-    { isImportant, page },
+    { isImportant, page, onlyWithoutFolder },
     {
       refetchOnFocus: true,
       refetchOnReconnect: true,

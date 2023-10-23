@@ -35,7 +35,7 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
     isRefreshing,
     onRefresh,
     fetchMore,
-  } = useGetAllUserNotesQueryWithFetchMore(undefined, {
+  } = useGetAllUserNotesQueryWithFetchMore(undefined, true, {
     skip: currentStep !== 4,
   });
   const folderTypesList = constants.folderTypesList;
@@ -208,9 +208,8 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
             Create your new folder
           </Modal.Header>
           {/* block scroll when selecting color */}
-          <Modal.Body
-            _scrollview={{ scrollEnabled: [3, 4].includes(currentStep) }}
-          >
+          {/* TODO: fix flatlist methods in 4 step */}
+          <Modal.Body _scrollview={{ scrollEnabled: currentStep !== 3 }}>
             {renderStep}
           </Modal.Body>
           <Modal.Footer backgroundColor={currentTheme.main}>

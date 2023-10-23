@@ -36,12 +36,13 @@ export const noteApi = createApi({
       NoteTypeArrayWithPageInfo,
       GetAllUserNotesParams
     >({
-      query: ({ isImportant, page }) => ({
+      query: ({ isImportant, page, onlyWithoutFolder }) => ({
         url: "getAllUserNotes",
         method: "GET",
         params: {
-          isImportant,
           page,
+          isImportant,
+          onlyWithoutFolder,
         },
       }),
     }),

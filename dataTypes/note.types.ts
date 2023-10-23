@@ -46,8 +46,9 @@ export type UpdateParams = {
 };
 
 export type GetAllUserNotesParams = {
-  isImportant?: boolean;
   page: number;
+  isImportant?: boolean;
+  onlyWithoutFolder?: boolean;
 };
 
 export type NoteFolderComponentPropsTypes = {
