@@ -17,9 +17,8 @@ import { useCustomNavigation, useNoteWizardTheme } from "../../hooks";
 import { Button, NoteWizardSpinner } from "../../components";
 import { constants } from "../../config/constants";
 import { useSendVerificationCodeMutation } from "../../store/userApi/user.api";
-import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 
-const Verification: FC<SignInUpProps> = ({ countryCode }) => {
+const Verification = () => {
   const [numbers, setNumbers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [correctNumber, setCorrectNumber] = useState<number | null>(null);
@@ -60,12 +59,12 @@ const Verification: FC<SignInUpProps> = ({ countryCode }) => {
     const phone = params.phone;
     if (selected === correctNumber && phone && typeof phone === "string") {
       navigate(constants.screens.newPassword, {
-        phone: countryCode + phone,
+        phone,
       });
     } else {
       setShowError(true);
     }
-  }, [setShowError, params, countryCode, selected, correctNumber]);
+  }, [setShowError, params, selected, correctNumber]);
 
   const renderNumbers = useMemo(() => {
     return (
@@ -148,4 +147,4 @@ const Verification: FC<SignInUpProps> = ({ countryCode }) => {
   );
 };
 
-export default withCountryPicker(Verification);
+export default Verification;

@@ -44,6 +44,7 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
   const [signIn, { data, error, isLoading }] = useSignInMutation();
+  console.log("🚀 ~ file: sign-in.tsx:47 ~ error:", error)
 
   useEffect(() => {
     if (data) {
@@ -235,7 +236,7 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
                     <Alert.Icon mt="1" />
                     <Text fontSize="md" color="coolGray.800">
                       {/* @ts-ignore - because data is exists but types said that not */}
-                      {error.data.message}
+                      {error?.data?.message || error?.error}
                     </Text>
                   </HStack>
                   <IconButton
