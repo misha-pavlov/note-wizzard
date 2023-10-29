@@ -1,8 +1,21 @@
 import { HStack, Text, View } from "native-base";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { useNoteWizardTheme } from "../../../../../hooks";
+import { NoteWizardSpinner } from "../../../../../components";
 
-const Statictic = () => {
+type StatisticPropsTypes = {
+  isLoading: boolean;
+  allNotesCount?: number;
+  remindersCount?: number;
+  importantCount?: number;
+};
+
+const Statistic: FC<StatisticPropsTypes> = ({
+  isLoading,
+  allNotesCount,
+  remindersCount,
+  importantCount,
+}) => {
   const { currentTheme } = useNoteWizardTheme();
 
   const renderItem = useCallback(
@@ -24,13 +37,17 @@ const Statictic = () => {
     [currentTheme]
   );
 
+  if (isLoading) {
+    return <NoteWizardSpinner />;
+  }
+
   return (
     <HStack justifyContent="space-between" alignItems="center">
-      {renderItem(147, "All notes")}
-      {renderItem(10, "Reminders")}
-      {renderItem(26, "Important")}
+      {renderItem(allNotesCount || 0, "All notes")}
+      {renderItem(remindersCount || 0, "Reminders")}
+      {renderItem(importantCount || 0, "Important")}
     </HStack>
   );
 };
 
-export default Statictic;
+export default Statistic;

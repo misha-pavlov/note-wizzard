@@ -13,18 +13,13 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  Platform,
-  Pressable,
-  useWindowDimensions,
-  Share,
-  ActivityIndicator,
-} from "react-native";
+import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
 import { useNoteWizardTheme } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
 import { constants } from "../../../config/constants";
 import { useGetNoteByIdQuery } from "../../../store/noteApi/note.api";
 import { NoteType } from "../../../dataTypes/note.types";
+import { NoteWizardSpinner } from "../../../components";
 
 const Note = () => {
   const params = useSearchParams();
@@ -98,7 +93,7 @@ const Note = () => {
   }, [noteById]);
 
   if (isLoading || !noteById || !note) {
-    return <ActivityIndicator />;
+    return <NoteWizardSpinner />;
   }
 
   return (

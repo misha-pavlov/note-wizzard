@@ -15,7 +15,7 @@ import {
   FontAwesome5,
   Ionicons,
 } from "@expo/vector-icons";
-import { ActivityIndicator, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -30,6 +30,7 @@ import { useCurrentUserQuery } from "../../../store/userApi/user.api";
 import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
 import { useCreateNoteMutation } from "../../../store/noteApi/note.api";
 import { useCreateFolderMutation } from "../../../store/folderApi/folder.api";
+import { NoteWizardSpinner } from "../../../components";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -130,7 +131,7 @@ const Home = () => {
   );
 
   if (isLoading || !user) {
-    return <ActivityIndicator />;
+    return <NoteWizardSpinner />;
   }
 
   return (

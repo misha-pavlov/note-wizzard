@@ -58,3 +58,9 @@ export type NoteFolderComponentPropsTypes = {
   note?: NoteType;
   folder?: FolderType;
 };
+
+export type GetUserStatisticReturnType = {
+  allNotesCount: number;
+  remindersCount: number;
+  importantCount: number;
+};

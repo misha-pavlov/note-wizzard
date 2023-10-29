@@ -12,6 +12,7 @@ type ButtonProps = {
   text: string;
   onPress: VoidFunction;
 
+  borderRadius?: number;
   isLoading?: boolean;
   isDisabled?: boolean;
   useTextTag?: boolean;
@@ -27,6 +28,7 @@ const Button: FC<ButtonProps> = ({
   isDisabled,
   useTextTag,
   isRedButton,
+  borderRadius,
 }) => {
   const colors = useNoteWizardTheme();
   const bg = useColorModeValue(
@@ -41,7 +43,7 @@ const Button: FC<ButtonProps> = ({
       isLoading={isLoading}
       isDisabled={isDisabled}
       bg={bg}
-      borderRadius={50}
+      borderRadius={borderRadius || 50}
       _pressed={{
         opacity: 0.5,
         bg,

@@ -1,10 +1,6 @@
 import { Text, Stack, View } from "native-base";
 import { FlashList } from "@shopify/flash-list";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  useWindowDimensions,
-} from "react-native";
+import { RefreshControl, useWindowDimensions } from "react-native";
 import { FC, useCallback } from "react";
 import { constants } from "../../../../../config/constants";
 import {
@@ -14,7 +10,11 @@ import {
   usePreviousProps,
 } from "../../../../../hooks";
 import { FolderType } from "../../../../../dataTypes/folder.types";
-import { NoteFolderRow, NoteFolderSquare } from "../../../../../components";
+import {
+  NoteFolderRow,
+  NoteFolderSquare,
+  NoteWizardSpinner,
+} from "../../../../../components";
 
 type FoldersListProps = {
   sortType: string | null;
@@ -64,7 +64,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
   );
 
   if (isLoading || !previousProps) {
-    return <ActivityIndicator />;
+    return <NoteWizardSpinner />;
   }
 
   return (
@@ -90,11 +90,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
             />
           }
           onEndReached={fetchMore}
-          ListFooterComponent={
-            isFetchingMore ? (
-              <ActivityIndicator color={currentTheme.purple} />
-            ) : null
-          }
+          ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
         />
       </View>
     </Stack>

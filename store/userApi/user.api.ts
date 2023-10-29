@@ -6,6 +6,7 @@ import {
   SendVerificationCodeParams,
   SignInParams,
   SignUpParams,
+  UpdateUserProfileParams,
   UserType,
 } from "../../dataTypes/user.types";
 
@@ -71,6 +72,31 @@ export const userApi = createApi({
         },
       }),
     }),
+    updateUserProfile: builder.mutation<UserType, UpdateUserProfileParams>({
+      query: ({
+        firstName,
+        lastName,
+        email,
+        phone,
+        birthday,
+        password,
+        oldPassword,
+        image,
+      }) => ({
+        url: "updateUserProfile",
+        method: "POST",
+        body: {
+          firstName,
+          lastName,
+          email,
+          phone,
+          birthday,
+          password,
+          oldPassword,
+          image,
+        },
+      }),
+    }),
 
     // GET
     currentUser: builder.query<UserType, void>({
@@ -88,6 +114,7 @@ export const {
   useSignInMutation,
   useSendVerificationCodeMutation,
   useResetPasswordMutation,
+  useUpdateUserProfileMutation,
 
   // GET
   useCurrentUserQuery,

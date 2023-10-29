@@ -48,7 +48,7 @@ const ForgotPassword: FC<SignInUpProps> = ({
           isDisabled={isDisabled}
           onPress={() =>
             navigate(constants.screens.verification, {
-              phone: countryCode + phone,
+              phone: phone.includes("+") ? phone : countryCode + phone,
             })
           }
         />
