@@ -81,6 +81,7 @@ export const userApi = createApi({
         birthday,
         password,
         oldPassword,
+        image,
       }) => ({
         url: "updateUserProfile",
         method: "POST",
@@ -92,6 +93,7 @@ export const userApi = createApi({
           birthday,
           password,
           oldPassword,
+          image,
         },
       }),
     }),

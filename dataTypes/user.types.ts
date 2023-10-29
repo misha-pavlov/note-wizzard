@@ -40,4 +40,5 @@ export type UpdateUserProfileParams = {
   password?: string;
   birthday?: Date;
   email?: string;
+  image?: string;
 };

@@ -30,13 +30,15 @@ import {
   validateEmail,
 } from "../../../helpers/user-helpers";
 import { UserType } from "../../../dataTypes/user.types";
+import { uploadImage } from "../../../helpers/image-helpers";
 
 const EditProfile = () => {
   const { currentTheme } = useNoteWizardTheme();
   const { goBack } = useNavigation();
   const { colorMode } = useColorMode();
   const { data: user, isLoading, refetch } = useCurrentUserQuery();
-  const [image, setImage] = useState(user?.image);
+  const [image, setImage] = useState(user?.image || "");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [profile, setProfile] = useState(user);
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -53,8 +55,6 @@ const EditProfile = () => {
       aspect: [1, 1],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -111,27 +111,27 @@ const EditProfile = () => {
       changedFields.oldPassword = oldPassword;
       changedFields.password = password;
     }
-    console.log(
-      "🚀 ~ file: editProfile.tsx:97 ~ onSubmit ~ changedFields:",
-      changedFields
-    );
+
+    if (image !== "") {
+      setIsUploadingImage(true);
+      changedFields.image = await uploadImage(image);
+    }
 
     try {
       const res = await updateUserProfile(changedFields).unwrap();
 
-      if (res._id) {
+      if (res?._id) {
+        setIsUploadingImage(false);
         refetch();
         goBack();
       }
-
-      console.log("🚀 ~ file: editProfile.tsx:121 ~ onSubmit ~ res:", res);
     } catch (error) {
       const typesError = error as { data: { message: string } };
       if (typesError?.data?.message) {
         return showError(typesError?.data?.message);
       }
     }
-  }, [oldPassword, password, showError, profile]);
+  }, [oldPassword, password, showError, profile, image]);
 
   const keyboardVerticalOffset = Platform.select({
     ios: 150,
@@ -272,7 +272,7 @@ const EditProfile = () => {
           text="Save changes"
           onPress={onSubmit}
           useTextTag
-          isLoading={updateUserProfileIsLoading}
+          isLoading={updateUserProfileIsLoading || isUploadingImage}
         />
 
         <BottomSheet
