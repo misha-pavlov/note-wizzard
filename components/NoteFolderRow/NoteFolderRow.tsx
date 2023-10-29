@@ -1,5 +1,5 @@
 import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
-import { FC } from "react";
+import { FC, memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
@@ -7,6 +7,7 @@ import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
+import { useGetIconTypeByFolderIdQuery } from "../../store/folderApi/folder.api";
 
 const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
@@ -16,6 +17,10 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   selected,
 }) => {
   const { currentTheme } = useNoteWizardTheme();
+  const { data: noteIconTypeData } = useGetIconTypeByFolderIdQuery(
+    { folderId: note?.folderId },
+    { skip: !note?.folderId || !note }
+  );
 
   if (!note && !folder) {
     return null;
@@ -23,11 +28,15 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
 
   const getIcon = () => {
     if (note) {
-      return <AntDesign name="question" size={24} color={currentTheme.red} />;
+      return noteIconTypeData ? (
+        getFolderTypeIcon(noteIconTypeData.iconType, 20, noteIconTypeData.color)
+      ) : (
+        <AntDesign name="question" size={24} color={currentTheme.red} />
+      );
     }
 
     if (folder) {
-      return getFolderTypeIcon(folder.iconType, 24, folder.color);
+      return getFolderTypeIcon(folder.iconType, 20, folder.color);
     }
   };
 
@@ -41,6 +50,18 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
     }
 
     return "???";
+  };
+
+  const getIconBackgroundColor = () => {
+    if (note) {
+      return noteIconTypeData ? noteIconTypeData.color : currentTheme.red;
+    }
+
+    if (folder) {
+      return folder.color;
+    }
+
+    return currentTheme.red;
   };
 
   return (
@@ -57,11 +78,10 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
         <HStack space={4} alignItems="center">
           <IconButton
             icon={getIcon()}
-            backgroundColor={hexToRgba(
-              folder ? folder.color : currentTheme.red,
-              0.2
-            )}
+            backgroundColor={hexToRgba(getIconBackgroundColor(), 0.2)}
             size="xs"
+            w={36}
+            h={36}
           />
 
           <VStack>
@@ -86,4 +106,4 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   );
 };
 
-export default NoteFolderRow;
+export default memo(NoteFolderRow);

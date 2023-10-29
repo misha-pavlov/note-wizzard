@@ -6,6 +6,8 @@ import {
   FolderType,
   FolderTypeArrayWithPageInfo,
   GetFoldersForUserParams,
+  GetIconTypeByFolderIdParams,
+  GetIconTypeByFolderIdReturnType,
 } from "../../dataTypes/folder.types";
 
 export const folderApi = createApi({
@@ -50,6 +52,21 @@ export const folderApi = createApi({
         },
       }),
     }),
+    getIconTypeByFolderId: builder.query<
+      GetIconTypeByFolderIdReturnType,
+      GetIconTypeByFolderIdParams
+    >({
+      query: ({ folderId }) =>
+        folderId
+          ? {
+              url: "getIconTypeByFolderId",
+              method: "GET",
+              params: {
+                folderId,
+              },
+            }
+          : { url: "" },
+    }),
   }),
 });
 
@@ -58,4 +75,5 @@ export const {
   useCreateFolderMutation,
   // GET
   useGetFoldersForUserQuery,
+  useGetIconTypeByFolderIdQuery,
 } = folderApi;

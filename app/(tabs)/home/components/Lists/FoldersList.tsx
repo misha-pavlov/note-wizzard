@@ -45,6 +45,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           onPress={() =>
             navigate(constants.screens.folderNotes, {
               folderName: item.title,
+              noteIds: item.noteIds,
             })
           }
         />
@@ -55,7 +56,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           onPress={() =>
             navigate(constants.screens.folderNotes, {
               folderName: item.title,
-              noteId: item._id,
+              noteIds: item.noteIds,
             })
           }
         />
