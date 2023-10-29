@@ -64,3 +64,12 @@ export type GetUserStatisticReturnType = {
   remindersCount: number;
   importantCount: number;
 };
+
+export type SearchNotesAndFoldersParams = {
+  searchTerm: string;
+};
+
+export type SearchNotesAndFoldersReturnType = {
+  notes: NoteType[];
+  folders: FolderType[];
+};

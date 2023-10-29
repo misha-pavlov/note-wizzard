@@ -7,10 +7,11 @@ import SearchList from "./SearchList";
 
 type ListProps = {
   currentTab: string;
+  searchTerm: string;
   sortType: string | null;
 };
 
-const Lists: FC<ListProps> = ({ currentTab, sortType }) => {
+const Lists: FC<ListProps> = ({ currentTab, sortType, searchTerm }) => {
   const renderList = useMemo(() => {
     switch (currentTab) {
       case TABS_KEYS.all:
@@ -20,9 +21,9 @@ const Lists: FC<ListProps> = ({ currentTab, sortType }) => {
       case TABS_KEYS.important:
         return <NoteList sortType={sortType} isImportant />;
       default:
-        return <SearchList />;
+        return <SearchList searchTerm={searchTerm} />;
     }
-  }, [currentTab, sortType]);
+  }, [currentTab, sortType, searchTerm]);
 
   return <View>{renderList}</View>;
 };
