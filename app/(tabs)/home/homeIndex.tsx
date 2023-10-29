@@ -166,7 +166,7 @@ const Home = () => {
               borderRadius={8}
               placeholderTextColor={currentTheme.purple}
               color={currentTheme.purple}
-              placeholder="Search notes..."
+              placeholder="Search notes and folders"
               value={searchTerm}
               onChangeText={(newText) => setSearchTerm(newText)}
               _focus={{
