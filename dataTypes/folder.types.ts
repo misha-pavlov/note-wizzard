@@ -33,3 +33,12 @@ export type UpdateParams = {
 export type GetFoldersForUserParams = {
   page: number;
 };
+
+export type GetIconTypeByFolderIdParams = {
+  folderId?: string;
+};
+
+export type GetIconTypeByFolderIdReturnType = {
+  iconType: string;
+  color: string;
+};
