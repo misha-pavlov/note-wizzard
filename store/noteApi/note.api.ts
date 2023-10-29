@@ -7,6 +7,8 @@ import {
   GetUserStatisticReturnType,
   NoteType,
   NoteTypeArrayWithPageInfo,
+  SearchNotesAndFoldersParams,
+  SearchNotesAndFoldersReturnType,
 } from "../../dataTypes/note.types";
 
 export const noteApi = createApi({
@@ -62,6 +64,18 @@ export const noteApi = createApi({
         method: "GET",
       }),
     }),
+    searchNotesAndFoldersReq: builder.query<
+      SearchNotesAndFoldersReturnType,
+      SearchNotesAndFoldersParams
+    >({
+      query: ({ searchTerm }) => ({
+        url: "searchNotesAndFolders",
+        method: "GET",
+        params: {
+          searchTerm,
+        },
+      }),
+    }),
   }),
 });
 
@@ -71,5 +85,6 @@ export const {
   // GET
   useGetAllUserNotesQuery,
   useGetNoteByIdQuery,
-  useGetUserStatisticQuery
+  useGetUserStatisticQuery,
+  useSearchNotesAndFoldersReqQuery,
 } = noteApi;

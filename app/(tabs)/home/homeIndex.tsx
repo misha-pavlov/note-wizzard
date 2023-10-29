@@ -125,9 +125,10 @@ const Home = () => {
       <Lists
         currentTab={isSearchTermEaqual0 ? selected : ""}
         sortType={sortType}
+        searchTerm={searchTerm}
       />
     ),
-    [sortType, isSearchTermEaqual0, selected]
+    [sortType, isSearchTermEaqual0, selected, searchTerm]
   );
 
   if (isLoading || !user) {
@@ -166,7 +167,7 @@ const Home = () => {
               borderRadius={8}
               placeholderTextColor={currentTheme.purple}
               color={currentTheme.purple}
-              placeholder="Search notes..."
+              placeholder="Search notes and folders"
               value={searchTerm}
               onChangeText={(newText) => setSearchTerm(newText)}
               _focus={{
@@ -226,17 +227,21 @@ const Home = () => {
         {renderLists}
 
         {/* ADD BUTTON */}
-        <Fab
-          shadow={2}
-          bottom={100}
-          backgroundColor={currentTheme.purple}
-          _pressed={{ opacity: 0.5 }}
-          placement="bottom-right"
-          onPress={() => createNoteFolderOnPress()}
-          renderInPortal={false}
-          disabled={isCreateNoteLoading || isCreateFolderLoading}
-          icon={<Ionicons name="ios-add" size={24} color={currentTheme.main} />}
-        />
+        {searchTerm.length === 0 && (
+          <Fab
+            shadow={2}
+            bottom={100}
+            backgroundColor={currentTheme.purple}
+            _pressed={{ opacity: 0.5 }}
+            placement="bottom-right"
+            onPress={() => createNoteFolderOnPress()}
+            renderInPortal={false}
+            disabled={isCreateNoteLoading || isCreateFolderLoading}
+            icon={
+              <Ionicons name="ios-add" size={24} color={currentTheme.main} />
+            }
+          />
+        )}
       </Stack>
       {renderFolderModal}
     </SafeAreaView>
