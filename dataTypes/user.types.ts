@@ -31,3 +31,13 @@ export type ResetPasswordParams = {
   phone: string;
   newPassword: string;
 };
+
+export type UpdateUserProfileParams = {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  oldPassword?: string;
+  password?: string;
+  birthday?: Date;
+  email?: string;
+};

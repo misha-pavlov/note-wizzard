@@ -44,7 +44,6 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
   const [signIn, { data, error, isLoading }] = useSignInMutation();
-  console.log("🚀 ~ file: sign-in.tsx:47 ~ error:", error)
 
   useEffect(() => {
     if (data) {
