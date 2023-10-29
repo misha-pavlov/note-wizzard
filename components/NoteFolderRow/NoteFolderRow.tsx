@@ -1,5 +1,5 @@
 import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
-import { FC, memo, useCallback } from "react";
+import { FC, memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
@@ -20,10 +20,6 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   const { data: noteIconTypeData } = useGetIconTypeByFolderIdQuery(
     { folderId: note?.folderId },
     { skip: !note?.folderId || !note }
-  );
-  console.log(
-    "🚀 ~ file: NoteFolderRow.tsx:21 ~ noteIconTypeData:",
-    noteIconTypeData
   );
 
   if (!note && !folder) {

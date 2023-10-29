@@ -82,6 +82,7 @@ const SearchList: FC<SearchListPropsType> = ({
             onPress={() =>
               navigate(constants.screens.folderNotes, {
                 folderName: item.title,
+                noteIds: item.noteIds,
               })
             }
           />

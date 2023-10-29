@@ -4,6 +4,7 @@ import { constants } from "../../config/constants";
 import {
   GetAllUserNotesParams,
   GetNoteByIdParams,
+  GetNotesByIdsParams,
   GetUserStatisticReturnType,
   NoteType,
   NoteTypeArrayWithPageInfo,
@@ -76,6 +77,13 @@ export const noteApi = createApi({
         },
       }),
     }),
+    getNotesByIds: builder.query<NoteType[], GetNotesByIdsParams>({
+      query: ({ noteIds }) => ({
+        url: "getNotesByIds",
+        method: "GET",
+        params: { noteIds },
+      }),
+    }),
   }),
 });
 
@@ -87,4 +95,5 @@ export const {
   useGetNoteByIdQuery,
   useGetUserStatisticQuery,
   useSearchNotesAndFoldersReqQuery,
+  useGetNotesByIdsQuery,
 } = noteApi;
