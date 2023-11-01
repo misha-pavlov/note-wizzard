@@ -28,7 +28,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     // POST
     signUp: builder.mutation<UserType, SignUpParams>({
-      query: ({ firstName, lastName, phone, password }) => ({
+      query: ({ firstName, lastName, phone, password, email, withGoogle }) => ({
         url: "signup",
         method: "POST",
         body: {
@@ -36,6 +36,8 @@ export const userApi = createApi({
           lastName,
           phone,
           password,
+          email,
+          withGoogle,
         },
       }),
     }),

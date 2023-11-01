@@ -13,8 +13,10 @@ export type UserType = {
 export type SignUpParams = {
   firstName: string;
   lastName: string;
-  phone: string;
-  password: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+  withGoogle?: boolean;
 };
 
 export type SignInParams = {

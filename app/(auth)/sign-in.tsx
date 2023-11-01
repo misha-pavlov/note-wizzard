@@ -19,7 +19,6 @@ import { useRouter } from "expo-router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Feather,
-  MaterialCommunityIcons,
   AntDesign,
   FontAwesome5,
 } from "@expo/vector-icons";
@@ -179,20 +178,6 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
               >
                 or Sign in with
               </Text>
-            </View>
-
-            <View alignItems="center">
-              <IconButton
-                icon={
-                  <MaterialCommunityIcons
-                    name="face-recognition"
-                    size={45}
-                    color={light.purple}
-                  />
-                }
-                borderRadius="full"
-              />
-              <Text color={dark.main}>Use Face ID</Text>
             </View>
 
             <HStack alignItems="center" justifyContent="space-around">
