@@ -20,8 +20,10 @@ export type SignUpParams = {
 };
 
 export type SignInParams = {
-  phone: string;
-  password: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+  withGoogle?: boolean;
 };
 
 export type SendVerificationCodeParams = {

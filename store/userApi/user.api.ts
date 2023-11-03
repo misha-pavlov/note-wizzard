@@ -42,12 +42,14 @@ export const userApi = createApi({
       }),
     }),
     signIn: builder.mutation<UserType, SignInParams>({
-      query: ({ phone, password }) => ({
+      query: ({ phone, password, withGoogle, email }) => ({
         url: "signin",
         method: "POST",
         body: {
+          email,
           phone,
           password,
+          withGoogle,
         },
       }),
     }),

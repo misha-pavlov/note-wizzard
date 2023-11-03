@@ -2,7 +2,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { useSignUpMutation } from "../../store/userApi/user.api";
+import { useSignInMutation, useSignUpMutation } from "../../store/userApi/user.api";
 
 const useGoogleAuth = () => {
   GoogleSignin.configure({
@@ -11,8 +11,8 @@ const useGoogleAuth = () => {
       "352040301940-1fj5f4hkfvjdk9fo7nrl9gplak31nesl.apps.googleusercontent.com",
   });
 
-  const [signUpMutation, { data }] = useSignUpMutation();
-  console.log("🚀 ~ file: useGoogleAuth.ts:15 ~ useGoogleAuth ~ data:", data);
+  const [signUpMutation, { data: dataSignUp }] = useSignUpMutation();
+  const [signInMutation, { data: dataSignIn }] = useSignInMutation();
 
   const errorHandler = (errorParam: unknown) => {
     const error = errorParam as { code: string };
@@ -27,6 +27,7 @@ const useGoogleAuth = () => {
     }
   };
 
+  // TODO: ADD LOG IN FOR GOOGLE IOS AND SIGN UP/SIGN IN FOR ANDROID
   const signUp = async () => {
     try {
       await GoogleSignin.hasPlayServices();
@@ -34,6 +35,19 @@ const useGoogleAuth = () => {
       signUpMutation({
         firstName: userInfo.user.givenName || "GoogleFirstname",
         lastName: userInfo.user.familyName || "GoogleLastName",
+        email: userInfo.user.email,
+        withGoogle: true,
+      });
+    } catch (errorParam) {
+      errorHandler(errorHandler);
+    }
+  };
+
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      signInMutation({
         email: userInfo.user.email,
         withGoogle: true,
       });
@@ -50,7 +64,7 @@ const useGoogleAuth = () => {
     }
   };
 
-  return { signUp, signOut, googleUserData: data };
+  return { signUp, signOut, signIn, googleUserData: dataSignUp || dataSignIn };
 };
 
 export default useGoogleAuth;
