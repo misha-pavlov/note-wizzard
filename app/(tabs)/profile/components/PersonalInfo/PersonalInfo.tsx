@@ -19,7 +19,6 @@ type PersonalInfoPropsTypes = {
 
 const PersonalInfo: FC<PersonalInfoPropsTypes> = ({ user }) => {
   const { currentTheme } = useNoteWizardTheme();
-  const phoneNumber = parsePhoneNumber(user.phone);
 
   const renderItem = useCallback(
     ({ icon, text, borderRadiusTop, borderRadiusBottom }: RenderItemProps) => (
@@ -69,7 +68,9 @@ const PersonalInfo: FC<PersonalInfoPropsTypes> = ({ user }) => {
             color={currentTheme.font}
           />
         ),
-        text: phoneNumber.formatInternational(),
+        text: user?.isGoogleUser
+          ? "Google user does not need phone"
+          : parsePhoneNumber(user.phone).formatInternational(),
       })}
       {renderItem({
         icon: (

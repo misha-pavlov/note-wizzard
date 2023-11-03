@@ -12,12 +12,14 @@ import { useCallback, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { TriangleColorPicker, fromHsv } from "react-native-color-picker";
+import { Provider } from "react-redux";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
 import { NoteType } from "../../dataTypes/note.types";
 import { NoteFolderRow, NoteWizardSpinner } from "../../components";
 import useGetAllUserNotesQueryWithFetchMore from "../note/useGetAllUserNotesQueryWithFetchMore";
+import { store } from "../../store";
 
 const useCreateFolderModal = (callback?: VoidFunction) => {
   // TODO: CONVERT ALL STATES INTO 1 USE_REDUCER
@@ -137,41 +139,45 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
         return isLoading ? (
           <NoteWizardSpinner />
         ) : (
-          <FlashList
-            data={notes}
-            renderItem={({ item }: { item: NoteType }) => {
-              const noteId = item._id;
-              return (
-                <NoteFolderRow
-                  key={noteId}
-                  note={item}
-                  withoutDate
-                  selected={selectedNotes.includes(noteId)}
-                  onPress={() =>
-                    setSelectedNotes((notes) =>
-                      notes.includes(noteId)
-                        ? notes.filter((n) => !n.includes(noteId))
-                        : [...notes, noteId]
-                    )
-                  }
+          <Provider store={store}>
+            <FlashList
+              data={notes}
+              renderItem={({ item }: { item: NoteType }) => {
+                const noteId = item._id;
+                return (
+                  <NoteFolderRow
+                    key={noteId}
+                    note={item}
+                    withoutDate
+                    selected={selectedNotes.includes(noteId)}
+                    onPress={() =>
+                      setSelectedNotes((notes) =>
+                        notes.includes(noteId)
+                          ? notes.filter((n) => !n.includes(noteId))
+                          : [...notes, noteId]
+                      )
+                    }
+                  />
+                );
+              }}
+              estimatedItemSize={84}
+              extraData={selectedNotes}
+              ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
+              onRefresh={onRefresh}
+              refreshing={isRefreshing}
+              refreshControl={
+                <RefreshControl
+                  tintColor={currentTheme.purple}
+                  refreshing={isRefreshing}
+                  onRefresh={onRefresh}
                 />
-              );
-            }}
-            estimatedItemSize={84}
-            extraData={selectedNotes}
-            ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
-            onRefresh={onRefresh}
-            refreshing={isRefreshing}
-            refreshControl={
-              <RefreshControl
-                tintColor={currentTheme.purple}
-                refreshing={isRefreshing}
-                onRefresh={onRefresh}
-              />
-            }
-            onEndReached={fetchMore}
-            ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
-          />
+              }
+              onEndReached={fetchMore}
+              ListFooterComponent={
+                isFetchingMore ? <NoteWizardSpinner /> : null
+              }
+            />
+          </Provider>
         );
       default:
         return <NoteWizardSpinner />;

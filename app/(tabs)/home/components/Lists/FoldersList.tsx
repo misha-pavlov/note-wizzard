@@ -77,7 +77,11 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
         <FlashList
           data={folders}
           renderItem={renderItem}
-          ListEmptyComponent={<Text>{constants.emptyLists.folder}</Text>}
+          ListEmptyComponent={
+            <Text textAlign="center" fontSize={16}>
+              {constants.emptyLists.folder}
+            </Text>
+          }
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}

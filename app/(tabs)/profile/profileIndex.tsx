@@ -43,7 +43,9 @@ const Profile = () => {
             }}
             size="xl"
           >
-            {getUserInitials(user)}
+            <Text color={currentTheme.font} fontSize={18}>
+              {getUserInitials(user)}
+            </Text>
           </Avatar>
 
           <Text fontSize={16} fontWeight={500}>

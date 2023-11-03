@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   useToast,
   Box,
+  Text,
 } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -183,7 +184,9 @@ const EditProfile = () => {
             >
               <Feather name="edit" size={12} color={currentTheme.main} />
             </Avatar.Badge>
-            {getUserInitials(user)}
+            <Text color={currentTheme.font} fontSize={18}>
+              {getUserInitials(user)}
+            </Text>
           </Avatar>
         </Pressable>
 
@@ -222,21 +225,24 @@ const EditProfile = () => {
               />
             </View>
 
-            <FloatingLabelInput
-              label="Email"
-              autoCapitalize="none"
-              value={profile?.email || ""}
-              onChangeText={(value) => updateMasterState("email", value)}
-              {...defaultStyles}
-            />
-
-            <FloatingLabelInput
-              label="Phone"
-              keyboardType="numeric"
-              value={profile.phone}
-              onChangeText={(value) => updateMasterState("phone", value)}
-              {...defaultStyles}
-            />
+            {!profile?.isGoogleUser && (
+              <>
+                <FloatingLabelInput
+                  label="Email"
+                  autoCapitalize="none"
+                  value={profile?.email || ""}
+                  onChangeText={(value) => updateMasterState("email", value)}
+                  {...defaultStyles}
+                />
+                <FloatingLabelInput
+                  label="Phone"
+                  keyboardType="numeric"
+                  value={profile?.isGoogleUser ? "" : profile.phone}
+                  onChangeText={(value) => updateMasterState("phone", value)}
+                  {...defaultStyles}
+                />
+              </>
+            )}
 
             <FloatingLabelInput
               label="Old password"

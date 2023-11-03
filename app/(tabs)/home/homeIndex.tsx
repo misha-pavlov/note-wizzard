@@ -79,6 +79,7 @@ const Home = () => {
               clearModal();
               navigate(screens.folderNotes, {
                 folderName: createdFolder.title,
+                noteIds,
               });
             }
           }
@@ -137,7 +138,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: currentTheme.background, flex: 1 }}>
-      <Stack px={4} space={4}>
+      <Stack px={4} space={4} flex={1}>
         {/* HEADER */}
         <HStack justifyContent="space-between" alignItems="center">
           <Stack>
@@ -153,7 +154,7 @@ const Home = () => {
               uri: user?.image,
             }}
           >
-            {getUserInitials(user)}
+            <Text color={currentTheme.font}>{getUserInitials(user)}</Text>
           </Avatar>
         </HStack>
 
@@ -230,7 +231,7 @@ const Home = () => {
         {searchTerm.length === 0 && (
           <Fab
             shadow={2}
-            bottom={100}
+            bottom={0}
             backgroundColor={currentTheme.purple}
             _pressed={{ opacity: 0.5 }}
             placement="bottom-right"

@@ -42,7 +42,7 @@ const FolderNotes = () => {
   }
 
   return (
-    <View backgroundColor={currentTheme.background} flex={1} px={4}>
+    <View backgroundColor={currentTheme.background} flex={1} px={4} py={4}>
       <FlashList
         data={notes}
         renderItem={renderItem}

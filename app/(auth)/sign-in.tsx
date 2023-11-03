@@ -98,7 +98,7 @@ const SignIn: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
             mt={6}
             mb={20}
           >
-            NoteWizard
+            Note Wizard
           </Text>
 
           <Stack space={5} mb={20}>

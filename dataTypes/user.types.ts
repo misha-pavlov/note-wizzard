@@ -8,6 +8,7 @@ export type UserType = {
   birthday?: Date;
   image?: string;
   email?: string;
+  isGoogleUser?: boolean;
 };
 
 export type SignUpParams = {
