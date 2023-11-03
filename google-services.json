@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "352040301940",
+    "project_id": "note-wizard",
+    "storage_bucket": "note-wizard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352040301940:android:982cf94b9375a5f2192821",
+        "android_client_info": {
+          "package_name": "com.notewizard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352040301940-o6bvhpht3d20d34rv26oerv22n8clfa3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-v8zhRksv8jhArnrSYnTPPJSWUAOEvyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352040301940-o6bvhpht3d20d34rv26oerv22n8clfa3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "352040301940-1fj5f4hkfvjdk9fo7nrl9gplak31nesl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.notewizard"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

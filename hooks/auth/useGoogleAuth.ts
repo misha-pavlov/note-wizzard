@@ -9,6 +9,7 @@ const useGoogleAuth = () => {
     scopes: ["https://www.googleapis.com/auth/drive.readonly"],
     iosClientId:
       "352040301940-1fj5f4hkfvjdk9fo7nrl9gplak31nesl.apps.googleusercontent.com",
+    webClientId: '352040301940-o6bvhpht3d20d34rv26oerv22n8clfa3.apps.googleusercontent.com'
   });
 
   const [signUpMutation, { data: dataSignUp }] = useSignUpMutation();
@@ -32,6 +33,7 @@ const useGoogleAuth = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
+      console.log("🚀 ~ file: useGoogleAuth.ts:36 ~ signUp ~ userInfo:", userInfo)
       signUpMutation({
         firstName: userInfo.user.givenName || "GoogleFirstname",
         lastName: userInfo.user.familyName || "GoogleLastName",

@@ -29,7 +29,8 @@
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.notewizard"
     },
     "web": {
       "favicon": "./assets/favicon.png",
