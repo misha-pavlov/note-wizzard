@@ -8,18 +8,23 @@ export type UserType = {
   birthday?: Date;
   image?: string;
   email?: string;
+  isGoogleUser?: boolean;
 };
 
 export type SignUpParams = {
   firstName: string;
   lastName: string;
-  phone: string;
-  password: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+  withGoogle?: boolean;
 };
 
 export type SignInParams = {
-  phone: string;
-  password: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+  withGoogle?: boolean;
 };
 
 export type SendVerificationCodeParams = {

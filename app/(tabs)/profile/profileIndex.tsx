@@ -2,13 +2,14 @@ import { useRouter } from "expo-router";
 import { Avatar, ScrollView, Text, VStack } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../../config/constants";
-import { useNoteWizardTheme } from "../../../hooks";
+import { useGoogleAuth, useNoteWizardTheme } from "../../../hooks";
 import { Button, NoteWizardSpinner } from "../../../components";
 import { PersonalInfo, Statistic } from "./components";
 import { useAuth } from "../../../context/auth";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
 import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
 import { useGetUserStatisticQuery } from "../../../store/noteApi/note.api";
+import { useCallback } from "react";
 
 const Profile = () => {
   const router = useRouter();
@@ -17,11 +18,16 @@ const Profile = () => {
   const { data: user, isLoading } = useCurrentUserQuery();
   const { data: userStatistic, isLoading: isUserStatisticLoading } =
     useGetUserStatisticQuery(undefined, { pollingInterval: 10000 });
+  const { signOut: signOutGoogle } = useGoogleAuth();
 
-  const onPress = () => {
+  const onPress = useCallback(async () => {
+    if (user?.isGoogleUser) {
+      await signOutGoogle();
+    }
+
     signOut();
-    (async () => AsyncStorage.removeItem(constants.localStorageKeys.token))();
-  };
+    await AsyncStorage.removeItem(constants.localStorageKeys.token)
+  }, [user]);
 
   if (isLoading || !user) {
     return <NoteWizardSpinner />;
@@ -43,7 +49,9 @@ const Profile = () => {
             }}
             size="xl"
           >
-            {getUserInitials(user)}
+            <Text color={currentTheme.font} fontSize={18}>
+              {getUserInitials(user)}
+            </Text>
           </Avatar>
 
           <Text fontSize={16} fontWeight={500}>

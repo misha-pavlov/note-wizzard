@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   useToast,
   Box,
+  Text,
 } from "native-base";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -46,6 +47,7 @@ const EditProfile = () => {
   const toast = useToast();
   const [updateUserProfile, { isLoading: updateUserProfileIsLoading }] =
     useUpdateUserProfileMutation();
+  const isGoogleUser = profile?.isGoogleUser;
 
   const pickImage = useCallback(async () => {
     // No permissions request is necessary for launching the image library
@@ -85,7 +87,7 @@ const EditProfile = () => {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    if (profile?.email && !validateEmail(profile.email)) {
+    if (!isGoogleUser && profile?.email && !validateEmail(profile.email)) {
       return showError("Email is not valid");
     }
 
@@ -93,7 +95,7 @@ const EditProfile = () => {
       return showError("First and last names can not be empty");
     }
 
-    if (profile?.phone === "") {
+    if (!isGoogleUser && profile?.phone === "") {
       return showError("Phone can not be empty");
     }
 
@@ -131,7 +133,7 @@ const EditProfile = () => {
         return showError(typesError?.data?.message);
       }
     }
-  }, [oldPassword, password, showError, profile, image]);
+  }, [oldPassword, password, showError, profile, image, isGoogleUser]);
 
   const keyboardVerticalOffset = Platform.select({
     ios: 150,
@@ -183,7 +185,9 @@ const EditProfile = () => {
             >
               <Feather name="edit" size={12} color={currentTheme.main} />
             </Avatar.Badge>
-            {getUserInitials(user)}
+            <Text color={currentTheme.font} fontSize={18}>
+              {getUserInitials(user)}
+            </Text>
           </Avatar>
         </Pressable>
 
@@ -222,49 +226,59 @@ const EditProfile = () => {
               />
             </View>
 
-            <FloatingLabelInput
-              label="Email"
-              autoCapitalize="none"
-              value={profile?.email || ""}
-              onChangeText={(value) => updateMasterState("email", value)}
-              {...defaultStyles}
-            />
+            {!isGoogleUser && (
+              <>
+                <FloatingLabelInput
+                  label="Email"
+                  autoCapitalize="none"
+                  value={profile?.email || ""}
+                  onChangeText={(value) => updateMasterState("email", value)}
+                  {...defaultStyles}
+                />
+                <FloatingLabelInput
+                  label="Phone"
+                  keyboardType="numeric"
+                  value={profile.phone}
+                  onChangeText={(value) => updateMasterState("phone", value)}
+                  {...defaultStyles}
+                />
+                <FloatingLabelInput
+                  label="Old password"
+                  isPassword
+                  value={oldPassword}
+                  onChangeText={(value) => setOldPassword(value)}
+                  customShowPasswordComponent={
+                    <Feather name="eye" size={20} color={currentTheme.font} />
+                  }
+                  customHidePasswordComponent={
+                    <Feather
+                      name="eye-off"
+                      size={20}
+                      color={currentTheme.font}
+                    />
+                  }
+                  {...defaultStyles}
+                />
 
-            <FloatingLabelInput
-              label="Phone"
-              keyboardType="numeric"
-              value={profile.phone}
-              onChangeText={(value) => updateMasterState("phone", value)}
-              {...defaultStyles}
-            />
-
-            <FloatingLabelInput
-              label="Old password"
-              isPassword
-              value={oldPassword}
-              onChangeText={(value) => setOldPassword(value)}
-              customShowPasswordComponent={
-                <Feather name="eye" size={20} color={currentTheme.font} />
-              }
-              customHidePasswordComponent={
-                <Feather name="eye-off" size={20} color={currentTheme.font} />
-              }
-              {...defaultStyles}
-            />
-
-            <FloatingLabelInput
-              label="Password"
-              isPassword
-              value={password}
-              onChangeText={(value) => setPassword(value)}
-              customShowPasswordComponent={
-                <Feather name="eye" size={20} color={currentTheme.font} />
-              }
-              customHidePasswordComponent={
-                <Feather name="eye-off" size={20} color={currentTheme.font} />
-              }
-              {...defaultStyles}
-            />
+                <FloatingLabelInput
+                  label="Password"
+                  isPassword
+                  value={password}
+                  onChangeText={(value) => setPassword(value)}
+                  customShowPasswordComponent={
+                    <Feather name="eye" size={20} color={currentTheme.font} />
+                  }
+                  customHidePasswordComponent={
+                    <Feather
+                      name="eye-off"
+                      size={20}
+                      color={currentTheme.font}
+                    />
+                  }
+                  {...defaultStyles}
+                />
+              </>
+            )}
           </VStack>
         </KeyboardAvoidingView>
 

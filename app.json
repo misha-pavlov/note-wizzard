@@ -12,15 +12,25 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "NoteWizard"
     },
     "android": {
+      "bundleIdentifier": "Note Wizard",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.notewizard"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -32,7 +42,8 @@
         {
           "photosPermission": "The NoteWizard accesses your photos to create something special."
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin"
     ]
   }
 }

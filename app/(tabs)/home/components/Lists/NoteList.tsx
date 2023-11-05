@@ -92,7 +92,11 @@ const NoteList: FC<NoteListProps> = ({
           data={notes}
           renderItem={renderItem}
           estimatedItemSize={sortType === constants.sortTypes.rows ? 84 : 125}
-          ListEmptyComponent={<Text>{constants.emptyLists.note}</Text>}
+          ListEmptyComponent={
+            <Text textAlign="center" fontSize={16}>
+              {constants.emptyLists.note}
+            </Text>
+          }
           // refetch FlashList on change sortType
           extraData={previousProps}
           numColumns={sortType === constants.sortTypes.rows ? 1 : 2}

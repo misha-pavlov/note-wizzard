@@ -11,3 +11,5 @@ export { default as useGetAllUserNotesQueryWithFetchMore } from "./note/useGetAl
 export { default as useCustomNavigation } from "./navigations/useCustomNavigation";
 // general
 export { default as useDebounce } from "./general/useDebounce";
+// auth
+export { default as useGoogleAuth } from "./auth/useGoogleAuth";

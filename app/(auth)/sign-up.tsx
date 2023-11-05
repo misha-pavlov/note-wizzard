@@ -17,14 +17,15 @@ import {
 } from "native-base";
 import { useRouter } from "expo-router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../../context/auth";
-import { useNoteWizardTheme } from "../../hooks";
+import { useGoogleAuth, useNoteWizardTheme } from "../../hooks";
 import { Button } from "../../components";
 import { constants } from "../../config/constants";
 import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 import { useSignUpMutation } from "../../store/userApi/user.api";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const initialState = {
   firstName: "",
@@ -41,16 +42,21 @@ const SignUp: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
   const router = useRouter();
   const { light, dark } = useNoteWizardTheme();
   const [signUp, { data, error, isLoading }] = useSignUpMutation();
+  const { signUp: signUpWithGoogle, googleUserData } = useGoogleAuth();
 
   useEffect(() => {
-    if (data) {
+    const newUserData = data || googleUserData;
+    if (newUserData) {
       // set new token
       (async () =>
-        AsyncStorage.setItem(constants.localStorageKeys.token, data.token))();
+        AsyncStorage.setItem(
+          constants.localStorageKeys.token,
+          newUserData.token
+        ))();
       // redirect to home screen
-      authSignIn(data.token);
+      authSignIn(newUserData.token);
     }
-  }, [data]);
+  }, [data, googleUserData]);
 
   useEffect(() => {
     if (error) {
@@ -96,7 +102,7 @@ const SignUp: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
             mt={6}
             mb={20}
           >
-            NoteWizard
+            Note Wizard
           </Text>
 
           <Stack space={5} mb={20}>
@@ -199,18 +205,11 @@ const SignUp: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
               </Text>
             </View>
 
-            <HStack alignItems="center" justifyContent="space-around">
-              <IconButton
-                icon={<AntDesign name="google" size={32} color="black" />}
-                borderRadius="full"
-              />
-              <IconButton
-                icon={<FontAwesome5 name="facebook" size={32} color="black" />}
-                borderRadius="full"
-              />
-              <IconButton
-                icon={<AntDesign name="apple1" size={32} color="black" />}
-                borderRadius="full"
+            <HStack alignItems="center" justifyContent="center">
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Light}
+                onPress={signUpWithGoogle}
               />
             </HStack>
 

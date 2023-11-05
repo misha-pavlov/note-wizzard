@@ -1,4 +1,4 @@
-import { SectionList, Center, Heading, View } from "native-base";
+import { SectionList, Center, Heading, View, Text } from "native-base";
 import { FC, useCallback, useMemo } from "react";
 import { SectionListData } from "react-native";
 import {
@@ -116,7 +116,7 @@ const SearchList: FC<SearchListPropsType> = ({
         ListEmptyComponent={() =>
           !isLoading && (
             <Center>
-              <Heading>We found nothing!</Heading>
+              <Text fontSize={16}>We found nothing!</Text>
             </Center>
           )
         }
