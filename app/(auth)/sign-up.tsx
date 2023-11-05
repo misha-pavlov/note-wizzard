@@ -17,7 +17,7 @@ import {
 } from "native-base";
 import { useRouter } from "expo-router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../../context/auth";
 import { useGoogleAuth, useNoteWizardTheme } from "../../hooks";
@@ -25,6 +25,7 @@ import { Button } from "../../components";
 import { constants } from "../../config/constants";
 import withCountryPicker, { SignInUpProps } from "./hocs/withCountryPicker";
 import { useSignUpMutation } from "../../store/userApi/user.api";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const initialState = {
   firstName: "",
@@ -204,19 +205,11 @@ const SignUp: FC<SignInUpProps> = ({ InputLeftElement, countryCode }) => {
               </Text>
             </View>
 
-            <HStack alignItems="center" justifyContent="space-around">
-              <IconButton
-                icon={<AntDesign name="google" size={32} color="black" />}
-                borderRadius="full"
+            <HStack alignItems="center" justifyContent="center">
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Light}
                 onPress={signUpWithGoogle}
-              />
-              <IconButton
-                icon={<FontAwesome5 name="facebook" size={32} color="black" />}
-                borderRadius="full"
-              />
-              <IconButton
-                icon={<AntDesign name="apple1" size={32} color="black" />}
-                borderRadius="full"
               />
             </HStack>
 
