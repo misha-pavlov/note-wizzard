@@ -10,6 +10,7 @@ import {
   NoteTypeArrayWithPageInfo,
   SearchNotesAndFoldersParams,
   SearchNotesAndFoldersReturnType,
+  UpdateNoteParams,
 } from "../../dataTypes/note.types";
 
 export const noteApi = createApi({
@@ -35,6 +36,7 @@ export const noteApi = createApi({
         method: "POST",
       }),
     }),
+
     // GET
     getAllUserNotes: builder.query<
       NoteTypeArrayWithPageInfo,
@@ -84,6 +86,37 @@ export const noteApi = createApi({
         params: { noteIds },
       }),
     }),
+
+    // PATCH
+    updateNote: builder.mutation<NoteType, UpdateNoteParams>({
+      query: ({
+        noteId,
+        newContent,
+        newName,
+        newPrivacy,
+        newRecorders,
+        newReminder,
+        newSharedWith,
+        newTitle,
+        rewriteRecorders,
+        rewriteSharedWith
+      }) => ({
+        url: 'update',
+        method: 'PATCH',
+        body: {
+          noteId,
+          newContent,
+          newName,
+          newPrivacy,
+          newRecorders,
+          newReminder,
+          newSharedWith,
+          newTitle,
+          rewriteRecorders,
+          rewriteSharedWith
+        }
+      })
+    })
   }),
 });
 
@@ -96,4 +129,6 @@ export const {
   useGetUserStatisticQuery,
   useSearchNotesAndFoldersReqQuery,
   useGetNotesByIdsQuery,
+  // PATCH
+  useUpdateNoteMutation
 } = noteApi;

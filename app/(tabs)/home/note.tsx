@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
-import { useNoteWizardTheme } from "../../../hooks";
+import { useNoteWizardTheme, useUpdateNoteNameModal } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
 import { constants } from "../../../config/constants";
 import { useGetNoteByIdQuery } from "../../../store/noteApi/note.api";
@@ -32,13 +32,20 @@ const Note = () => {
   const { height } = useWindowDimensions();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { data: noteById, isLoading } = useGetNoteByIdQuery(
+  const {
+    data: noteById,
+    isLoading,
+    refetch,
+  } = useGetNoteByIdQuery(
     {
       noteId,
     },
     { skip: !noteId }
   );
-  console.log("🚀 ~ file: note.tsx:41 ~ Note ~ noteById:", noteById);
+  const { renderUpdateNoteNameModal, updateNoteName } = useUpdateNoteNameModal(
+    noteId,
+    refetch
+  );
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -58,7 +65,13 @@ const Note = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      ...(params.noteName && { title: `${params.noteName}` }),
+      ...(params.noteName && {
+        title: `${
+          noteById && noteById.name !== params.noteName
+            ? noteById.name
+            : params.noteName
+        }`,
+      }),
       headerRight: () => (
         <Box alignItems="center">
           <Menu
@@ -78,13 +91,14 @@ const Note = () => {
               );
             }}
           >
+            <Menu.Item onPress={updateNoteName}>Update note name</Menu.Item>
             <Menu.Item onPress={shareNote}>Share</Menu.Item>
             <Menu.Item>Delete</Menu.Item>
           </Menu>
         </Box>
       ),
     });
-  }, [currentTheme]);
+  }, [currentTheme, updateNoteName, noteById]);
 
   useEffect(() => {
     if (noteById) {
@@ -149,6 +163,8 @@ const Note = () => {
 
       <Fab
         shadow={2}
+        bottom="5%"
+        right="5%"
         backgroundColor={currentTheme.purple}
         _pressed={{ opacity: 0.5 }}
         placement="bottom-right"
@@ -162,6 +178,8 @@ const Note = () => {
           />
         }
       />
+
+      {renderUpdateNoteNameModal}
     </>
   );
 };

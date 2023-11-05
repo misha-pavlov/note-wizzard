@@ -7,6 +7,7 @@ export { default as useCreateFolderModal } from "./folder/useCreateFolderModal";
 export { default as useGetFoldersForUserQueryWithFetchMore } from "./folder/useGetFoldersForUserQueryWithFetchMore";
 // note
 export { default as useGetAllUserNotesQueryWithFetchMore } from "./note/useGetAllUserNotesQueryWithFetchMore";
+export { default as useUpdateNoteNameModal } from "./note/useUpdateNoteNameModal";
 // navigations
 export { default as useCustomNavigation } from "./navigations/useCustomNavigation";
 // general
