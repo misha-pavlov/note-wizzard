@@ -3,11 +3,16 @@ import {
   RichToolbar,
   actions,
 } from "react-native-pell-rich-editor";
-import { useRef } from "react";
+import { FC, useRef } from "react";
 import { useNoteWizardTheme } from "../../../../../hooks";
 import { NoteWizardSpinner } from "../../../../../components";
 
-const NoteBody = () => {
+type NoteBodyPropsType = {
+  content: string;
+  onChange: (text: string) => void;
+};
+
+const NoteBody: FC<NoteBodyPropsType> = ({ content, onChange }) => {
   const { currentTheme } = useNoteWizardTheme();
   const richText = useRef<RichEditor>(null);
 
@@ -32,14 +37,12 @@ const NoteBody = () => {
       />
       <RichEditor
         ref={richText}
-        initialContentHTML="Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>"
+        initialContentHTML={content}
         editorStyle={{
           backgroundColor: currentTheme.background,
           color: currentTheme.font,
         }}
-        onChange={(text) => {
-          console.log("text:", text);
-        }}
+        onChange={onChange}
         placeholder="Your note here"
         renderLoading={() => <NoteWizardSpinner />}
       />

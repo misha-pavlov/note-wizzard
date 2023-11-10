@@ -371,7 +371,12 @@ const Note = () => {
             <Audio />
 
             {/* NOTE */}
-            <NoteBody />
+            <NoteBody
+              content={note?.content || ""}
+              onChange={(text) =>
+                dispatch({ type: "UPDATE_NOTE", payload: { content: text } })
+              }
+            />
           </VStack>
         </KeyboardAvoidingView>
       </ScrollView>
