@@ -91,33 +91,45 @@ export const noteApi = createApi({
     updateNote: builder.mutation<NoteType, UpdateNoteParams>({
       query: ({
         noteId,
-        newContent,
-        newName,
-        newPrivacy,
-        newRecorders,
-        newReminder,
-        newSharedWith,
-        newTitle,
-        rewriteRecorders,
-        rewriteSharedWith
+        content,
+        name,
+        privacy,
+        recorders,
+        reminder,
+        sharedWith,
+        title,
+        folderId,
+        isImportant,
       }) => ({
         url: 'update',
         method: 'PATCH',
         body: {
           noteId,
-          newContent,
-          newName,
-          newPrivacy,
-          newRecorders,
-          newReminder,
-          newSharedWith,
-          newTitle,
-          rewriteRecorders,
-          rewriteSharedWith
+          content,
+          name,
+          privacy,
+          recorders,
+          reminder,
+          sharedWith,
+          title,
+          folderId,
+          isImportant,
+        }
+      })
+    }),
+
+    // DELETE
+    deleteNoteById: builder.mutation<NoteType, GetNoteByIdParams>({
+      query: ({ noteId }) => ({
+        url: 'deleteNoteById',
+        method: 'DELETE',
+        body: {
+          noteId
         }
       })
     })
   }),
+
 });
 
 export const {
@@ -130,5 +142,7 @@ export const {
   useSearchNotesAndFoldersReqQuery,
   useGetNotesByIdsQuery,
   // PATCH
-  useUpdateNoteMutation
+  useUpdateNoteMutation,
+  //DELETE
+  useDeleteNoteByIdMutation
 } = noteApi;

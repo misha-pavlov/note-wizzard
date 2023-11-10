@@ -76,13 +76,13 @@ export type SearchNotesAndFoldersReturnType = {
 
 export type UpdateNoteParams = {
   noteId: string;
-  newTitle?: string;
-  newContent?: string;
-  newName?: string;
-  newReminder?: Date;
-  newPrivacy?: "private" | "public";
-  newSharedWith?: string[];
-  newRecorders?: string[];
-  rewriteRecorders?: boolean;
-  rewriteSharedWith?: boolean;
+  title?: string;
+  content?: string;
+  name?: string;
+  reminder?: Date;
+  privacy?: "private" | "public";
+  sharedWith?: string[];
+  recorders?: string[];
+  folderId?: string;
+  isImportant?: boolean;
 }

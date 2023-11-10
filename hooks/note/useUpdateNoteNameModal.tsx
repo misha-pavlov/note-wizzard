@@ -11,7 +11,6 @@ const useUpdateNoteNameModal = (noteId: string, refetch?: VoidFunction) => {
   const [showModal, setShowModal] = useState(false);
   const [newNoteName, setNewNoteName] = useState("");
   const { currentTheme } = useNoteWizardTheme();
-  const { data: user } = useCurrentUserQuery();
   const { data: noteById } = useGetNoteByIdQuery(
     {
       noteId,
@@ -27,7 +26,7 @@ const useUpdateNoteNameModal = (noteId: string, refetch?: VoidFunction) => {
   };
 
   const onUpdate = useCallback(() => {
-    updateNote({ noteId, newName: newNoteName }).then(() => {
+    updateNote({ noteId, name: newNoteName }).then(() => {
       cleanModal();
       if (refetch) refetch();
     });

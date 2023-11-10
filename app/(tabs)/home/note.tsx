@@ -1,4 +1,4 @@
-import { useNavigation, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import {
   Fab,
   HStack,
@@ -9,29 +9,40 @@ import {
   Box,
   Menu,
   useColorMode,
+  useToast,
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
-import { useNoteWizardTheme, useUpdateNoteNameModal } from "../../../hooks";
+import { useCustomNavigation, useNoteWizardTheme, useUpdateNoteNameModal } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
 import { constants } from "../../../config/constants";
-import { useGetNoteByIdQuery } from "../../../store/noteApi/note.api";
+import {
+  useDeleteNoteByIdMutation,
+  useGetNoteByIdQuery,
+} from "../../../store/noteApi/note.api";
 import { NoteType } from "../../../dataTypes/note.types";
 import { NoteWizardSpinner } from "../../../components";
 
 const Note = () => {
+  // nav
   const params = useSearchParams();
   const noteId = params.noteId as string;
+  const navigation = useCustomNavigation();
+  const router = useRouter();
 
-  const navigation = useNavigation();
+  // state
   const [note, setNote] = useState<NoteType | undefined>();
   const [showReminder, setShowReminder] = useState(false);
+
+  // styles
   const { currentTheme } = useNoteWizardTheme();
   const { height } = useWindowDimensions();
-  const router = useRouter();
   const { colorMode } = useColorMode();
+  const toast = useToast();
+
+  // fetch
   const {
     data: noteById,
     isLoading,
@@ -42,10 +53,13 @@ const Note = () => {
     },
     { skip: !noteId }
   );
+
+  // mutaions
   const { renderUpdateNoteNameModal, updateNoteName } = useUpdateNoteNameModal(
     noteId,
     refetch
   );
+  const [deleteNoteById, { error: deleteError }] = useDeleteNoteByIdMutation();
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -63,6 +77,7 @@ const Note = () => {
     }
   }, []);
 
+  // render top dots
   useEffect(() => {
     navigation.setOptions({
       ...(params.noteName && {
@@ -93,18 +108,42 @@ const Note = () => {
           >
             <Menu.Item onPress={updateNoteName}>Update note name</Menu.Item>
             <Menu.Item onPress={shareNote}>Share</Menu.Item>
-            <Menu.Item>Delete</Menu.Item>
+            <Menu.Item onPress={() => deleteNoteById({ noteId })}>
+              Delete
+            </Menu.Item>
           </Menu>
         </Box>
       ),
     });
-  }, [currentTheme, updateNoteName, noteById]);
+  }, [currentTheme, updateNoteName, noteById, deleteNoteById, deleteNoteById]);
 
+  // set note data
   useEffect(() => {
     if (noteById) {
       setNote(noteById);
     }
   }, [noteById]);
+
+  // show errors
+  useEffect(() => {
+    const error = deleteError as { data?: string & { message?: string } };
+    if (error) {
+      if (error?.data === "Deleted") {
+        navigation.goBack();
+      } else {
+        toast.show({
+          placement: "top",
+          render: () => {
+            return (
+              <Box bg={currentTheme.red} px="2" py="1" rounded="sm" mb={5}>
+                {error?.data?.message}
+              </Box>
+            );
+          },
+        });
+      }
+    }
+  }, [deleteError]);
 
   if (isLoading || !noteById || !note) {
     return <NoteWizardSpinner />;
