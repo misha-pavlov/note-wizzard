@@ -9,6 +9,7 @@ export { default as useSelectNoteFolder } from "./folder/useSelectNoteFolder";
 // note
 export { default as useGetAllUserNotesQueryWithFetchMore } from "./note/useGetAllUserNotesQueryWithFetchMore";
 export { default as useUpdateNoteNameModal } from "./note/useUpdateNoteNameModal";
+export { default as useSelectSharingWithModal } from "./note/useSelectSharingWithModal";
 // navigations
 export { default as useCustomNavigation } from "./navigations/useCustomNavigation";
 // general

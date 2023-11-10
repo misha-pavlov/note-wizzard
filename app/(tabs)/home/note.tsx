@@ -38,6 +38,7 @@ import {
   useCustomNavigation,
   useNoteWizardTheme,
   useSelectNoteFolder,
+  useSelectSharingWithModal,
   useUpdateNoteNameModal,
 } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
@@ -113,13 +114,23 @@ const Note = () => {
     refetch
   );
   const [deleteNoteById, { error: deleteError }] = useDeleteNoteByIdMutation();
-  const { renderSelectFolderModal, showModalToggle } = useSelectNoteFolder(
+
+  // modals
+  const { renderSelectFolderModal, showModalToggle: selectNoteFolder } = useSelectNoteFolder(
     (selectedFolderId) =>
       dispatch({
         type: "UPDATE_NOTE",
         payload: { folderId: selectedFolderId },
       }),
     note?.folderId
+  );
+  const { renderSelectSharingWithModal, showModalToggle: selectSharingWith } = useSelectSharingWithModal(
+    (sharedWith) =>
+      dispatch({
+        type: "UPDATE_NOTE",
+        payload: { sharedWith },
+      }),
+    note?.sharedWith
   );
 
   const keyboardVerticalOffset = Platform.select({
@@ -211,7 +222,8 @@ const Note = () => {
             }}
           >
             <Menu.Item onPress={updateNoteName}>Update note name</Menu.Item>
-            <Menu.Item onPress={showModalToggle}>Update note folder</Menu.Item>
+            <Menu.Item onPress={selectNoteFolder}>Update note folder</Menu.Item>
+            <Menu.Item onPress={selectSharingWith}>Share with in app users</Menu.Item>
             <Menu.Item onPress={shareNote}>Share</Menu.Item>
             <Menu.Item
               onPress={() => deleteNoteById({ noteId })}
@@ -230,7 +242,8 @@ const Note = () => {
     deleteNoteById,
     dispatch,
     note,
-    showModalToggle,
+    selectNoteFolder,
+    selectSharingWith
   ]);
 
   // set note data
@@ -401,6 +414,7 @@ const Note = () => {
 
       {renderUpdateNoteNameModal}
       {renderSelectFolderModal}
+      {renderSelectSharingWithModal}
     </>
   );
 };

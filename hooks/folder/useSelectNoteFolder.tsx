@@ -2,12 +2,12 @@ import { Button, Modal, Text } from "native-base";
 import { useCallback, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl } from "react-native";
+import { Provider } from "react-redux";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import useGetFoldersForUserQueryWithFetchMore from "./useGetFoldersForUserQueryWithFetchMore";
 import { NoteFolderRow, NoteWizardSpinner } from "../../components";
 import { FolderType } from "../../dataTypes/folder.types";
 import { constants } from "../../config/constants";
-import { Provider } from "react-redux";
 import { store } from "../../store";
 
 const useSelectNoteFolder = (

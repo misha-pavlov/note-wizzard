@@ -109,6 +109,12 @@ export const userApi = createApi({
         method: "GET",
       }),
     }),
+    getAllUsers: builder.query<UserType[], void>({
+      query: () => ({
+        url: "getAllUsers",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -119,7 +125,7 @@ export const {
   useSendVerificationCodeMutation,
   useResetPasswordMutation,
   useUpdateUserProfileMutation,
-
   // GET
   useCurrentUserQuery,
+  useGetAllUsersQuery,
 } = userApi;
