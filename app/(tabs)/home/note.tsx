@@ -37,6 +37,7 @@ import { Easing } from "react-native-reanimated";
 import {
   useCustomNavigation,
   useNoteWizardTheme,
+  useSelectNoteFolder,
   useUpdateNoteNameModal,
 } from "../../../hooks";
 import { Audio, NoteBody } from "./components";
@@ -112,6 +113,14 @@ const Note = () => {
     refetch
   );
   const [deleteNoteById, { error: deleteError }] = useDeleteNoteByIdMutation();
+  const { renderSelectFolderModal, showModalToggle } = useSelectNoteFolder(
+    (selectedFolderId) =>
+      dispatch({
+        type: "UPDATE_NOTE",
+        payload: { folderId: selectedFolderId },
+      }),
+    note?.folderId
+  );
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -202,15 +211,27 @@ const Note = () => {
             }}
           >
             <Menu.Item onPress={updateNoteName}>Update note name</Menu.Item>
+            <Menu.Item onPress={showModalToggle}>Update note folder</Menu.Item>
             <Menu.Item onPress={shareNote}>Share</Menu.Item>
-            <Menu.Item onPress={() => deleteNoteById({ noteId })}>
+            <Menu.Item
+              onPress={() => deleteNoteById({ noteId })}
+              backgroundColor={currentTheme.red}
+            >
               Delete
             </Menu.Item>
           </Menu>
         </HStack>
       ),
     });
-  }, [currentTheme, updateNoteName, noteById, deleteNoteById, dispatch, note]);
+  }, [
+    currentTheme,
+    updateNoteName,
+    noteById,
+    deleteNoteById,
+    dispatch,
+    note,
+    showModalToggle,
+  ]);
 
   // set note data
   useEffect(() => {
@@ -374,6 +395,7 @@ const Note = () => {
       />
 
       {renderUpdateNoteNameModal}
+      {renderSelectFolderModal}
     </>
   );
 };
