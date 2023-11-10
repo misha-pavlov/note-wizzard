@@ -1,5 +1,5 @@
 import { Button, Modal, Text } from "native-base";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl } from "react-native";
 import { Provider } from "react-redux";
@@ -16,8 +16,16 @@ const useSelectNoteFolder = (
 ) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState(
-    defaultSelectedFolderId || ""
+    defaultSelectedFolderId
   );
+
+  // add this because useState doesn't works as expected for some reason
+  useEffect(() => {
+    if (defaultSelectedFolderId) {
+      setSelectedFolderId(defaultSelectedFolderId);
+    }
+  }, [defaultSelectedFolderId]);
+
   const { currentTheme } = useNoteWizardTheme();
   const {
     folders,
@@ -100,7 +108,9 @@ const useSelectNoteFolder = (
               <Button
                 backgroundColor={currentTheme.purple}
                 onPress={() => {
-                  onSubmit(selectedFolderId);
+                  if (selectedFolderId) {
+                    onSubmit(selectedFolderId);
+                  }
                   setShowModal(false);
                 }}
               >

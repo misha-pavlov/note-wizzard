@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "native-base";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { NoteWizardSpinner } from "../../components";
@@ -36,6 +36,13 @@ const useSelectSharingWithModal = (
   const { currentTheme } = useNoteWizardTheme();
   const { data: users, isLoading } = useGetAllUsersQuery();
   const { data: currentUser } = useCurrentUserQuery();
+
+  // add this because useState doesn't works as expected for some reason
+  useEffect(() => {
+    if (defaultSharedWith) {
+      setSharedWith(defaultSharedWith);
+    }
+  }, [defaultSharedWith]);
 
   const renderItem = useCallback(
     ({ item }: { item: UserType }) =>

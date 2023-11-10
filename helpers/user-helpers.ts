@@ -14,18 +14,3 @@ export const validateEmail = (email: string) => {
   // Test the email against the pattern
   return emailPattern.test(email);
 };
-
-// for update profile
-export const findChangedFields = (originalObject: any, modifiedObject: any) => {
-  const changedFields: Record<any, any> = {};
-
-  for (const key in originalObject) {
-    if (originalObject.hasOwnProperty(key)) {
-      if (originalObject[key] !== modifiedObject[key]) {
-        changedFields[key] = modifiedObject[key];
-      }
-    }
-  }
-
-  return changedFields;
-};

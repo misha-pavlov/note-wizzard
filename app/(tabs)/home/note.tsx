@@ -11,30 +11,12 @@ import {
   useColorMode,
   useToast,
 } from "native-base";
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
 import {
-  Platform,
-  Pressable,
-  useWindowDimensions,
-  Share,
-  Animated,
-} from "react-native";
-import {
-  HandlerStateChangeEvent,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
-  State,
-} from "react-native-gesture-handler";
-import { Easing } from "react-native-reanimated";
-import {
+  useCallbackOnUnmount,
   useCustomNavigation,
   useNoteWizardTheme,
   useSelectNoteFolder,
@@ -46,9 +28,11 @@ import { constants } from "../../../config/constants";
 import {
   useDeleteNoteByIdMutation,
   useGetNoteByIdQuery,
+  useUpdateNoteMutation,
 } from "../../../store/noteApi/note.api";
 import { NoteType } from "../../../dataTypes/note.types";
 import { NoteWizardSpinner } from "../../../components";
+import { findChangedFields } from "../../../helpers/genereal-helpers";
 
 type UpdateFields = {
   title?: string;
@@ -88,7 +72,6 @@ const Note = () => {
   // state
   const [note, dispatch] = useReducer(reducer, {} as NoteType);
   const [showReminder, setShowReminder] = useState(false);
-  const scale = useRef(new Animated.Value(1)).current;
 
   // styles
   const { currentTheme } = useNoteWizardTheme();
@@ -105,7 +88,12 @@ const Note = () => {
     {
       noteId,
     },
-    { skip: !noteId }
+    {
+      skip: !noteId,
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }
   );
 
   // mutaions
@@ -113,25 +101,32 @@ const Note = () => {
     noteId,
     refetch
   );
+
   const [deleteNoteById, { error: deleteError }] = useDeleteNoteByIdMutation();
+  const [updateNote] = useUpdateNoteMutation();
+  useCallbackOnUnmount(() => {
+    updateNote({ noteId, ...findChangedFields(noteById, note) });
+  });
 
   // modals
-  const { renderSelectFolderModal, showModalToggle: selectNoteFolder } = useSelectNoteFolder(
-    (selectedFolderId) =>
-      dispatch({
-        type: "UPDATE_NOTE",
-        payload: { folderId: selectedFolderId },
-      }),
-    note?.folderId
-  );
-  const { renderSelectSharingWithModal, showModalToggle: selectSharingWith } = useSelectSharingWithModal(
-    (sharedWith) =>
-      dispatch({
-        type: "UPDATE_NOTE",
-        payload: { sharedWith },
-      }),
-    note?.sharedWith
-  );
+  const { renderSelectFolderModal, showModalToggle: selectNoteFolder } =
+    useSelectNoteFolder(
+      (selectedFolderId) =>
+        dispatch({
+          type: "UPDATE_NOTE",
+          payload: { folderId: selectedFolderId },
+        }),
+      note?.folderId
+    );
+  const { renderSelectSharingWithModal, showModalToggle: selectSharingWith } =
+    useSelectSharingWithModal(
+      (sharedWith) =>
+        dispatch({
+          type: "UPDATE_NOTE",
+          payload: { sharedWith },
+        }),
+      note?.sharedWith
+    );
 
   const keyboardVerticalOffset = Platform.select({
     ios: height / 2,
@@ -148,24 +143,6 @@ const Note = () => {
       console.error(error);
     }
   }, []);
-
-  const onZoomEvent = Animated.event([{ nativeEvent: { scale: scale } }], {
-    useNativeDriver: true,
-  });
-
-  const onZoomStateChange = (
-    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
-  ) => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 2500,
-        delay: 500,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }
-  };
 
   // render top dots
   useEffect(() => {
@@ -223,7 +200,9 @@ const Note = () => {
           >
             <Menu.Item onPress={updateNoteName}>Update note name</Menu.Item>
             <Menu.Item onPress={selectNoteFolder}>Update note folder</Menu.Item>
-            <Menu.Item onPress={selectSharingWith}>Share with in app users</Menu.Item>
+            <Menu.Item onPress={selectSharingWith}>
+              Share with in app users
+            </Menu.Item>
             <Menu.Item onPress={shareNote}>Share</Menu.Item>
             <Menu.Item
               onPress={() => deleteNoteById({ noteId })}
@@ -243,7 +222,7 @@ const Note = () => {
     dispatch,
     note,
     selectNoteFolder,
-    selectSharingWith
+    selectSharingWith,
   ]);
 
   // set note data
@@ -274,37 +253,6 @@ const Note = () => {
     }
   }, [deleteError]);
 
-  // zoom in/out
-  useEffect(() => {
-    const loopAnimation = () => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 0.8,
-            duration: 2500,
-            easing: Easing.in(Easing.ease),
-            delay: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 2500,
-            delay: 500,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    };
-
-    const intervalId = setInterval(loopAnimation, 5000);
-
-    // Call loopAnimation once when the component mounts
-    loopAnimation();
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   if (isLoading || !noteById || !note) {
     return <NoteWizardSpinner />;
   }
@@ -330,7 +278,9 @@ const Note = () => {
                 showReminder ? (
                   <HStack space={1} alignItems="center">
                     <DateTimePicker
-                      value={note?.reminder ? note.reminder : new Date()}
+                      value={
+                        note?.reminder ? new Date(note.reminder) : new Date()
+                      }
                       onChange={(event, date) =>
                         dispatch({
                           type: "UPDATE_NOTE",
@@ -346,7 +296,15 @@ const Note = () => {
                         name="delete"
                         size={16}
                         color={currentTheme.red}
-                        onPress={() => setShowReminder(false)}
+                        onPress={() => {
+                          dispatch({
+                            type: "UPDATE_NOTE",
+                            // @ts-ignore - becuase we must here use null for
+                            // escate of filtering during sending on server
+                            payload: { reminder: null },
+                          });
+                          setShowReminder(false);
+                        }}
                       />
                     )}
                     <MaterialIcons
@@ -357,25 +315,14 @@ const Note = () => {
                     />
                   </HStack>
                 ) : (
-                  <PinchGestureHandler
-                    onGestureEvent={onZoomEvent}
-                    onHandlerStateChange={onZoomStateChange}
-                  >
-                    <Animated.View
-                      style={note?.reminder && [{ transform: [{ scale }] }]}
-                    >
-                      <MaterialIcons
-                        name="timer"
-                        size={16}
-                        color={
-                          note?.reminder
-                            ? currentTheme.font
-                            : currentTheme.purple
-                        }
-                        onPress={() => setShowReminder(true)}
-                      />
-                    </Animated.View>
-                  </PinchGestureHandler>
+                  <MaterialIcons
+                    name="timer"
+                    size={16}
+                    color={
+                      note?.reminder ? currentTheme.font : currentTheme.purple
+                    }
+                    onPress={() => setShowReminder(true)}
+                  />
                 )
               }
             />

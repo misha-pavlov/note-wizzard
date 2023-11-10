@@ -14,5 +14,6 @@ export { default as useSelectSharingWithModal } from "./note/useSelectSharingWit
 export { default as useCustomNavigation } from "./navigations/useCustomNavigation";
 // general
 export { default as useDebounce } from "./general/useDebounce";
+export { default as useCallbackOnUnmount } from "./general/useCallbackOnUnmount";
 // auth
 export { default as useGoogleAuth } from "./auth/useGoogleAuth";
