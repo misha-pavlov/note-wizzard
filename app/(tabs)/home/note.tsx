@@ -11,11 +11,15 @@ import {
   useColorMode,
   useToast,
 } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
-import { useCustomNavigation, useNoteWizardTheme, useUpdateNoteNameModal } from "../../../hooks";
+import {
+  useCustomNavigation,
+  useNoteWizardTheme,
+  useUpdateNoteNameModal,
+} from "../../../hooks";
 import { Audio, NoteBody } from "./components";
 import { constants } from "../../../config/constants";
 import {
@@ -25,6 +29,34 @@ import {
 import { NoteType } from "../../../dataTypes/note.types";
 import { NoteWizardSpinner } from "../../../components";
 
+type UpdateFields = {
+  title?: string;
+  content?: string;
+  reminder?: Date;
+  privacy?: "private" | "public";
+  sharedWith?: string[];
+  recorders?: string[];
+  folderId?: string;
+  isImportant?: boolean;
+};
+
+const reducer = (
+  state: NoteType,
+  action: {
+    type: string;
+    payload: UpdateFields;
+  }
+): NoteType => {
+  switch (action.type) {
+    case "UPDATE_NOTE":
+      return { ...state, ...action.payload };
+    case "SET_NOTE":
+      return action.payload as NoteType;
+    default:
+      return state;
+  }
+};
+
 const Note = () => {
   // nav
   const params = useSearchParams();
@@ -33,7 +65,7 @@ const Note = () => {
   const router = useRouter();
 
   // state
-  const [note, setNote] = useState<NoteType | undefined>();
+  const [note, dispatch] = useReducer(reducer, {} as NoteType);
   const [showReminder, setShowReminder] = useState(false);
 
   // styles
@@ -120,7 +152,7 @@ const Note = () => {
   // set note data
   useEffect(() => {
     if (noteById) {
-      setNote(noteById);
+      dispatch({ type: 'SET_NOTE', payload: noteById })
     }
   }, [noteById]);
 
@@ -163,7 +195,7 @@ const Note = () => {
               variant="unstyled"
               placeholder="Title"
               value={note.title}
-              onChangeText={(newTitle) => setNote({ ...note, title: newTitle })}
+              onChangeText={(newTitle) => dispatch({ type: 'UPDATE_NOTE', payload: { title: newTitle } })}
               InputRightElement={
                 showReminder ? (
                   <HStack space={1} alignItems="center">
