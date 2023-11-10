@@ -158,7 +158,32 @@ const Note = () => {
         }`,
       }),
       headerRight: () => (
-        <Box alignItems="center">
+        <HStack alignItems="center" space={3}>
+          {note?.isImportant ? (
+            <MaterialIcons
+              name="star"
+              size={20}
+              color={currentTheme.purple}
+              onPress={() =>
+                dispatch({
+                  type: "UPDATE_NOTE",
+                  payload: { isImportant: false },
+                })
+              }
+            />
+          ) : (
+            <MaterialIcons
+              name="star-border"
+              size={20}
+              color={currentTheme.purple}
+              onPress={() =>
+                dispatch({
+                  type: "UPDATE_NOTE",
+                  payload: { isImportant: true },
+                })
+              }
+            />
+          )}
           <Menu
             w="150"
             trigger={(triggerProps) => {
@@ -182,10 +207,10 @@ const Note = () => {
               Delete
             </Menu.Item>
           </Menu>
-        </Box>
+        </HStack>
       ),
     });
-  }, [currentTheme, updateNoteName, noteById, deleteNoteById, deleteNoteById]);
+  }, [currentTheme, updateNoteName, noteById, deleteNoteById, dispatch, note]);
 
   // set note data
   useEffect(() => {
@@ -302,7 +327,9 @@ const Note = () => {
                     onGestureEvent={onZoomEvent}
                     onHandlerStateChange={onZoomStateChange}
                   >
-                    <Animated.View style={note?.reminder && [{ transform: [{ scale }] }]}>
+                    <Animated.View
+                      style={note?.reminder && [{ transform: [{ scale }] }]}
+                    >
                       <MaterialIcons
                         name="timer"
                         size={16}
