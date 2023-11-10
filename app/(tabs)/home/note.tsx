@@ -11,10 +11,29 @@ import {
   useColorMode,
   useToast,
 } from "native-base";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
+import {
+  Platform,
+  Pressable,
+  useWindowDimensions,
+  Share,
+  Animated,
+} from "react-native";
+import {
+  HandlerStateChangeEvent,
+  PinchGestureHandler,
+  PinchGestureHandlerEventPayload,
+  State,
+} from "react-native-gesture-handler";
+import { Easing } from "react-native-reanimated";
 import {
   useCustomNavigation,
   useNoteWizardTheme,
@@ -67,6 +86,7 @@ const Note = () => {
   // state
   const [note, dispatch] = useReducer(reducer, {} as NoteType);
   const [showReminder, setShowReminder] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
 
   // styles
   const { currentTheme } = useNoteWizardTheme();
@@ -108,6 +128,24 @@ const Note = () => {
       console.error(error);
     }
   }, []);
+
+  const onZoomEvent = Animated.event([{ nativeEvent: { scale: scale } }], {
+    useNativeDriver: true,
+  });
+
+  const onZoomStateChange = (
+    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
+  ) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 2500,
+        delay: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    }
+  };
 
   // render top dots
   useEffect(() => {
@@ -152,7 +190,7 @@ const Note = () => {
   // set note data
   useEffect(() => {
     if (noteById) {
-      dispatch({ type: 'SET_NOTE', payload: noteById })
+      dispatch({ type: "SET_NOTE", payload: noteById });
     }
   }, [noteById]);
 
@@ -177,6 +215,37 @@ const Note = () => {
     }
   }, [deleteError]);
 
+  // zoom in/out
+  useEffect(() => {
+    const loopAnimation = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(scale, {
+            toValue: 0.8,
+            duration: 2500,
+            easing: Easing.in(Easing.ease),
+            delay: 500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 1,
+            duration: 2500,
+            delay: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    };
+
+    const intervalId = setInterval(loopAnimation, 5000);
+
+    // Call loopAnimation once when the component mounts
+    loopAnimation();
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   if (isLoading || !noteById || !note) {
     return <NoteWizardSpinner />;
   }
@@ -195,16 +264,32 @@ const Note = () => {
               variant="unstyled"
               placeholder="Title"
               value={note.title}
-              onChangeText={(newTitle) => dispatch({ type: 'UPDATE_NOTE', payload: { title: newTitle } })}
+              onChangeText={(newTitle) =>
+                dispatch({ type: "UPDATE_NOTE", payload: { title: newTitle } })
+              }
               InputRightElement={
                 showReminder ? (
                   <HStack space={1} alignItems="center">
                     <DateTimePicker
-                      value={new Date()}
+                      value={note?.reminder ? note.reminder : new Date()}
+                      onChange={(event, date) =>
+                        dispatch({
+                          type: "UPDATE_NOTE",
+                          payload: { reminder: date },
+                        })
+                      }
                       mode="datetime"
                       themeVariant={colorMode || undefined}
                       style={{ width: 180, height: 27 }}
                     />
+                    {note?.reminder && (
+                      <MaterialIcons
+                        name="delete"
+                        size={16}
+                        color={currentTheme.red}
+                        onPress={() => setShowReminder(false)}
+                      />
+                    )}
                     <MaterialIcons
                       name="cancel"
                       size={16}
@@ -213,12 +298,23 @@ const Note = () => {
                     />
                   </HStack>
                 ) : (
-                  <MaterialIcons
-                    name="timer"
-                    size={16}
-                    color={currentTheme.purple}
-                    onPress={() => setShowReminder(true)}
-                  />
+                  <PinchGestureHandler
+                    onGestureEvent={onZoomEvent}
+                    onHandlerStateChange={onZoomStateChange}
+                  >
+                    <Animated.View style={note?.reminder && [{ transform: [{ scale }] }]}>
+                      <MaterialIcons
+                        name="timer"
+                        size={16}
+                        color={
+                          note?.reminder
+                            ? currentTheme.font
+                            : currentTheme.purple
+                        }
+                        onPress={() => setShowReminder(true)}
+                      />
+                    </Animated.View>
+                  </PinchGestureHandler>
                 )
               }
             />
