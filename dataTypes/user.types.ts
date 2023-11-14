@@ -47,3 +47,7 @@ export type UpdateUserProfileParams = {
   email?: string;
   image?: string;
 };
+
+export type GetAllUsersParams = {
+  searchTerm?: string;
+}

@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   HStack,
+  Input,
   Modal,
   Pressable,
   Text,
@@ -9,6 +10,7 @@ import {
 } from "native-base";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import useNoteWizardTheme from "../theme/useNoteWizardTheme";
 import { NoteWizardSpinner } from "../../components";
 import { constants } from "../../config/constants";
@@ -18,6 +20,7 @@ import {
 } from "../../store/userApi/user.api";
 import { UserType } from "../../dataTypes/user.types";
 import { getUserInitials, getUserName } from "../../helpers/user-helpers";
+import { useDebounce } from "..";
 
 const getNewSharedWith = (id: string, selectedIds: string[]) => {
   if (selectedIds.includes(id)) {
@@ -32,9 +35,13 @@ const useSelectSharingWithModal = (
   defaultSharedWith?: string[]
 ) => {
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [sharedWith, setSharedWith] = useState(defaultSharedWith || []);
   const { currentTheme } = useNoteWizardTheme();
-  const { data: users, isLoading } = useGetAllUsersQuery();
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const { data: users, isLoading } = useGetAllUsersQuery({
+    searchTerm: debouncedSearchTerm,
+  });
   const { data: currentUser } = useCurrentUserQuery();
 
   // add this because useState doesn't works as expected for some reason
@@ -78,6 +85,21 @@ const useSelectSharingWithModal = (
     [sharedWith, getNewSharedWith, currentUser]
   );
 
+  const cancelButton = useMemo(
+    () => (
+      <Pressable
+        pr={2}
+        _pressed={{ opacity: 0.5 }}
+        onPress={() => {
+          setSearchTerm("");
+        }}
+      >
+        <MaterialIcons name="cancel" size={24} color={currentTheme.purple} />
+      </Pressable>
+    ),
+    []
+  );
+
   const renderList = useMemo(() => {
     if (isLoading || !users) {
       return <NoteWizardSpinner />;
@@ -99,6 +121,36 @@ const useSelectSharingWithModal = (
     );
   }, [isLoading, sharedWith, renderItem, users]);
 
+  const renderSearchInput = useMemo(
+    () => (
+      <Input
+        size="xl"
+        borderColor={currentTheme.purple}
+        borderRadius={8}
+        placeholderTextColor={currentTheme.purple}
+        color={currentTheme.purple}
+        placeholder="Search user"
+        value={searchTerm}
+        onChangeText={(newText) => setSearchTerm(newText)}
+        _focus={{
+          backgroundColor: "transparency",
+          borderColor: currentTheme.purple,
+        }}
+        mb={2}
+        InputLeftElement={
+          <View pl={2}>
+            <Feather name="search" size={24} color={currentTheme.purple} />
+          </View>
+        }
+        // show icon only when value.length > 0
+        {...(searchTerm.length !== 0 && {
+          InputRightElement: cancelButton,
+        })}
+      />
+    ),
+    [searchTerm, cancelButton]
+  );
+
   const renderSelectSharingWithModal = useMemo(
     () => (
       <Modal
@@ -112,7 +164,10 @@ const useSelectSharingWithModal = (
           <Modal.Header backgroundColor={currentTheme.main}>
             Select folder
           </Modal.Header>
-          <Modal.Body>{renderList}</Modal.Body>
+          <Modal.Body _scrollview={{ scrollEnabled: false }}>
+            {renderSearchInput}
+            {renderList}
+          </Modal.Body>
           <Modal.Footer backgroundColor={currentTheme.main}>
             <Button.Group>
               <Button
@@ -129,7 +184,7 @@ const useSelectSharingWithModal = (
         </Modal.Content>
       </Modal>
     ),
-    [showModal, renderList, onSubmit, sharedWith]
+    [showModal, renderList, onSubmit, sharedWith, searchTerm]
   );
 
   return {

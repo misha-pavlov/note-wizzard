@@ -11,10 +11,10 @@ import {
   useColorMode,
   useToast,
 } from "native-base";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform, Pressable, useWindowDimensions, Share } from "react-native";
+import { Platform, Pressable, useWindowDimensions } from "react-native";
 import {
   useCallbackOnUnmount,
   useCustomNavigation,
@@ -133,17 +133,6 @@ const Note = () => {
     default: 0,
   });
 
-  const shareNote = useCallback(async () => {
-    try {
-      await Share.share({
-        title: "Look on this amazing note",
-        url: "https://google.com",
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   // render top dots
   useEffect(() => {
     navigation.setOptions({
@@ -203,7 +192,6 @@ const Note = () => {
             <Menu.Item onPress={selectSharingWith}>
               Share with in app users
             </Menu.Item>
-            <Menu.Item onPress={shareNote}>Share</Menu.Item>
             <Menu.Item
               onPress={() => deleteNoteById({ noteId })}
               backgroundColor={currentTheme.red}
