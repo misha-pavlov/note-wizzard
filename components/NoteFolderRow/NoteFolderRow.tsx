@@ -1,6 +1,7 @@
 import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
 import { FC, memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import RenderHtml from "react-native-render-html";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
@@ -74,7 +75,11 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
       p={4}
       {...(selected && { borderColor: currentTheme.purple, borderWidth: 1 })}
     >
-      <HStack justifyContent="space-between" alignItems="center">
+      <HStack
+        justifyContent="space-between"
+        alignItems="center"
+        overflow="hidden"
+      >
         <HStack space={4} alignItems="center">
           <IconButton
             icon={getIcon()}
@@ -84,9 +89,18 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
             h={36}
           />
 
-          <VStack>
+          <VStack space={1}>
             <Text fontWeight={700}>{note ? note.name : folder?.title}</Text>
-            <Text fontSize={13}>{getSubText()}</Text>
+            <RenderHtml
+              contentWidth={100}
+              baseStyle={{
+                color: currentTheme.font,
+                fontSize: 13,
+                maxHeight: 15,
+                overflow: "hidden",
+              }}
+              source={{ html: getSubText() }}
+            />
           </VStack>
         </HStack>
 
