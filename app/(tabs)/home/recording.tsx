@@ -1,15 +1,19 @@
 import { View, Text, Pressable, Box } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCallback, useMemo, useState } from "react";
-import { Vibration } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Vibration, Animated, Easing } from "react-native";
 import { Audio } from "expo-av";
 import { useSearchParams } from "expo-router";
-import { useCustomNavigation, useNoteWizardTheme } from "../../../hooks";
-import { RotateView } from "./components";
+import {
+  useCallbackOnUnmount,
+  useCustomNavigation,
+  useNoteWizardTheme,
+} from "../../../hooks";
 import { uploadAudio } from "../../../helpers/audio-helpers";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
 import { NoteType } from "../../../dataTypes/note.types";
 import { useUpdateNoteMutation } from "../../../store/noteApi/note.api";
+import { secondsToMinutesAndSeconds } from "../../../helpers/date-helpers";
 
 const Recording = () => {
   const params = useSearchParams();
@@ -21,7 +25,26 @@ const Recording = () => {
 
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording>();
+  const [time, setTime] = useState(0);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const spinValue = useRef(new Animated.Value(0)).current;
+
   const note = JSON.parse(params.note as string) as NoteType;
+
+  const startStopwatch = useCallback(() => {
+    startTimeRef.current = Date.now() - time * 1000;
+    intervalRef.current = setInterval(() => {
+      setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 1000);
+  }, [intervalRef, startTimeRef]);
+
+  const pauseStopwatch = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  }, [intervalRef]);
 
   // TODO: CHECK AN ISSUE BECAUSE DOESN'T WORK FOR NEW IOS
   // https://github.com/expo/expo/issues/21782
@@ -35,6 +58,7 @@ const Recording = () => {
       });
 
       console.log("Starting recording..");
+      startStopwatch();
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
@@ -43,7 +67,7 @@ const Recording = () => {
     } catch (err) {
       console.error("Failed to start recording", err);
     }
-  }, [recording]);
+  }, [recording, startStopwatch]);
 
   const stopRecording = useCallback(async () => {
     console.log("Stopping recording..");
@@ -54,7 +78,9 @@ const Recording = () => {
           allowsRecordingIOS: false,
         });
         const uri = recording.getURI();
+        pauseStopwatch();
         console.log("Recording stopped and now uploading");
+        goBack();
 
         if (uri && currentUser) {
           const uploadedUrl = await uploadAudio(
@@ -74,21 +100,74 @@ const Recording = () => {
       }
     }
     setRecording(undefined);
-  }, [recording, currentUser, note]);
+  }, [recording, currentUser, note, pauseStopwatch]);
+
+  const extraStopRecording = useCallback(async () => {
+    console.log("Extra stopping recording..");
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+      console.log("Recording stopped");
+    }
+    setRecording(undefined);
+  }, [recording]);
+
+  // max recording time is 5 mins(300 seconds)
+  useEffect(() => {
+    if (time === 300) {
+      stopRecording();
+    }
+  }, [time]);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(spinValue, {
+        toValue: 1,
+        duration: 2000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [spinValue]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   const recordingAnimation = useMemo(
     () => (
-      <View mt={150} alignItems="center" position="relative">
-        <RotateView duration={1000} />
-        <RotateView duration={1500} />
-        <RotateView duration={2000} />
-        <Text fontSize={25} position="absolute" top={55}>
-          2:30
-        </Text>
+      <View
+        position="absolute"
+        top={100}
+        left="33%"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <View position="absolute">
+          <Text fontSize={25}>{secondsToMinutesAndSeconds(time)}</Text>
+        </View>
+        <Animated.View
+          style={[
+            {
+              width: 150,
+              height: 150,
+              borderWidth: 2,
+              borderColor: currentTheme.purple,
+            },
+            {
+              transform: [{ rotate: spin }],
+            },
+          ]}
+        />
       </View>
     ),
-    []
+    [time]
   );
+
+  useCallbackOnUnmount(extraStopRecording);
 
   return (
     <View

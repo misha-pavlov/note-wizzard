@@ -11,3 +11,13 @@ export const noteWizardDateFormat = (date: Date) => {
     sameElse: "MMMM D, YYYY", // Everything else ( August 16, 2018 )
   });
 };
+
+export const secondsToMinutesAndSeconds = (seconds: number): string => {
+  const minutes: number = Math.floor(seconds / 60);
+  const remainingSeconds: number = seconds % 60;
+
+  // Add leading zero if seconds is less than 10
+  const formattedSeconds: string = remainingSeconds < 10 ? "0" + remainingSeconds : "" + remainingSeconds;
+
+  return `${minutes}:${formattedSeconds}`;
+}
