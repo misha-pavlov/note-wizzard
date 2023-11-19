@@ -11,16 +11,28 @@ import {
 } from "../../../hooks";
 import { uploadAudio } from "../../../helpers/audio-helpers";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
-import { NoteType } from "../../../dataTypes/note.types";
-import { useUpdateNoteMutation } from "../../../store/noteApi/note.api";
+import {
+  useGetNoteByIdQuery,
+  useUpdateNoteMutation,
+} from "../../../store/noteApi/note.api";
 import { secondsToMinutesAndSeconds } from "../../../helpers/date-helpers";
+import { NoteWizardSpinner } from "../../../components";
 
 const Recording = () => {
   const params = useSearchParams();
+  const noteId = params.noteId as string;
   const { goBack } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
 
   const { data: currentUser } = useCurrentUserQuery();
+  const { data: noteById, isLoading } = useGetNoteByIdQuery(
+    {
+      noteId,
+    },
+    {
+      skip: !noteId,
+    }
+  );
   const [updateNote] = useUpdateNoteMutation();
 
   const [isRecording, setIsRecording] = useState(false);
@@ -30,8 +42,6 @@ const Recording = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const spinValue = useRef(new Animated.Value(0)).current;
-
-  const note = JSON.parse(params.note as string) as NoteType;
 
   const startStopwatch = useCallback(() => {
     startTimeRef.current = Date.now() - time * 1000;
@@ -80,31 +90,26 @@ const Recording = () => {
         const uri = recording.getURI();
         pauseStopwatch();
         console.log("Recording stopped and now uploading");
-        goBack();
 
         if (uri && currentUser) {
-          const uploadedUrl = await uploadAudio(
-            uri,
-            note._id,
-            currentUser?._id
-          );
+          const uploadedUrl = await uploadAudio(uri, noteId, currentUser?._id);
           console.log("Uploading done");
           updateNote({
-            noteId: note._id,
-            recorders: [...(note?.recorders || []), uploadedUrl],
+            noteId,
+            recorders: [...(noteById?.recorders || []), uploadedUrl],
           });
-          goBack();
         }
       } catch (error) {
         console.error(error);
       }
     }
     setRecording(undefined);
-  }, [recording, currentUser, note, pauseStopwatch]);
+    goBack();
+  }, [recording, currentUser, noteId, noteById, pauseStopwatch]);
 
   const extraStopRecording = useCallback(async () => {
-    console.log("Extra stopping recording..");
-    if (recording) {
+    if (recording && isRecording) {
+      console.log("Extra stopping recording..");
       await recording.stopAndUnloadAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -112,7 +117,7 @@ const Recording = () => {
       console.log("Recording stopped");
     }
     setRecording(undefined);
-  }, [recording]);
+  }, [recording, isRecording]);
 
   // max recording time is 5 mins(300 seconds)
   useEffect(() => {
@@ -168,6 +173,10 @@ const Recording = () => {
   );
 
   useCallbackOnUnmount(extraStopRecording);
+
+  if (isLoading) {
+    return <NoteWizardSpinner />;
+  }
 
   return (
     <View

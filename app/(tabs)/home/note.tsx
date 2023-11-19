@@ -315,7 +315,7 @@ const Note = () => {
             />
 
             {/* RECORDERS */}
-            <Audio />
+            <Audio recorders={note?.recorders} />
 
             {/* NOTE */}
             <NoteBody
@@ -337,7 +337,7 @@ const Note = () => {
         placement="bottom-right"
         onPress={() =>
           navigation.navigate(constants.screens.recording, {
-            note: JSON.stringify(note),
+            noteId,
           })
         }
         renderInPortal={false}

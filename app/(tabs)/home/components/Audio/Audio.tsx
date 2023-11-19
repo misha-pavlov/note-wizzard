@@ -1,13 +1,19 @@
-import { HStack, Pressable, Text, VStack, View } from "native-base";
-import { Button, useWindowDimensions } from "react-native";
+import { HStack, Pressable, Text, View } from "native-base";
+import { useWindowDimensions } from "react-native";
 import { AVPlaybackStatusSuccess, Audio as ExpoAudio } from "expo-av";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Sound } from "expo-av/build/Audio";
 import { Foundation } from "@expo/vector-icons";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
+import { FlashList } from "@shopify/flash-list";
 import { useNoteWizardTheme } from "../../../../../hooks";
+import { NoteType } from "../../../../../dataTypes/note.types";
 
-const Audio = () => {
+type AudioPropsType = {
+  recorders: NoteType["recorders"];
+};
+
+const Audio: FC<AudioPropsType> = ({ recorders }) => {
   const [sound, setSound] = useState<Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const { currentTheme } = useNoteWizardTheme();
@@ -22,37 +28,44 @@ const Audio = () => {
       : undefined;
   }, [sound]);
 
-  const playSound = useCallback(async () => {
-    const soundStatus =
-      (await sound?.getStatusAsync()) as AVPlaybackStatusSuccess;
+  const playSound = useCallback(
+    async (uri: string) => {
+      const soundStatus =
+        (await sound?.getStatusAsync()) as AVPlaybackStatusSuccess;
 
-    if (soundStatus?.isPlaying) {
-      console.log("Pause Sound");
-      await sound?.pauseAsync();
-      setIsPlaying(false);
-      return;
-    }
+      if (soundStatus?.isPlaying) {
+        console.log("Pause Sound");
+        await sound?.pauseAsync();
+        setIsPlaying(false);
+        return;
+      }
 
-    console.log("Loading Sound");
-    const { sound: createdSound } = await ExpoAudio.Sound.createAsync({
-      uri: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
-    });
+      console.log("Loading Sound");
+      try {
+        const { sound: createdSound } = await ExpoAudio.Sound.createAsync({
+          uri,
+        });
 
-    setSound(createdSound);
+        setSound(createdSound);
 
-    console.log("Playing Sound");
-    await createdSound.playAsync();
-    setIsPlaying(true);
-  }, [sound]);
+        console.log("Playing Sound");
+        await createdSound.playAsync();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [sound]
+  );
 
-  const audioFile = useMemo(
-    () => (
+  const audioFile = useCallback(
+    ({ item }: { item: string }) => (
       <Pressable
         _pressed={{ opacity: 0.5 }}
         backgroundColor={currentTheme.second}
         padding={3}
         borderRadius={15}
-        onPress={playSound}
+        onPress={() => playSound(item)}
       >
         <HStack alignItems="center" justifyContent="space-between">
           <View w={28}>
@@ -80,13 +93,18 @@ const Audio = () => {
     [isPlaying, width]
   );
 
+  if (!recorders) {
+    return null;
+  }
+
   return (
-    <VStack space={3}>
-      {audioFile}
-      {audioFile}
-      {audioFile}
-      {audioFile}
-    </VStack>
+    <FlashList
+      ItemSeparatorComponent={() => <View mt={3} />}
+      data={recorders}
+      renderItem={audioFile}
+      estimatedItemSize={52}
+      extraData={recorders}
+    />
   );
 };
 
