@@ -3,13 +3,25 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCallback, useMemo, useState } from "react";
 import { Vibration } from "react-native";
 import { Audio } from "expo-av";
-import { useNoteWizardTheme } from "../../../hooks";
+import { useSearchParams } from "expo-router";
+import { useCustomNavigation, useNoteWizardTheme } from "../../../hooks";
 import { RotateView } from "./components";
+import { uploadAudio } from "../../../helpers/audio-helpers";
+import { useCurrentUserQuery } from "../../../store/userApi/user.api";
+import { NoteType } from "../../../dataTypes/note.types";
+import { useUpdateNoteMutation } from "../../../store/noteApi/note.api";
 
 const Recording = () => {
+  const params = useSearchParams();
+  const { goBack } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
+
+  const { data: currentUser } = useCurrentUserQuery();
+  const [updateNote] = useUpdateNoteMutation();
+
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording>();
+  const note = JSON.parse(params.note as string) as NoteType;
 
   // TODO: CHECK AN ISSUE BECAUSE DOESN'T WORK FOR NEW IOS
   // https://github.com/expo/expo/issues/21782
@@ -35,20 +47,34 @@ const Recording = () => {
 
   const stopRecording = useCallback(async () => {
     console.log("Stopping recording..");
-    console.log(
-      "🚀 ~ file: recording.tsx:37 ~ stopRecording ~ recording:",
-      recording
-    );
     if (recording) {
-      await recording.stopAndUnloadAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-      });
-      const uri = recording.getURI();
-      console.log("Recording stopped and stored at", uri);
+      try {
+        await recording.stopAndUnloadAsync();
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+        });
+        const uri = recording.getURI();
+        console.log("Recording stopped and now uploading");
+
+        if (uri && currentUser) {
+          const uploadedUrl = await uploadAudio(
+            uri,
+            note._id,
+            currentUser?._id
+          );
+          console.log("Uploading done");
+          updateNote({
+            noteId: note._id,
+            recorders: [...(note?.recorders || []), uploadedUrl],
+          });
+          goBack();
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
     setRecording(undefined);
-  }, [recording]);
+  }, [recording, currentUser, note]);
 
   const recordingAnimation = useMemo(
     () => (
@@ -65,7 +91,11 @@ const Recording = () => {
   );
 
   return (
-    <View position="relative" flex={1} backgroundColor={currentTheme.background}>
+    <View
+      position="relative"
+      flex={1}
+      backgroundColor={currentTheme.background}
+    >
       {isRecording && recordingAnimation}
       <Pressable
         alignItems="center"

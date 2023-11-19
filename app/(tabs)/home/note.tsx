@@ -1,4 +1,4 @@
-import { useRouter, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import {
   Fab,
   HStack,
@@ -67,7 +67,6 @@ const Note = () => {
   const params = useSearchParams();
   const noteId = params.noteId as string;
   const navigation = useCustomNavigation();
-  const router = useRouter();
 
   // state
   const [note, dispatch] = useReducer(reducer, {} as NoteType);
@@ -336,7 +335,11 @@ const Note = () => {
         backgroundColor={currentTheme.purple}
         _pressed={{ opacity: 0.5 }}
         placement="bottom-right"
-        onPress={() => router.push(constants.routes.recording)}
+        onPress={() =>
+          navigation.navigate(constants.screens.recording, {
+            note: JSON.stringify(note),
+          })
+        }
         renderInPortal={false}
         icon={
           <MaterialCommunityIcons
