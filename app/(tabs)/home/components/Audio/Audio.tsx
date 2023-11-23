@@ -3,13 +3,14 @@ import { useWindowDimensions } from "react-native";
 import { Audio as ExpoAudio } from "expo-av";
 import { FC, useCallback, useEffect, useState } from "react";
 import { Sound } from "expo-av/build/Audio";
-import { Foundation } from "@expo/vector-icons";
+import { Foundation, MaterialIcons } from "@expo/vector-icons";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
 import { FlashList } from "@shopify/flash-list";
 import { useNoteWizardTheme } from "../../../../../hooks";
 import { NoteType } from "../../../../../dataTypes/note.types";
 import { secondsToMinutesAndSeconds } from "../../../../../helpers/date-helpers";
 import { NoteWizardSpinner } from "../../../../../components";
+import { SwipeableBlock } from "..";
 
 type AudioPropsType = {
   recorders: NoteType["recorders"];
@@ -127,56 +128,77 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
       }
 
       return (
-        <HStack space={2} alignItems="center" justifyContent="space-between">
-          <Pressable
-            _pressed={{ opacity: 0.5 }}
-            backgroundColor={currentTheme.second}
-            padding={3}
-            borderRadius={15}
-            onPress={() => playSound(uri)}
-          >
-            <HStack
+        <SwipeableBlock
+          callback={() => console.log("123")}
+          rectElement={
+            <View
+              ml={2}
+              backgroundColor={currentTheme.red}
+              h="100%"
+              w={50}
+              borderRadius={10}
               alignItems="center"
-              justifyContent="space-between"
-              space={2}
+              justifyContent="center"
             >
-              <View w={28}>
-                {playing === uri ? (
-                  <Foundation
-                    name="pause"
-                    size={28}
-                    color={currentTheme.purple}
-                  />
-                ) : (
-                  <Foundation
-                    name="play-circle"
-                    size={28}
-                    color={currentTheme.purple}
-                  />
-                )}
-              </View>
-              <ProgressBarAnimated
-                width={width / 1.9}
-                value={value}
-                maxValue={100}
-                backgroundColor={currentTheme.purple}
-                borderColor={currentTheme.gray}
+              <MaterialIcons
+                name="delete"
+                size={18}
+                color={currentTheme.white}
               />
-              <Text>{item.totalPlayTime}</Text>
-            </HStack>
-          </Pressable>
-
-          <Pressable _pressed={{ opacity: 0.5 }}>
-            <View>
-              <Text textAlign="center" color={currentTheme.purple}>
-                Convert
-              </Text>
-              <Text textAlign="center" color={currentTheme.purple}>
-                in text
-              </Text>
             </View>
-          </Pressable>
-        </HStack>
+          }
+        >
+          <HStack space={2} alignItems="center" justifyContent="space-between">
+            <Pressable
+              _pressed={{ opacity: 0.5 }}
+              backgroundColor={currentTheme.second}
+              padding={3}
+              borderRadius={15}
+              onPress={() => playSound(uri)}
+            >
+              <HStack
+                alignItems="center"
+                justifyContent="space-between"
+                space={2}
+              >
+                <View w={28}>
+                  {playing === uri ? (
+                    <Foundation
+                      name="pause"
+                      size={28}
+                      color={currentTheme.purple}
+                    />
+                  ) : (
+                    <Foundation
+                      name="play-circle"
+                      size={28}
+                      color={currentTheme.purple}
+                    />
+                  )}
+                </View>
+                <ProgressBarAnimated
+                  width={width / 1.9}
+                  value={value}
+                  maxValue={100}
+                  backgroundColor={currentTheme.purple}
+                  borderColor={currentTheme.gray}
+                />
+                <Text>{item.totalPlayTime}</Text>
+              </HStack>
+            </Pressable>
+
+            <Pressable _pressed={{ opacity: 0.5 }}>
+              <View>
+                <Text textAlign="center" color={currentTheme.purple}>
+                  Convert
+                </Text>
+                <Text textAlign="center" color={currentTheme.purple}>
+                  in text
+                </Text>
+              </View>
+            </Pressable>
+          </HStack>
+        </SwipeableBlock>
       );
     },
     [playing, width, playSound, position, duration]
