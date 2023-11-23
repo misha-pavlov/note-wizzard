@@ -1,4 +1,4 @@
-import { HStack, Pressable, Text, View } from "native-base";
+import { Center, HStack, Pressable, Text, VStack, View } from "native-base";
 import { useWindowDimensions } from "react-native";
 import { Audio as ExpoAudio } from "expo-av";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -20,6 +20,12 @@ type SavedRecorders = { uri: string; totalPlayTime: string; sound: Sound };
 const Audio: FC<AudioPropsType> = ({ recorders }) => {
   const [playing, setPlaying] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [position, setPosition] = useState<{ [x: string]: number } | undefined>(
+    {}
+  );
+  const [duration, setDuration] = useState<{ [x: string]: number } | undefined>(
+    {}
+  );
   const [savedRecorders, setSavedRecorders] = useState<SavedRecorders[]>([]);
 
   const { currentTheme } = useNoteWizardTheme();
@@ -82,6 +88,8 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
         console.log("Pause Sound");
         await sound.pauseAsync();
         setPlaying("");
+        setPosition({});
+        setDuration({});
         return;
       }
 
@@ -91,8 +99,15 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
         await sound.replayAsync();
 
         sound.setOnPlaybackStatusUpdate((status) => {
-          if (status.isLoaded && status.didJustFinish) {
-            setPlaying("");
+          if (status.isLoaded) {
+            setPosition({ [uri]: status.positionMillis });
+            setDuration({ [uri]: status.durationMillis || 0 });
+
+            if (status.didJustFinish) {
+              setPlaying("");
+              setPosition({ [uri]: 0 });
+              setDuration({ [uri]: 0 });
+            }
           }
         });
       } catch (error) {
@@ -103,38 +118,51 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
   );
 
   const audioFile = useCallback(
-    ({ item }: { item: SavedRecorders }) => (
-      <Pressable
-        _pressed={{ opacity: 0.5 }}
-        backgroundColor={currentTheme.second}
-        padding={3}
-        borderRadius={15}
-        onPress={() => playSound(item.uri)}
-      >
-        <HStack alignItems="center" justifyContent="space-between">
-          <View w={28}>
-            {playing === item.uri ? (
-              <Foundation name="pause" size={28} color={currentTheme.purple} />
-            ) : (
-              <Foundation
-                name="play-circle"
-                size={28}
-                color={currentTheme.purple}
-              />
-            )}
-          </View>
-          <ProgressBarAnimated
-            width={width / 1.7}
-            value={30}
-            maxValue={100}
-            backgroundColor={currentTheme.purple}
-            borderColor={currentTheme.gray}
-          />
-          <Text>{item.totalPlayTime}</Text>
-        </HStack>
-      </Pressable>
-    ),
-    [playing, width, playSound]
+    ({ item }: { item: SavedRecorders }) => {
+      const uri = item.uri;
+      let value = 0;
+
+      if (position && duration) {
+        value = (100 * position[uri]) / duration[uri];
+      }
+
+      return (
+        <Pressable
+          _pressed={{ opacity: 0.5 }}
+          backgroundColor={currentTheme.second}
+          padding={3}
+          borderRadius={15}
+          onPress={() => playSound(uri)}
+        >
+          <HStack alignItems="center" justifyContent="space-between">
+            <View w={28}>
+              {playing === uri ? (
+                <Foundation
+                  name="pause"
+                  size={28}
+                  color={currentTheme.purple}
+                />
+              ) : (
+                <Foundation
+                  name="play-circle"
+                  size={28}
+                  color={currentTheme.purple}
+                />
+              )}
+            </View>
+            <ProgressBarAnimated
+              width={width / 1.7}
+              value={value}
+              maxValue={100}
+              backgroundColor={currentTheme.purple}
+              borderColor={currentTheme.gray}
+            />
+            <Text>{item.totalPlayTime}</Text>
+          </HStack>
+        </Pressable>
+      );
+    },
+    [playing, width, playSound, position, duration]
   );
 
   if (!recorders) {
@@ -142,7 +170,14 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
   }
 
   if (isLoading || savedRecorders.length !== recorders.length) {
-    return <NoteWizardSpinner />;
+    return (
+      <Center>
+        <VStack>
+          <NoteWizardSpinner />
+          <Text>Sorry for long loading :)</Text>
+        </VStack>
+      </Center>
+    );
   }
 
   return (
@@ -151,7 +186,7 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
       data={savedRecorders}
       renderItem={audioFile}
       estimatedItemSize={52}
-      extraData={{ playing, recorders, savedRecorders }}
+      extraData={{ playing, recorders, savedRecorders, position, duration }}
       keyExtractor={(item) => item.uri}
     />
   );
