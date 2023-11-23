@@ -127,39 +127,56 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
       }
 
       return (
-        <Pressable
-          _pressed={{ opacity: 0.5 }}
-          backgroundColor={currentTheme.second}
-          padding={3}
-          borderRadius={15}
-          onPress={() => playSound(uri)}
-        >
-          <HStack alignItems="center" justifyContent="space-between">
-            <View w={28}>
-              {playing === uri ? (
-                <Foundation
-                  name="pause"
-                  size={28}
-                  color={currentTheme.purple}
-                />
-              ) : (
-                <Foundation
-                  name="play-circle"
-                  size={28}
-                  color={currentTheme.purple}
-                />
-              )}
+        <HStack space={2} alignItems="center" justifyContent="space-between">
+          <Pressable
+            _pressed={{ opacity: 0.5 }}
+            backgroundColor={currentTheme.second}
+            padding={3}
+            borderRadius={15}
+            onPress={() => playSound(uri)}
+          >
+            <HStack
+              alignItems="center"
+              justifyContent="space-between"
+              space={2}
+            >
+              <View w={28}>
+                {playing === uri ? (
+                  <Foundation
+                    name="pause"
+                    size={28}
+                    color={currentTheme.purple}
+                  />
+                ) : (
+                  <Foundation
+                    name="play-circle"
+                    size={28}
+                    color={currentTheme.purple}
+                  />
+                )}
+              </View>
+              <ProgressBarAnimated
+                width={width / 1.9}
+                value={value}
+                maxValue={100}
+                backgroundColor={currentTheme.purple}
+                borderColor={currentTheme.gray}
+              />
+              <Text>{item.totalPlayTime}</Text>
+            </HStack>
+          </Pressable>
+
+          <Pressable _pressed={{ opacity: 0.5 }}>
+            <View>
+              <Text textAlign="center" color={currentTheme.purple}>
+                Convert
+              </Text>
+              <Text textAlign="center" color={currentTheme.purple}>
+                in text
+              </Text>
             </View>
-            <ProgressBarAnimated
-              width={width / 1.7}
-              value={value}
-              maxValue={100}
-              backgroundColor={currentTheme.purple}
-              borderColor={currentTheme.gray}
-            />
-            <Text>{item.totalPlayTime}</Text>
-          </HStack>
-        </Pressable>
+          </Pressable>
+        </HStack>
       );
     },
     [playing, width, playSound, position, duration]
