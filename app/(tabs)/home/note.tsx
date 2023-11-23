@@ -1,4 +1,4 @@
-import { useSearchParams } from "expo-router";
+import { useFocusEffect, useSearchParams } from "expo-router";
 import {
   Fab,
   HStack,
@@ -11,7 +11,13 @@ import {
   useColorMode,
   useToast,
 } from "native-base";
-import React, { useEffect, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, Pressable, useWindowDimensions } from "react-native";
@@ -63,6 +69,9 @@ const reducer = (
 };
 
 const Note = () => {
+  // refs
+  const isFirstRender = useRef(true);
+
   // nav
   const params = useSearchParams();
   const noteId = params.noteId as string;
@@ -219,6 +228,19 @@ const Note = () => {
     }
   }, [noteById]);
 
+  // refetch note data
+  useFocusEffect(
+    useCallback(() => {
+      if (!isFirstRender.current) {
+        refetch();
+      }
+
+      return () => {
+        isFirstRender.current = false;
+      };
+    }, [])
+  );
+
   // show errors
   useEffect(() => {
     const error = deleteError as { data?: string & { message?: string } };
@@ -315,7 +337,7 @@ const Note = () => {
             />
 
             {/* RECORDERS */}
-            <Audio recorders={note?.recorders} />
+            <Audio recorders={noteById?.recorders} />
 
             {/* NOTE */}
             <NoteBody

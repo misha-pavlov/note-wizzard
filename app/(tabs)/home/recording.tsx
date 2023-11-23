@@ -104,7 +104,7 @@ const Recording = () => {
       }
     }
     setRecording(undefined);
-    goBack();
+    setTimeout(goBack, 10)
   }, [recording, currentUser, noteId, noteById, pauseStopwatch]);
 
   const extraStopRecording = useCallback(async () => {
