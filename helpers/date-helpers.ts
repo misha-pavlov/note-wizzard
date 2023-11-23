@@ -14,7 +14,7 @@ export const noteWizardDateFormat = (date: Date) => {
 
 export const secondsToMinutesAndSeconds = (seconds: number): string => {
   const minutes: number = Math.floor(seconds / 60);
-  const remainingSeconds: number = seconds % 60;
+  const remainingSeconds: number = Math.floor(seconds % 60);
 
   // Add leading zero if seconds is less than 10
   const formattedSeconds: string = remainingSeconds < 10 ? "0" + remainingSeconds : "" + remainingSeconds;
