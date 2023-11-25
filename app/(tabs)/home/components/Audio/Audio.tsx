@@ -1,7 +1,7 @@
 import { Center, HStack, Pressable, Text, VStack, View } from "native-base";
 import { useWindowDimensions } from "react-native";
 import { Audio as ExpoAudio } from "expo-av";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, memo, useCallback, useEffect, useState } from "react";
 import { Sound } from "expo-av/build/Audio";
 import { Foundation, MaterialIcons } from "@expo/vector-icons";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
@@ -14,13 +14,15 @@ import { SwipeableBlock } from "..";
 
 type AudioPropsType = {
   recorders: NoteType["recorders"];
+  deleteCallback: (uri: string[]) => void;
 };
 
 type SavedRecorders = { uri: string; totalPlayTime: string; sound: Sound };
 
-const Audio: FC<AudioPropsType> = ({ recorders }) => {
+const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
   const [playing, setPlaying] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [rerunEffect, setRerunEffect] = useState(false);
   const [position, setPosition] = useState<{ [x: string]: number } | undefined>(
     {}
   );
@@ -42,23 +44,23 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
   }, [savedRecorders]);
 
   useEffect(() => {
-    if (recorders?.length) {
+    if (recorders?.length && savedRecorders.length !== recorders.length) {
       (async () =>
-        recorders.forEach(async (uri, index, array) => {
+        recorders.forEach(async (uri, _, array) => {
           try {
             const { status, sound } = await ExpoAudio.Sound.createAsync({
               uri,
             });
             const sr = savedRecorders;
 
-            if (status.isLoaded) {
+            if (status.isLoaded && sr.length < array.length) {
               // Access the duration property to get the total play time in seconds
               const totalPlayTime = secondsToMinutesAndSeconds(
                 (status.durationMillis || 0) / 1000
               );
               const existsElement = sr.find(({ uri: srUri }) => srUri === uri);
 
-              if (!existsElement) {
+              if (!existsElement && sr.length < array.length) {
                 sr.push({ uri, totalPlayTime, sound });
               }
               setSavedRecorders(sr);
@@ -67,14 +69,19 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
             console.error(error);
           }
 
-          if (index === array.length - 1) {
+          if (savedRecorders.length > array.length) {
+            setSavedRecorders([]);
+            setRerunEffect(prev => !prev);
+          }
+
+          if (savedRecorders.length === recorders.length) {
             setIsLoading(false);
           }
         }))();
     } else {
       setIsLoading(false);
     }
-  }, [recorders, savedRecorders]);
+  }, [recorders, savedRecorders, rerunEffect]);
 
   const playSound = useCallback(
     async (uri: string) => {
@@ -118,6 +125,18 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
     [savedRecorders, setPlaying]
   );
 
+  const onDeleteRecorder = useCallback(
+    (uri: string) => {
+      if (recorders) {
+        const newRecorders = recorders.filter((r) => r !== uri);
+        const newSavedRecorders = savedRecorders.filter((sr) => sr.uri !== uri);
+        setSavedRecorders(newSavedRecorders);
+        deleteCallback(newRecorders);
+      }
+    },
+    [recorders, deleteCallback]
+  );
+
   const audioFile = useCallback(
     ({ item }: { item: SavedRecorders }) => {
       const uri = item.uri;
@@ -129,7 +148,7 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
 
       return (
         <SwipeableBlock
-          callback={() => console.log("123")}
+          callback={() => onDeleteRecorder(uri)}
           rectElement={
             <View
               ml={2}
@@ -201,7 +220,7 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
         </SwipeableBlock>
       );
     },
-    [playing, width, playSound, position, duration]
+    [playing, width, playSound, position, duration, onDeleteRecorder]
   );
 
   if (!recorders) {
@@ -231,4 +250,4 @@ const Audio: FC<AudioPropsType> = ({ recorders }) => {
   );
 };
 
-export default Audio;
+export default memo(Audio);

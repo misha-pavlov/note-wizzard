@@ -114,6 +114,7 @@ const Note = () => {
   const [updateNote] = useUpdateNoteMutation();
   useCallbackOnUnmount(() => {
     updateNote({ noteId, ...findChangedFields(noteById, note) });
+    dispatch({ type: "SET_NOTE", payload: {} });
   });
 
   // modals
@@ -337,7 +338,17 @@ const Note = () => {
             />
 
             {/* RECORDERS */}
-            <Audio recorders={noteById?.recorders} />
+            <Audio
+              recorders={note?.recorders}
+              deleteCallback={(newRecorders: string[]) =>
+                dispatch({
+                  type: "UPDATE_NOTE",
+                  payload: {
+                    recorders: newRecorders,
+                  },
+                })
+              }
+            />
 
             {/* NOTE */}
             <NoteBody
