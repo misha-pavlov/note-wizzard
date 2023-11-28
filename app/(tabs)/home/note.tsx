@@ -37,7 +37,7 @@ import {
   useUpdateNoteMutation,
 } from "../../../store/noteApi/note.api";
 import { NoteType } from "../../../dataTypes/note.types";
-import { NoteWizardSpinner } from "../../../components";
+import { AnimatedDropdown, NoteWizardSpinner } from "../../../components";
 import { findChangedFields } from "../../../helpers/genereal-helpers";
 
 type UpdateFields = {
@@ -338,17 +338,22 @@ const Note = () => {
             />
 
             {/* RECORDERS */}
-            <Audio
-              recorders={note?.recorders}
-              deleteCallback={(newRecorders: string[]) =>
-                dispatch({
-                  type: "UPDATE_NOTE",
-                  payload: {
-                    recorders: newRecorders,
-                  },
-                })
-              }
-            />
+            <AnimatedDropdown
+              headerText={`Recorders (${note?.recorders?.length})`}
+              disabled={!note?.recorders?.length}
+            >
+              <Audio
+                recorders={note?.recorders}
+                deleteCallback={(newRecorders: string[]) =>
+                  dispatch({
+                    type: "UPDATE_NOTE",
+                    payload: {
+                      recorders: newRecorders,
+                    },
+                  })
+                }
+              />
+            </AnimatedDropdown>
 
             {/* NOTE */}
             <NoteBody
