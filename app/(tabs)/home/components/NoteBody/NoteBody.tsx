@@ -3,7 +3,7 @@ import {
   RichToolbar,
   actions,
 } from "react-native-pell-rich-editor";
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useNoteWizardTheme } from "../../../../../hooks";
 import { NoteWizardSpinner } from "../../../../../components";
 
@@ -15,6 +15,25 @@ type NoteBodyPropsType = {
 const NoteBody: FC<NoteBodyPropsType> = ({ content, onChange }) => {
   const { currentTheme } = useNoteWizardTheme();
   const richText = useRef<RichEditor>(null);
+
+  useEffect(() => {
+    const abordController = new AbortController();
+    const checkHTML = async () => {
+      if (richText?.current) {
+        const contentHtml = await richText?.current.getContentHtml();
+        if (content !== contentHtml) {
+          richText?.current?.setContentHTML("");
+          richText?.current?.insertHTML(content);
+        }
+      }
+    };
+
+    checkHTML();
+
+    return () => {
+      abordController.abort();
+    }
+  }, [content]);
 
   return (
     <>

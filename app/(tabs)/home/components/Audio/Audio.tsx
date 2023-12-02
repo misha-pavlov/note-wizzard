@@ -11,15 +11,21 @@ import { NoteType } from "../../../../../dataTypes/note.types";
 import { secondsToMinutesAndSeconds } from "../../../../../helpers/date-helpers";
 import { NoteWizardSpinner } from "../../../../../components";
 import { SwipeableBlock } from "..";
+import { useLazySpeechToTextQuery } from "../../../../../store/noteApi/note.api";
 
 type AudioPropsType = {
   recorders: NoteType["recorders"];
   deleteCallback: (uri: string[]) => void;
+  updateNoteContent: (text: string) => void;
 };
 
 type SavedRecorders = { uri: string; totalPlayTime: string; sound: Sound };
 
-const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
+const Audio: FC<AudioPropsType> = ({
+  recorders,
+  deleteCallback,
+  updateNoteContent,
+}) => {
   const [playing, setPlaying] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [rerunEffect, setRerunEffect] = useState(false);
@@ -33,6 +39,7 @@ const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
 
   const { currentTheme } = useNoteWizardTheme();
   const { width } = useWindowDimensions();
+  const [lazySpeechToText] = useLazySpeechToTextQuery();
 
   useEffect(() => {
     return savedRecorders.length
@@ -71,7 +78,7 @@ const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
 
           if (savedRecorders.length > array.length) {
             setSavedRecorders([]);
-            setRerunEffect(prev => !prev);
+            setRerunEffect((prev) => !prev);
           }
 
           if (savedRecorders.length === recorders.length) {
@@ -135,6 +142,18 @@ const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
       }
     },
     [recorders, deleteCallback]
+  );
+
+  const onConvertInText = useCallback(
+    async (uri: string) => {
+      const speechToText = await lazySpeechToText({ uri });
+      const text = speechToText?.data?.transcript;
+
+      if (text) {
+        updateNoteContent(text);
+      }
+    },
+    [lazySpeechToText, updateNoteContent]
   );
 
   const audioFile = useCallback(
@@ -206,7 +225,10 @@ const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
               </HStack>
             </Pressable>
 
-            <Pressable _pressed={{ opacity: 0.5 }}>
+            <Pressable
+              _pressed={{ opacity: 0.5 }}
+              onPress={() => onConvertInText(uri)}
+            >
               <View>
                 <Text textAlign="center" color={currentTheme.purple}>
                   Convert
@@ -244,7 +266,13 @@ const Audio: FC<AudioPropsType> = ({ recorders, deleteCallback }) => {
       data={savedRecorders}
       renderItem={audioFile}
       estimatedItemSize={52}
-      extraData={{ playing, recorders, savedRecorders, position, duration }}
+      extraData={{
+        playing,
+        recorders,
+        savedRecorders,
+        position,
+        duration,
+      }}
       keyExtractor={(item) => item.uri}
     />
   );

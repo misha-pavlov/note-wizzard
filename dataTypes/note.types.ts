@@ -85,4 +85,12 @@ export type UpdateNoteParams = {
   recorders?: string[];
   folderId?: string;
   isImportant?: boolean;
-}
+};
+
+export type SpeechToTextParams = {
+  uri: string;
+};
+
+export type SpeechToTextReturnType = {
+  transcript: string;
+};

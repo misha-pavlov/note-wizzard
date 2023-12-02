@@ -10,6 +10,8 @@ import {
   NoteTypeArrayWithPageInfo,
   SearchNotesAndFoldersParams,
   SearchNotesAndFoldersReturnType,
+  SpeechToTextParams,
+  SpeechToTextReturnType,
   UpdateNoteParams,
 } from "../../dataTypes/note.types";
 
@@ -86,6 +88,13 @@ export const noteApi = createApi({
         params: { noteIds },
       }),
     }),
+    speechToText: builder.query<SpeechToTextReturnType, SpeechToTextParams>({
+      query: ({ uri }) => ({
+        url: "speechToText",
+        method: "GET",
+        params: { uri },
+      }),
+    }),
 
     // PATCH
     updateNote: builder.mutation<NoteType, UpdateNoteParams>({
@@ -101,8 +110,8 @@ export const noteApi = createApi({
         folderId,
         isImportant,
       }) => ({
-        url: 'update',
-        method: 'PATCH',
+        url: "update",
+        method: "PATCH",
         body: {
           noteId,
           content,
@@ -114,22 +123,21 @@ export const noteApi = createApi({
           title,
           folderId,
           isImportant,
-        }
-      })
+        },
+      }),
     }),
 
     // DELETE
     deleteNoteById: builder.mutation<NoteType, GetNoteByIdParams>({
       query: ({ noteId }) => ({
-        url: 'deleteNoteById',
-        method: 'DELETE',
+        url: "deleteNoteById",
+        method: "DELETE",
         body: {
-          noteId
-        }
-      })
-    })
+          noteId,
+        },
+      }),
+    }),
   }),
-
 });
 
 export const {
@@ -141,8 +149,9 @@ export const {
   useGetUserStatisticQuery,
   useSearchNotesAndFoldersReqQuery,
   useGetNotesByIdsQuery,
+  useLazySpeechToTextQuery,
   // PATCH
   useUpdateNoteMutation,
   //DELETE
-  useDeleteNoteByIdMutation
+  useDeleteNoteByIdMutation,
 } = noteApi;

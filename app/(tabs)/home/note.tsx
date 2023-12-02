@@ -352,6 +352,14 @@ const Note = () => {
                     },
                   })
                 }
+                updateNoteContent={(text: string) =>
+                  dispatch({
+                    type: "UPDATE_NOTE",
+                    payload: {
+                      content: `${note?.content || ""} ${text}`,
+                    },
+                  })
+                }
               />
             </AnimatedDropdown>
 
