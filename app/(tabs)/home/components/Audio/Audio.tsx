@@ -1,4 +1,12 @@
-import { Center, HStack, Pressable, Text, VStack, View } from "native-base";
+import {
+  Center,
+  HStack,
+  Pressable,
+  Text,
+  VStack,
+  View,
+  useToast,
+} from "native-base";
 import { useWindowDimensions } from "react-native";
 import { Audio as ExpoAudio } from "expo-av";
 import { FC, memo, useCallback, useEffect, useState } from "react";
@@ -39,7 +47,15 @@ const Audio: FC<AudioPropsType> = ({
 
   const { currentTheme } = useNoteWizardTheme();
   const { width } = useWindowDimensions();
-  const [lazySpeechToText] = useLazySpeechToTextQuery();
+  const toast = useToast();
+  const [lazySpeechToText, { error: lazySpeechToTextError }] =
+    useLazySpeechToTextQuery();
+
+  useEffect(() => {
+    if (lazySpeechToTextError) {
+      toast.show({ title: "Something went wrong", backgroundColor: currentTheme.red });
+    }
+  }, [lazySpeechToTextError]);
 
   useEffect(() => {
     return savedRecorders.length
