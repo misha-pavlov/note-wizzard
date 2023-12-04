@@ -9,14 +9,20 @@ import { noteWizardDateFormat } from "../../helpers/date-helpers";
 import { hexToRgba } from "../../helpers/color-helpers";
 import { constants } from "../../config/constants";
 import { getFolderTypeIcon } from "../../helpers/folder-helpers";
+import { useGetIconTypeByFolderIdQuery } from "../../store/folderApi/folder.api";
 
 const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
   onPress,
   note,
   folder,
+  onLongPress,
 }) => {
   const { currentTheme } = useNoteWizardTheme();
   const { width } = useWindowDimensions();
+  const { data: noteIconTypeData } = useGetIconTypeByFolderIdQuery(
+    { folderId: note?.folderId },
+    { skip: !note?.folderId || !note }
+  );
 
   if (!note && !folder) {
     return null;
@@ -24,11 +30,15 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
 
   const getIcon = () => {
     if (note) {
-      return <AntDesign name="question" size={24} color={currentTheme.red} />;
+      return noteIconTypeData ? (
+        getFolderTypeIcon(noteIconTypeData.iconType, 20, noteIconTypeData.color)
+      ) : (
+        <AntDesign name="question" size={24} color={currentTheme.red} />
+      );
     }
 
     if (folder) {
-      return getFolderTypeIcon(folder.iconType, 24, folder.color);
+      return getFolderTypeIcon(folder.iconType, 20, folder.color);
     }
   };
 
@@ -44,6 +54,18 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
     return "???";
   };
 
+  const getIconBackgroundColor = () => {
+    if (note) {
+      return noteIconTypeData ? noteIconTypeData.color : currentTheme.red;
+    }
+
+    if (folder) {
+      return folder.color;
+    }
+
+    return currentTheme.red;
+  };
+
   return (
     <Pressable
       onPress={onPress}
@@ -52,6 +74,7 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
+      onLongPress={onLongPress}
       // 32 - container padding, 8 - space
       w={(width - 32 - 8) / 2}
     >
@@ -59,10 +82,7 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
         <HStack space={4}>
           <IconButton
             icon={getIcon()}
-            backgroundColor={hexToRgba(
-              folder ? folder.color : currentTheme.red,
-              0.2
-            )}
+            backgroundColor={hexToRgba(getIconBackgroundColor(), 0.2)}
             size="xs"
           />
 

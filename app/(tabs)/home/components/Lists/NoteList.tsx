@@ -91,6 +91,10 @@ const NoteList: FC<NoteListProps> = ({
               noteId: item._id,
             })
           }
+          onLongPress={() => {
+            setSelected(item._id);
+            onOpen();
+          }}
         />
       ),
     [sortType]
