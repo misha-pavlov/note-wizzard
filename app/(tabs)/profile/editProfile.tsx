@@ -25,13 +25,10 @@ import {
   useCurrentUserQuery,
   useUpdateUserProfileMutation,
 } from "../../../store/userApi/user.api";
-import {
-  findChangedFields,
-  getUserInitials,
-  validateEmail,
-} from "../../../helpers/user-helpers";
+import { getUserInitials, validateEmail } from "../../../helpers/user-helpers";
 import { UserType } from "../../../dataTypes/user.types";
 import { uploadImage } from "../../../helpers/image-helpers";
+import { findChangedFields } from "../../../helpers/genereal-helpers";
 
 const EditProfile = () => {
   const { currentTheme } = useNoteWizardTheme();

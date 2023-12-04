@@ -73,3 +73,24 @@ export type SearchNotesAndFoldersReturnType = {
   notes: NoteType[];
   folders: FolderType[];
 };
+
+export type UpdateNoteParams = {
+  noteId: string;
+  title?: string;
+  content?: string;
+  name?: string;
+  reminder?: Date;
+  privacy?: "private" | "public";
+  sharedWith?: string[];
+  recorders?: string[];
+  folderId?: string;
+  isImportant?: boolean;
+};
+
+export type SpeechToTextParams = {
+  uri: string;
+};
+
+export type SpeechToTextReturnType = {
+  transcript: string;
+};

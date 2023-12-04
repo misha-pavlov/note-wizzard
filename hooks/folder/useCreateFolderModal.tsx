@@ -209,8 +209,6 @@ const useCreateFolderModal = (callback?: VoidFunction) => {
           <Modal.Header backgroundColor={currentTheme.main}>
             Create your new folder
           </Modal.Header>
-          {/* block scroll when selecting color */}
-          {/* TODO: fix flatlist methods in 4 step */}
           <Modal.Body _scrollview={{ scrollEnabled: currentStep !== 3 }}>
             {renderStep}
           </Modal.Body>

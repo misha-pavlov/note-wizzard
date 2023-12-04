@@ -2,6 +2,7 @@ import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
 import { FC } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { useWindowDimensions } from "react-native";
+import RenderHtml from "react-native-render-html";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
@@ -75,9 +76,16 @@ const NoteFolderSquare: FC<NoteFolderComponentPropsTypes> = ({
           </VStack>
         </HStack>
 
-        <HStack>
-          <Text fontSize={13}>{getSubText()}</Text>
-        </HStack>
+        <RenderHtml
+          contentWidth={100}
+          baseStyle={{
+            color: currentTheme.font,
+            fontSize: 13,
+            maxHeight: 100,
+            overflow: "hidden",
+          }}
+          source={{ html: getSubText() }}
+        />
       </VStack>
     </Pressable>
   );

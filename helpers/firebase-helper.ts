@@ -20,3 +20,19 @@ export const getFirebaseApp = () => {
   // Initialize Firebase
   return initializeApp(firebaseConfig);
 };
+
+export const getBlob = async (uri: string) => new Promise((resolve, reject) => {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    resolve(xhr.response);
+  };
+
+  xhr.onerror = function (e) {
+    console.error(e);
+    reject(new TypeError("Network request failed!"));
+  };
+
+  xhr.responseType = "blob";
+  xhr.open("GET", uri, true);
+  xhr.send();
+}) as Promise<Blob>
