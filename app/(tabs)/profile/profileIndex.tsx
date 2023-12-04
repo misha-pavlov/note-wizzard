@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { Avatar, ScrollView, Text, VStack } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback } from "react";
 import { constants } from "../../../config/constants";
 import { useGoogleAuth, useNoteWizardTheme } from "../../../hooks";
 import { Button, NoteWizardSpinner } from "../../../components";
@@ -9,7 +10,7 @@ import { useAuth } from "../../../context/auth";
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
 import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
 import { useGetUserStatisticQuery } from "../../../store/noteApi/note.api";
-import { useCallback } from "react";
+import withNetInfo from "../../../hocs/withNetInfo";
 
 const Profile = () => {
   const router = useRouter();
@@ -81,4 +82,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withNetInfo(Profile);

@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-community/datetimepicker": "6.7.3",
+    "@react-native-community/netinfo": "9.3.7",
     "@react-native-google-signin/google-signin": "^10.1.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@shopify/flash-list": "1.4.0",
@@ -22,6 +23,7 @@
     "expo-image-picker": "~14.1.1",
     "expo-linking": "~4.0.1",
     "expo-router": "^1.5.3",
+    "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "firebase": "^10.5.2",
     "libphonenumber-js": "^1.10.48",
@@ -43,8 +45,7 @@
     "react-native-svg": "13.4.0",
     "react-native-uuid": "^2.0.1",
     "react-native-webview": "11.26.0",
-    "react-redux": "^8.1.2",
-    "expo-splash-screen": "~0.18.2"
+    "react-redux": "^8.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

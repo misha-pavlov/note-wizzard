@@ -3,6 +3,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { useNoteWizardTheme } from "../../../hooks";
 import { SettingsItem } from "./components";
+import withNetInfo from "../../../hocs/withNetInfo";
 
 const settingsGroupTitle = (groupTitle: string) => groupTitle.toUpperCase();
 
@@ -86,4 +87,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withNetInfo(Settings);
