@@ -118,7 +118,6 @@ const Layout = () => {
     },
   };
 
-  // TODO: FIX THEM SWITCHER
   // TODO: ADD A POSSIBILITY TO REMOVE NOTE/FOLDER FROM LIST
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
