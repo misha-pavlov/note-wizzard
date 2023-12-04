@@ -118,11 +118,7 @@ const Layout = () => {
     },
   };
 
-  // TODO: ADD INTERNET CONNECTION HANDLER
-  // TODO: ADD DATE FORMAT DEPEND ON COUNTRY
   // TODO: FIX THEM SWITCHER
-  // TODO: ADD REMOVING OLD FILE FROM FIREBASE STORAGE ON UPDATING THIS
-  // TODO: REMOVE FILE note-wizard/patches/metro-config++metro-runtime+0.76.0.patch AND TRY TO FIX WARNINGS
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
       <StoreProvider store={store}>
