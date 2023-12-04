@@ -56,8 +56,6 @@ const Recording = () => {
     }
   }, [intervalRef]);
 
-  // TODO: CHECK AN ISSUE BECAUSE DOESN'T WORK FOR NEW IOS
-  // https://github.com/expo/expo/issues/21782
   const startRecording = useCallback(async () => {
     try {
       console.log("Requesting permissions..");
