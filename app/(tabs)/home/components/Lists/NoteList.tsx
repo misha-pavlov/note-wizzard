@@ -1,7 +1,8 @@
-import { Text, Stack, View } from "native-base";
-import { FC, useCallback, useRef } from "react";
+import { Text, Stack, View, Actionsheet, useDisclose } from "native-base";
+import { FC, useCallback, useRef, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl, useWindowDimensions } from "react-native";
+import { useFocusEffect } from "expo-router";
 import { constants } from "../../../../../config/constants";
 import {
   NoteFolderRow,
@@ -15,7 +16,7 @@ import {
   useNoteWizardTheme,
   usePreviousProps,
 } from "../../../../../hooks";
-import { useFocusEffect } from "expo-router";
+import { useDeleteNoteByIdMutation } from "../../../../../store/noteApi/note.api";
 
 type NoteListProps = {
   sortType: string | null;
@@ -31,11 +32,14 @@ const NoteList: FC<NoteListProps> = ({
   isImportant,
 }) => {
   const isFirstRender = useRef(true);
+  const [selected, setSelected] = useState<string | undefined>();
   const previousProps = usePreviousProps<NoteListProps>({
     isAllTab,
     hideHeader,
     sortType,
   });
+  const [deleteNoteById] = useDeleteNoteByIdMutation();
+  const { isOpen, onOpen, onClose } = useDisclose();
   const { width } = useWindowDimensions();
   const { navigate } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
@@ -51,7 +55,7 @@ const NoteList: FC<NoteListProps> = ({
   useFocusEffect(
     useCallback(() => {
       if (!isFirstRender.current) {
-        onRefresh()
+        onRefresh();
       }
 
       return () => {
@@ -72,6 +76,10 @@ const NoteList: FC<NoteListProps> = ({
               noteId: item._id,
             })
           }
+          onLongPress={() => {
+            setSelected(item._id);
+            onOpen();
+          }}
         />
       ) : (
         <NoteFolderSquare
@@ -127,6 +135,31 @@ const NoteList: FC<NoteListProps> = ({
           ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
         />
       </View>
+
+      <Actionsheet
+        isOpen={isOpen}
+        onClose={() => {
+          setSelected(undefined);
+          onClose();
+        }}
+      >
+        <Actionsheet.Content>
+          <Actionsheet.Item
+            _pressed={{ opacity: 0.5 }}
+            backgroundColor={currentTheme.red}
+            onPress={() => {
+              if (selected) {
+                deleteNoteById({ noteId: selected });
+              }
+
+              setSelected(undefined);
+              onClose();
+            }}
+          >
+            Delete note
+          </Actionsheet.Item>
+        </Actionsheet.Content>
+      </Actionsheet>
     </Stack>
   );
 };

@@ -17,6 +17,7 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   folder,
   withoutDate,
   selected,
+  onLongPress
 }) => {
   const { width } = useWindowDimensions();
   const { currentTheme } = useNoteWizardTheme();
@@ -75,6 +76,7 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
+      onLongPress={onLongPress}
       {...(selected && { borderColor: currentTheme.purple, borderWidth: 1 })}
     >
       <HStack
