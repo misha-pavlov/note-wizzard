@@ -1,7 +1,7 @@
-import { Text, Stack, View } from "native-base";
+import { Text, Stack, View, useDisclose, Actionsheet } from "native-base";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl, useWindowDimensions } from "react-native";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import { constants } from "../../../../../config/constants";
 import {
   useCustomNavigation,
@@ -15,12 +15,15 @@ import {
   NoteFolderSquare,
   NoteWizardSpinner,
 } from "../../../../../components";
+import { useDeleteFolderByIdMutation } from "../../../../../store/folderApi/folder.api";
 
 type FoldersListProps = {
   sortType: string | null;
 };
 
 const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
+  const [selected, setSelected] = useState<string | undefined>();
+  const { isOpen, onOpen, onClose } = useDisclose();
   const { width } = useWindowDimensions();
   const { navigate } = useCustomNavigation();
   const { currentTheme } = useNoteWizardTheme();
@@ -35,6 +38,7 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
     onRefresh,
     isFetchingMore,
   } = useGetFoldersForUserQueryWithFetchMore();
+  const [deleteFolderById] = useDeleteFolderByIdMutation();
 
   const renderItem = useCallback(
     ({ item }: { item: FolderType }) =>
@@ -48,6 +52,10 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
               noteIds: item.noteIds,
             })
           }
+          onLongPress={() => {
+            setSelected(item._id);
+            onOpen();
+          }}
         />
       ) : (
         <NoteFolderSquare
@@ -59,6 +67,10 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
               noteIds: item.noteIds,
             })
           }
+          onLongPress={() => {
+            setSelected(item._id);
+            onOpen();
+          }}
         />
       ),
     [sortType]
@@ -72,8 +84,8 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
     <Stack space={4}>
       <Text fontWeight={700}>My Folders</Text>
 
-      {/* 32 - padding left + right, 82% - height to the bottom nav*/}
-      <View width={width - 32} height="82%">
+      {/* 32 - padding left + right, 87% - height to the bottom nav*/}
+      <View width={width - 32} height="87%">
         <FlashList
           data={folders}
           renderItem={renderItem}
@@ -98,6 +110,31 @@ const FoldersList: FC<FoldersListProps> = ({ sortType }) => {
           ListFooterComponent={isFetchingMore ? <NoteWizardSpinner /> : null}
         />
       </View>
+
+      <Actionsheet
+        isOpen={isOpen}
+        onClose={() => {
+          setSelected(undefined);
+          onClose();
+        }}
+      >
+        <Actionsheet.Content>
+          <Actionsheet.Item
+            _pressed={{ opacity: 0.5 }}
+            backgroundColor={currentTheme.red}
+            onPress={() => {
+              if (selected) {
+                deleteFolderById({ folderId: selected });
+              }
+
+              setSelected(undefined);
+              onClose();
+            }}
+          >
+            Delete folder
+          </Actionsheet.Item>
+        </Actionsheet.Content>
+      </Actionsheet>
     </Stack>
   );
 };

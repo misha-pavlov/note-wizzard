@@ -118,7 +118,6 @@ const Layout = () => {
     },
   };
 
-  // TODO: ADD A POSSIBILITY TO REMOVE NOTE/FOLDER FROM LIST
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
       <StoreProvider store={store}>
