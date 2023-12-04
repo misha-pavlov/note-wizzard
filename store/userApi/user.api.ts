@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../config/constants";
 import {
+  GetAllUsersParams,
   ResetPasswordParams,
   SendVerificationCodeParams,
   SignInParams,
@@ -109,6 +110,15 @@ export const userApi = createApi({
         method: "GET",
       }),
     }),
+    getAllUsers: builder.query<UserType[], GetAllUsersParams>({
+      query: ({ searchTerm }) => ({
+        url: "getAllUsers",
+        method: "GET",
+        params: {
+          searchTerm
+        }
+      }),
+    }),
   }),
 });
 
@@ -119,7 +129,7 @@ export const {
   useSendVerificationCodeMutation,
   useResetPasswordMutation,
   useUpdateUserProfileMutation,
-
   // GET
   useCurrentUserQuery,
+  useGetAllUsersQuery,
 } = userApi;

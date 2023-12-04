@@ -10,6 +10,9 @@ import {
   NoteTypeArrayWithPageInfo,
   SearchNotesAndFoldersParams,
   SearchNotesAndFoldersReturnType,
+  SpeechToTextParams,
+  SpeechToTextReturnType,
+  UpdateNoteParams,
 } from "../../dataTypes/note.types";
 
 export const noteApi = createApi({
@@ -35,6 +38,7 @@ export const noteApi = createApi({
         method: "POST",
       }),
     }),
+
     // GET
     getAllUserNotes: builder.query<
       NoteTypeArrayWithPageInfo,
@@ -84,6 +88,55 @@ export const noteApi = createApi({
         params: { noteIds },
       }),
     }),
+    speechToText: builder.query<SpeechToTextReturnType, SpeechToTextParams>({
+      query: ({ uri }) => ({
+        url: "speechToText",
+        method: "GET",
+        params: { uri },
+      }),
+    }),
+
+    // PATCH
+    updateNote: builder.mutation<NoteType, UpdateNoteParams>({
+      query: ({
+        noteId,
+        content,
+        name,
+        privacy,
+        recorders,
+        reminder,
+        sharedWith,
+        title,
+        folderId,
+        isImportant,
+      }) => ({
+        url: "update",
+        method: "PATCH",
+        body: {
+          noteId,
+          content,
+          name,
+          privacy,
+          recorders,
+          reminder,
+          sharedWith,
+          title,
+          folderId,
+          isImportant,
+        },
+      }),
+    }),
+
+    // DELETE
+    deleteNoteById: builder.mutation<NoteType, GetNoteByIdParams>({
+      query: ({ noteId }) => ({
+        url: "deleteNoteById",
+        method: "DELETE",
+        body: {
+          noteId,
+        },
+      }),
+    }),
   }),
 });
 
@@ -96,4 +149,9 @@ export const {
   useGetUserStatisticQuery,
   useSearchNotesAndFoldersReqQuery,
   useGetNotesByIdsQuery,
+  useLazySpeechToTextQuery,
+  // PATCH
+  useUpdateNoteMutation,
+  //DELETE
+  useDeleteNoteByIdMutation,
 } = noteApi;

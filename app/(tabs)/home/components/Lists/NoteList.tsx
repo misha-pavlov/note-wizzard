@@ -1,5 +1,5 @@
 import { Text, Stack, View } from "native-base";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useRef } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl, useWindowDimensions } from "react-native";
 import { constants } from "../../../../../config/constants";
@@ -15,6 +15,7 @@ import {
   useNoteWizardTheme,
   usePreviousProps,
 } from "../../../../../hooks";
+import { useFocusEffect } from "expo-router";
 
 type NoteListProps = {
   sortType: string | null;
@@ -29,6 +30,7 @@ const NoteList: FC<NoteListProps> = ({
   sortType,
   isImportant,
 }) => {
+  const isFirstRender = useRef(true);
   const previousProps = usePreviousProps<NoteListProps>({
     isAllTab,
     hideHeader,
@@ -45,6 +47,18 @@ const NoteList: FC<NoteListProps> = ({
     onRefresh,
     isFetchingMore,
   } = useGetAllUserNotesQueryWithFetchMore(isImportant);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isFirstRender.current) {
+        onRefresh()
+      }
+
+      return () => {
+        isFirstRender.current = false;
+      };
+    }, [])
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: NoteType }) =>
@@ -86,8 +100,8 @@ const NoteList: FC<NoteListProps> = ({
         </Text>
       )}
 
-      {/* 32 - padding left + right, 82% - height to the bottom nav*/}
-      <View width={width - 32} height="82%">
+      {/* 32 - padding left + right, 87% - height to the bottom nav*/}
+      <View width={width - 32} height="87%">
         <FlashList
           data={notes}
           renderItem={renderItem}

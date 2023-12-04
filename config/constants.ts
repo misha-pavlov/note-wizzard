@@ -21,12 +21,7 @@ export const constants = {
     forgotPassword: "/forgot-password",
     verification: "/verification",
     newPassword: "/new-password",
-    // logged in user
-    home: "/home",
-    profile: "/profile",
-    settings: "/settings",
     // home screens
-    folderNotes: "/home/folderNotes",
     note: "/home/note",
     recording: "/home/recording",
     // profile screens
