@@ -22,7 +22,6 @@ import useGetAllUserNotesQueryWithFetchMore from "../note/useGetAllUserNotesQuer
 import { store } from "../../store";
 
 const useCreateFolderModal = (callback?: VoidFunction) => {
-  // TODO: CONVERT ALL STATES INTO 1 USE_REDUCER
   const [currentStep, setCurrentStep] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [folderTitle, setFolderTitle] = useState("");

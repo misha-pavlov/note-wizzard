@@ -3,6 +3,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { useNoteWizardTheme } from "../../../hooks";
 import { SettingsItem } from "./components";
+import withNetInfo from "../../../hocs/withNetInfo";
 
 const settingsGroupTitle = (groupTitle: string) => groupTitle.toUpperCase();
 
@@ -13,28 +14,16 @@ const Settings = () => {
 
   const renderDarkModeSwitcher = useMemo(
     () => (
-      <SettingsItem
-        icon={
-          <Ionicons
-            name="ios-moon-outline"
-            size={20}
-            color={currentTheme.font}
-          />
-        }
-        settingTitle="Dark mode"
-        rightItem={
-          <Switch
-            trackColor={{
-              false: currentTheme.background,
-              true: currentTheme.purple,
-            }}
-            thumbColor={isDarkMode ? currentTheme.white : currentTheme.gray}
-            ios_backgroundColor={currentTheme.background}
-            onValueChange={toggleColorMode}
-            value={isDarkMode}
-            size="sm"
-          />
-        }
+      <Switch
+        trackColor={{
+          false: currentTheme.background,
+          true: currentTheme.purple,
+        }}
+        thumbColor={isDarkMode ? currentTheme.white : currentTheme.gray}
+        ios_backgroundColor={currentTheme.background}
+        onToggle={toggleColorMode}
+        value={isDarkMode}
+        size="sm"
       />
     ),
     [isDarkMode]
@@ -45,12 +34,21 @@ const Settings = () => {
       <Text color={currentTheme.purple} mb={4}>
         {settingsGroupTitle("General Settings")}
       </Text>
-      {renderDarkModeSwitcher}
+      <SettingsItem
+        icon={
+          <Ionicons
+            name="ios-moon-outline"
+            size={20}
+            color={currentTheme.font}
+          />
+        }
+        settingTitle="Dark mode"
+        rightItem={renderDarkModeSwitcher}
+      />
 
       <Text color={currentTheme.purple} mb={4} mt={4}>
         {settingsGroupTitle("Other")}
       </Text>
-      {/* TODO: ADD LOGIC FOR THE NEXT TWO SETTINGS */}
       <SettingsItem
         icon={
           <Ionicons
@@ -86,4 +84,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withNetInfo(Settings);

@@ -28,12 +28,10 @@ const useGoogleAuth = () => {
     }
   };
 
-  // TODO: ADD LOG IN FOR GOOGLE IOS AND SIGN UP/SIGN IN FOR ANDROID
   const signUp = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log("🚀 ~ file: useGoogleAuth.ts:36 ~ signUp ~ userInfo:", userInfo)
       signUpMutation({
         firstName: userInfo.user.givenName || "GoogleFirstname",
         lastName: userInfo.user.familyName || "GoogleLastName",

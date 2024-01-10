@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { constants } from "../../config/constants";
 import {
   CreateParams,
+  DeleteFolderByIdParams,
   FolderType,
   FolderTypeArrayWithPageInfo,
   GetFoldersForUserParams,
@@ -39,6 +40,7 @@ export const folderApi = createApi({
         },
       }),
     }),
+
     // GET
     getFoldersForUser: builder.query<
       FolderTypeArrayWithPageInfo,
@@ -67,6 +69,17 @@ export const folderApi = createApi({
             }
           : { url: "" },
     }),
+
+    // DELETE
+    deleteFolderById: builder.mutation<FolderType, DeleteFolderByIdParams>({
+      query: ({ folderId }) => ({
+        url: "deleteFolderById",
+        method: "DELETE",
+        body: {
+          folderId,
+        },
+      }),
+    }),
   }),
 });
 
@@ -76,4 +89,6 @@ export const {
   // GET
   useGetFoldersForUserQuery,
   useGetIconTypeByFolderIdQuery,
+  // DELETE
+  useDeleteFolderByIdMutation
 } = folderApi;

@@ -53,6 +53,7 @@ export type GetAllUserNotesParams = {
 
 export type NoteFolderComponentPropsTypes = {
   onPress: () => void;
+  onLongPress?: () => void;
   selected?: boolean;
   withoutDate?: boolean;
   note?: NoteType;

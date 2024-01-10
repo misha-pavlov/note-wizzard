@@ -2,6 +2,7 @@ import { Text, Pressable, VStack, IconButton, HStack } from "native-base";
 import { FC, memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import RenderHtml from "react-native-render-html";
+import { useWindowDimensions } from "react-native";
 import { NoteFolderComponentPropsTypes } from "../../dataTypes/note.types";
 import { useNoteWizardTheme } from "../../hooks";
 import { noteWizardDateFormat } from "../../helpers/date-helpers";
@@ -16,7 +17,9 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
   folder,
   withoutDate,
   selected,
+  onLongPress
 }) => {
+  const { width } = useWindowDimensions();
   const { currentTheme } = useNoteWizardTheme();
   const { data: noteIconTypeData } = useGetIconTypeByFolderIdQuery(
     { folderId: note?.folderId },
@@ -73,6 +76,7 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
       borderRadius={20}
       mb={4}
       p={4}
+      onLongPress={onLongPress}
       {...(selected && { borderColor: currentTheme.purple, borderWidth: 1 })}
     >
       <HStack
@@ -88,9 +92,16 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
             w={36}
             h={36}
           />
-
-          <VStack space={1}>
-            <Text fontWeight={700}>{note ? note.name : folder?.title}</Text>
+          {/* 116 - all required spaces */}
+          <VStack space={1} {...(note && { w: width - 116 })}>
+            <HStack alignItems="center" justifyContent="space-between">
+              <Text fontWeight={700}>{note ? note.name : folder?.title}</Text>
+              {note && (
+                <Text color={currentTheme.gray} fontSize={11}>
+                  {noteWizardDateFormat(note.createdAt)}
+                </Text>
+              )}
+            </HStack>
             <RenderHtml
               contentWidth={100}
               baseStyle={{
@@ -104,15 +115,9 @@ const NoteFolderRow: FC<NoteFolderComponentPropsTypes> = ({
           </VStack>
         </HStack>
 
-        {!withoutDate && (
+        {!withoutDate && folder && (
           <VStack alignSelf={note ? "flex-start" : "center"}>
-            {note ? (
-              <Text color={currentTheme.gray} fontSize={11}>
-                {noteWizardDateFormat(note.createdAt)}
-              </Text>
-            ) : (
-              <AntDesign name="right" size={24} color={currentTheme.font} />
-            )}
+            <AntDesign name="right" size={24} color={currentTheme.font} />
           </VStack>
         )}
       </HStack>

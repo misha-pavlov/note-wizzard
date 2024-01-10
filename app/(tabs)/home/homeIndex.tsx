@@ -18,19 +18,26 @@ import {
 import { useWindowDimensions } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// hooks
 import {
   useCreateFolderModal,
   useCustomNavigation,
   useNoteWizardTheme,
 } from "../../../hooks";
+// components
 import { Lists, NoteWizardTabs } from "./components";
+import { NoteWizardSpinner } from "../../../components";
+// constants
 import { TABS_KEYS } from "./config/constants";
 import { constants } from "../../../config/constants";
+// apis
 import { useCurrentUserQuery } from "../../../store/userApi/user.api";
-import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
 import { useCreateNoteMutation } from "../../../store/noteApi/note.api";
 import { useCreateFolderMutation } from "../../../store/folderApi/folder.api";
-import { NoteWizardSpinner } from "../../../components";
+// helpers
+import { getUserInitials, getUserName } from "../../../helpers/user-helpers";
+// hocs
+import withNetInfo from "../../../hocs/withNetInfo";
 
 const DEFAULT_TAB = TABS_KEYS.all;
 
@@ -249,4 +256,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withNetInfo(Home);

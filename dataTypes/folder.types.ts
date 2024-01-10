@@ -42,3 +42,7 @@ export type GetIconTypeByFolderIdReturnType = {
   iconType: string;
   color: string;
 };
+
+export type DeleteFolderByIdParams = {
+  folderId: string;
+};
